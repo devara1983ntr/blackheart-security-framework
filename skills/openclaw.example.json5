@@ -1,92 +1,470 @@
-// BLACKHEART — OpenClaw example configuration
+// Blackhearts — OpenClaw example configuration
 //
-// Copy to openclaw.json and adjust. This file contains NO secrets.
-// Never commit a real openclaw.json containing credentials.
+// Valid JSON5. Validate with:
+//   python3 -c "import json5;json5.load(open('skills/openclaw.example.json5'))"
 //
-// Related: skills/README.md · skills/conformance/SKILL.md · skills/VENDOR.md
+// Scope: the complete vendored catalogue — all 387 canonical skill directories
+// from claude-skills @ 19392f7a08264ed00486a251f5b2098321771f94 (MIT, Alireza Rezvani),
+// plus the mandatory Blackhearts conformance skill.
+// See skills/VENDOR.md for provenance and the full audit record.
+//
+// Every vendored skill has an adapter at <skill>/_BLACKHEART-ADAPTER.md recording its
+// audit verdict and its conditions of use. An entry here does NOT authorize that skill
+// to touch a target: see the authorization gate at the bottom, and skills/conformance/SKILL.md.
 
 {
   skills: {
-    // <workspace>/skills is the default workspace root and already contains
-    // the vendored skills plus the conformance layer. No extraDirs needed
-    // unless you keep skills outside the workspace.
+    // Load every group directory in the mirror, so no vendored skill is silently skipped.
     load: {
-      extraDirs: [],
-      watch: true, // default
+      extraDirs: [
+        'skills/third-party/claude-skills/agent-launcher',
+        'skills/third-party/claude-skills/business-growth',
+        'skills/third-party/claude-skills/business-operations',
+        'skills/third-party/claude-skills/c-level-advisor',
+        'skills/third-party/claude-skills/c-level-agents',
+        'skills/third-party/claude-skills/commercial',
+        'skills/third-party/claude-skills/compliance-os',
+        'skills/third-party/claude-skills/engineering',
+        'skills/third-party/claude-skills/engineering-team',
+        'skills/third-party/claude-skills/finance',
+        'skills/third-party/claude-skills/loop-library',
+        'skills/third-party/claude-skills/markdown-html',
+        'skills/third-party/claude-skills/marketing',
+        'skills/third-party/claude-skills/marketing-skill',
+        'skills/third-party/claude-skills/product-team',
+        'skills/third-party/claude-skills/productivity',
+        'skills/third-party/claude-skills/project-management',
+        'skills/third-party/claude-skills/ra-qm-team',
+        'skills/third-party/claude-skills/research',
+        'skills/third-party/claude-skills/research-ops'
+      ],
+      watch: true,
     },
 
-    // Per-skill overrides. Keys match the skill's frontmatter `name`,
-    // not its directory path. Quote hyphenated names — this is JSON5.
+    // Explicit per-skill policy for the 373 distinct skill names in the mirror.
+    // 373 names cover all 387 loadable directories: 14 names
+    // appear at two upstream paths (upstream duplication — e.g. 'handoff' exists under both
+    // engineering/ and productivity/). One entry enables both copies. The full path-level
+    // mapping for every skill is in skills/VENDOR.md.
     entries: {
-      // --- Conformance: keep enabled everywhere ---
-      "blackheart-conformance": { enabled: true },
+      // --- Layer 0: mandatory, always on ---
+      'blackheart-conformance': { enabled: true },
 
-      // --- Assessment skills ---
-      "ai-security": { enabled: true },
-      "cloud-security": { enabled: true },
-      "dependency-auditor": { enabled: true },
-      "red-team": { enabled: true },
-      "security-pen-testing": { enabled: true },
-      "senior-security": { enabled: true },
-      "threat-detection": { enabled: true },
+      // --- Layer 5 promoted security skills (individually audited, Round 4) ---
+      'incident-response': { enabled: false },  // needs an explicit incident engagement record
+      'ai-security': { enabled: true },
+      'cloud-security': { enabled: true },
+      'dependency-auditor': { enabled: true },
+      'red-team': { enabled: true },
+      'security-pen-testing': { enabled: true },
+      'senior-security': { enabled: true },
+      'threat-detection': { enabled: true },
 
-      // Incident response touches live evidence, which a testing
-      // authorization does not cover. Off by default; enable deliberately.
-      "incident-response": { enabled: false },
+      // --- Remaining vendored catalogue (365 names) ---
+      // Each has an adapter. Non-PASS audit verdicts are marked and were adjudicated
+      // in the adapter, not suppressed.
+      'a11y-audit': { enabled: true },
+      'ab-test-setup': { enabled: true },
+      'ad-creative': { enabled: true },
+      'adversarial-reviewer': { enabled: true },
+      'aeo': { enabled: true },  // audit: WARN — see adapter
+      'agent-decision-receipts': { enabled: true },  // audit: WARN — see adapter
+      'agent-designer': { enabled: true },
+      'agent-harness': { enabled: true },  // audit: WARN — see adapter
+      'agent-launcher-orchestrator': { enabled: true },
+      'agent-memory': { enabled: true },  // audit: WARN — see adapter
+      'agent-protocol': { enabled: true },
+      'agent-workflow-designer': { enabled: true },
+      'agenthub': { enabled: true },
+      'agile-product-owner': { enabled: true },
+      'ai-act-readiness': { enabled: true },
+      'aims-audit': { enabled: true },
+      'analytics-tracking': { enabled: true },
+      'andreessen': { enabled: true },
+      'api-design-reviewer': { enabled: true },
+      'api-test-suite-builder': { enabled: true },
+      'app-store-optimization': { enabled: true },
+      'apple-hig-expert': { enabled: true },
+      'ar-resume': { enabled: true },
+      'ar-status': { enabled: true },
+      'arquiteto-de-empresa': { enabled: true },
+      'atlassian-admin': { enabled: true },
+      'atlassian-templates': { enabled: true },
+      'autoresearch-agent': { enabled: true },
+      'aws-solution-architect': { enabled: true },
+      'azure-cloud-architect': { enabled: true },
+      'behuman': { enabled: true },
+      'board': { enabled: true },
+      'board-deck-builder': { enabled: true },
+      'board-meeting': { enabled: true },
+      'board-prep': { enabled: true },
+      'boardroom': { enabled: true },
+      'book-to-skill': { enabled: true },  // audit: WARN — see adapter
+      'boost-asio-pro': { enabled: true },
+      'brand-guidelines': { enabled: true },
+      'brief': { enabled: true },
+      'browser-automation': { enabled: true },  // audit: WARN — see adapter
+      'browserstack': { enabled: true },
+      'business-growth-skills': { enabled: true },
+      'business-investment-advisor': { enabled: true },
+      'business-name-fit': { enabled: true },
+      'business-operations-skills': { enabled: true },
+      'c-level-agents': { enabled: true },
+      'c-level-skills': { enabled: true },
+      'caio-review': { enabled: true },
+      'campaign-analytics': { enabled: true },
+      'capa-officer': { enabled: true },
+      'capacity-planner': { enabled: true },
+      'capture': { enabled: true },
+      'caveman': { enabled: true },
+      'cco-review': { enabled: true },
+      'cdo-review': { enabled: true },
+      'ceo-advisor': { enabled: true },
+      'cfo-advisor': { enabled: true },
+      'cfo-review': { enabled: true },
+      'challenge': { enabled: true },
+      'change-management': { enabled: true },
+      'changelog-generator': { enabled: true },
+      'channel-economics': { enabled: true },  // audit: FAIL — see adapter
+      'chaos-engineering': { enabled: true },
+      'chief-ai-officer-advisor': { enabled: true },
+      'chief-customer-officer-advisor': { enabled: true },
+      'chief-data-officer-advisor': { enabled: true },
+      'chief-of-staff': { enabled: true },
+      'chro-advisor': { enabled: true },
+      'churn-prevention': { enabled: true },
+      'ci-cd-pipeline-builder': { enabled: true },  // audit: WARN — see adapter
+      'ciso-advisor': { enabled: true },
+      'ciso-review': { enabled: true },
+      'claude-coach': { enabled: true },
+      'clinical-research': { enabled: true },
+      'cmo-advisor': { enabled: true },
+      'cmo-review': { enabled: true },
+      'code-reviewer': { enabled: true },
+      'code-to-prd': { enabled: true },
+      'code-tour': { enabled: true },
+      'codebase-onboarding': { enabled: true },
+      'cold-email': { enabled: true },
+      'collab-proof': { enabled: true },
+      'commercial-forecaster': { enabled: true },
+      'commercial-policy': { enabled: true },
+      'commercial-skills': { enabled: true },
+      'company-os': { enabled: true },
+      'competitive-intel': { enabled: true },
+      'competitive-teardown': { enabled: true },
+      'competitor-alternatives': { enabled: true },
+      'compliance-os': { enabled: true },
+      'compliance-readiness': { enabled: true },
+      'confluence-expert': { enabled: true },
+      'content-creator': { enabled: true },
+      'content-humanizer': { enabled: true },
+      'content-production': { enabled: true },
+      'content-strategy': { enabled: true },
+      'context-engine': { enabled: true },
+      'contract-and-proposal-writer': { enabled: true },
+      'coo-advisor': { enabled: true },
+      'copy-editing': { enabled: true },
+      'copywriting': { enabled: true },
+      'coverage': { enabled: true },
+      'cpo-advisor': { enabled: true },
+      'cpo-review': { enabled: true },
+      'cro-advisor': { enabled: true },
+      'cro-review': { enabled: true },
+      'cross-eval': { enabled: true },
+      'cs-onboard': { enabled: true },
+      'cto-advisor': { enabled: true },
+      'cto-review': { enabled: true },
+      'culture-architect': { enabled: true },
+      'customer-success-manager': { enabled: true },
+      'data-quality-auditor': { enabled: true },
+      'database-designer': { enabled: true },
+      'database-schema-designer': { enabled: true },
+      'deal-desk': { enabled: true },
+      'decide': { enabled: true },
+      'decision-logger': { enabled: true },
+      'deep-learning-book': { enabled: true },  // audit: FAIL — see adapter
+      'deep-research': { enabled: true },
+      'deep-work': { enabled: true },  // audit: WARN — see adapter
+      'deepread': { enabled: true },
+      'demo-video': { enabled: true },
+      'design-system': { enabled: true },
+      'docker-development': { enabled: true },  // audit: WARN — see adapter
+      'dossier': { enabled: true },
+      'email-sequence': { enabled: true },
+      'email-template-builder': { enabled: true },
+      'embedded-iot-mentor': { enabled: true },
+      'engineering-advanced-skills': { enabled: true },
+      'engineering-skills': { enabled: true },
+      'env-secrets-manager': { enabled: true },  // audit: FAIL — see adapter
+      'epic-design': { enabled: true },  // audit: FAIL — see adapter
+      'eu-ai-act-specialist': { enabled: true },
+      'eval': { enabled: true },
+      'execute': { enabled: true },
+      'executive-mentor': { enabled: true },
+      'experiment-designer': { enabled: true },
+      'extract': { enabled: true },
+      'fable-goal': { enabled: true },
+      'fda-consultant-specialist': { enabled: true },
+      'fda-qsr-audit-prep': { enabled: true },
+      'feature-flags-architect': { enabled: true },
+      'finance-skills': { enabled: true },
+      'financial-analyst': { enabled: true },
+      'fix': { enabled: true },
+      'focused-fix': { enabled: true },
+      'form-cro': { enabled: true },
+      'founder-coach': { enabled: true },
+      'founder-mode': { enabled: true },
+      'free-tool-strategy': { enabled: true },
+      'freeze': { enabled: true },
+      'full-page-screenshot': { enabled: true },  // audit: FAIL — see adapter
+      'gc-review': { enabled: true },
+      'gcp-cloud-architect': { enabled: true },
+      'gdpr-audit-prep': { enabled: true },
+      'gdpr-dsgvo-expert': { enabled: true },
+      'general-counsel-advisor': { enabled: true },
+      'generate': { enabled: true },
+      'git-worktree-manager': { enabled: true },
+      'google-workspace-cli': { enabled: true },  // audit: WARN — see adapter
+      'grade-iterate': { enabled: true },
+      'grants': { enabled: true },
+      'grill-me': { enabled: true },
+      'grill-with-docs': { enabled: true },
+      'handoff': { enabled: true },
+      'hard-call': { enabled: true },
+      'helm-chart-builder': { enabled: true },
+      'hivemind': { enabled: true },
+      'hub-init': { enabled: true },
+      'hub-status': { enabled: true },
+      'human-gate': { enabled: true },  // audit: WARN — see adapter
+      'inbox-setup': { enabled: true },
+      'inbox-triage': { enabled: true },
+      'incident-commander': { enabled: true },
+      'information-security-manager-iso27001': { enabled: true },
+      'internal-comms': { enabled: true },
+      'internal-narrative': { enabled: true },
+      'interview': { enabled: true },
+      'interview-system-designer': { enabled: true },
+      'intl-expansion': { enabled: true },
+      'isms-audit-expert': { enabled: true },
+      'iso13485-audit-prep': { enabled: true },
+      'iso27001-audit-prep': { enabled: true },
+      'iso42001-specialist': { enabled: true },
+      'jira-expert': { enabled: true },
+      'karpathy-coder': { enabled: true },
+      'knowledge-ops': { enabled: true },
+      'kubernetes-operator': { enabled: true },
+      'landing': { enabled: true },
+      'landing-page-generator': { enabled: true },
+      'launch-strategy': { enabled: true },
+      'linkedin-analytics': { enabled: true },
+      'linkedin-content': { enabled: true },
+      'linkedin-engagement': { enabled: true },
+      'linkedin-profile': { enabled: true },
+      'linkedin-skills': { enabled: true },
+      'linkedin-strategy': { enabled: true },
+      'litreview': { enabled: true },  // audit: WARN — see adapter
+      'llm-cost-optimizer': { enabled: true },
+      'llm-wiki': { enabled: true },
+      'local-seo-manager': { enabled: true },
+      'loop': { enabled: true },
+      'loop-library': { enabled: true },
+      'ma-playbook': { enabled: true },
+      'markdown-html-orchestrator': { enabled: true },
+      'market-research': { enabled: true },
+      'marketing-context': { enabled: true },
+      'marketing-demand-acquisition': { enabled: true },
+      'marketing-ideas': { enabled: true },
+      'marketing-ops': { enabled: true },
+      'marketing-psychology': { enabled: true },
+      'marketing-skills': { enabled: true },
+      'marketing-strategy-pmm': { enabled: true },
+      'mcp-server-builder': { enabled: true },
+      'md-document': { enabled: true },
+      'md-review': { enabled: true },
+      'md-slides': { enabled: true },
+      'mdr-745-specialist': { enabled: true },
+      'meeting-analyzer': { enabled: true },
+      'meetings': { enabled: true },
+      'memory-engineering': { enabled: true },
+      'memory-review': { enabled: true },
+      'memory-status': { enabled: true },
+      'merge': { enabled: true },
+      'migrate': { enabled: true },
+      'migration-architect': { enabled: true },
+      'minimalist': { enabled: true },
+      'monorepo-navigator': { enabled: true },
+      'ms365-tenant-manager': { enabled: true },
+      'named-persona-adversarial-review': { enabled: true },
+      'notebooklm': { enabled: true },
+      'observability-designer': { enabled: true },
+      'office-hours': { enabled: true },
+      'onboard': { enabled: true },
+      'onboarding-cro': { enabled: true },
+      'org-health-diagnostic': { enabled: true },
+      'page-cro': { enabled: true },  // audit: WARN — see adapter
+      'paid-ads': { enabled: true },
+      'partnerships-architect': { enabled: true },
+      'patent': { enabled: true },
+      'paywall-upgrade-cro': { enabled: true },
+      'performance-profiler': { enabled: true },
+      'playwright-pro': { enabled: true },
+      'pm-skills': { enabled: true },
+      'popup-cro': { enabled: true },
+      'post-mortem': { enabled: true },
+      'postmortem': { enabled: true },
+      'pr-review-expert': { enabled: true },
+      'pricing-strategist': { enabled: true },
+      'pricing-strategy': { enabled: true },
+      'process-mapper': { enabled: true },
+      'procurement-optimizer': { enabled: true },
+      'product-analytics': { enabled: true },
+      'product-discovery': { enabled: true },
+      'product-manager-toolkit': { enabled: true },
+      'product-research': { enabled: true },
+      'product-skills': { enabled: true },
+      'product-strategist': { enabled: true },
+      'programmatic-seo': { enabled: true },
+      'promote': { enabled: true },
+      'prompt-engineer-toolkit': { enabled: true },
+      'prompt-governance': { enabled: true },
+      'pulse': { enabled: true },
+      'pw-init': { enabled: true },
+      'pw-review': { enabled: true },
+      'qms-audit-expert': { enabled: true },
+      'quality-documentation-manager': { enabled: true },
+      'quality-manager-qmr': { enabled: true },
+      'quality-manager-qms-iso13485': { enabled: true },
+      'ra-qm-skills': { enabled: true },
+      'rag-architect': { enabled: true },
+      'referral-program': { enabled: true },
+      'reflect': { enabled: true },
+      'regulatory-affairs-head': { enabled: true },
+      'remember': { enabled: true },
+      'report': { enabled: true },
+      'research': { enabled: true },
+      'research-finance': { enabled: true },
+      'research-ops-skills': { enabled: true },
+      'research-summarizer': { enabled: true },
+      'revenue-operations': { enabled: true },
+      'rfp-responder': { enabled: true },
+      'risk-management-specialist': { enabled: true },
+      'roadmap-communicator': { enabled: true },
+      'roast': { enabled: true },
+      'run': { enabled: true },
+      'run-without-you': { enabled: true },
+      'runbook-generator': { enabled: true },
+      'saas-metrics-coach': { enabled: true },
+      'saas-scaffolder': { enabled: true },  // audit: WARN — see adapter
+      'sales-engineer': { enabled: true },  // audit: FAIL — see adapter
+      'scenario-war-room': { enabled: true },
+      'schema-markup': { enabled: true },
+      'scrum-master': { enabled: true },
+      'secrets-vault-manager': { enabled: true },
+      'security-guidance': { enabled: true },
+      'self-eval': { enabled: true },
+      'self-improving-agent': { enabled: true },
+      'senior-architect': { enabled: true },
+      'senior-backend': { enabled: true },
+      'senior-computer-vision': { enabled: true },  // audit: WARN — see adapter
+      'senior-data-engineer': { enabled: true },  // audit: FAIL — see adapter
+      'senior-data-scientist': { enabled: true },
+      'senior-devops': { enabled: true },  // audit: WARN — see adapter
+      'senior-frontend': { enabled: true },  // audit: WARN — see adapter
+      'senior-fullstack': { enabled: true },  // audit: FAIL — see adapter
+      'senior-ml-engineer': { enabled: true },
+      'senior-pm': { enabled: true },
+      'senior-prompt-engineer': { enabled: true },
+      'senior-qa': { enabled: true },
+      'senior-secops': { enabled: true },  // audit: FAIL — see adapter
+      'seo-audit': { enabled: true },  // audit: WARN — see adapter
+      'setup': { enabled: true },
+      'ship-gate': { enabled: true },
+      'signup-flow-cro': { enabled: true },
+      'site-architecture': { enabled: true },  // audit: WARN — see adapter
+      'skill-doctor': { enabled: true },
+      'skill-security-auditor': { enabled: true },
+      'skill-tester': { enabled: true },  // audit: FAIL — see adapter
+      'skillopt-sleep': { enabled: true },
+      'slo-architect': { enabled: true },
+      'snowflake-development': { enabled: true },
+      'soc2-audit-prep': { enabled: true },
+      'soc2-compliance': { enabled: true },
+      'social-content': { enabled: true },
+      'social-media-analyzer': { enabled: true },
+      'social-media-manager': { enabled: true },
+      'spawn': { enabled: true },
+      'spec-driven-workflow': { enabled: true },
+      'spec-to-repo': { enabled: true },
+      'spinning-up-deep-rl': { enabled: true },
+      'sql-database-assistant': { enabled: true },
+      'stage-launch': { enabled: true },
+      'statistical-analyst': { enabled: true },
+      'stock-analysis': { enabled: true },
+      'strategic-alignment': { enabled: true },
+      'stress-test': { enabled: true },
+      'strict-api': { enabled: true },
+      'stripe-integration-expert': { enabled: true },
+      'swedish-mentor': { enabled: true },
+      'syllabus': { enabled: true },  // audit: WARN — see adapter
+      'tc-tracker': { enabled: true },
+      'tdd-guide': { enabled: true },
+      'team-communications': { enabled: true },
+      'tech-debt-tracker': { enabled: true },  // audit: FAIL — see adapter
+      'tech-stack-evaluator': { enabled: true },
+      'terraform-patterns': { enabled: true },
+      'testrail': { enabled: true },
+      'ui-design-system': { enabled: true },
+      'universal-scraping-architect': { enabled: true },  // audit: WARN — see adapter
+      'ux-researcher-designer': { enabled: true },
+      'vendor-management': { enabled: true },
+      'video-content-strategist': { enabled: true },
+      'vpe-advisor': { enabled: true },
+      'vpe-review': { enabled: true },
+      'webinar-marketing': { enabled: true },
+      'weekly-review': { enabled: true },
+      'workflow-builder': { enabled: true },
+      'wrap-up': { enabled: true },
+      'write-a-skill': { enabled: true },
+      'x-twitter-growth': { enabled: true },
+      'youtube-full': { enabled: true },
+      'zero-hallucination-coder': { enabled: true },
+    },
+
+    // --- Authorization gate ---------------------------------------------
+    // Nothing in this file authorizes scanning, testing, or profiling any target.
+    // A target URL, APK, repository, or test account must be supplied explicitly
+    // by the operator and the engagement recorded, before any skill may act.
+    security: {
+      // JSON5 carries no executable code, so the gate is declared, not implemented.
+      // These are hard preconditions enforced by skills/conformance/SKILL.md and by the
+      // operator; a host that can run hooks should enforce all four before activation.
+      requireAuthorizedTarget: true,   // target URL/APK/repo/test account supplied by the operator
+      requireEngagementRecord: true,    // written authorization on file before any action
+      requireAdapter: true,             // skill must ship a _BLACKHEART-ADAPTER.md
+      denyTargetsWithoutScope: true,    // e.g. production writes, credentialed testing, third-party services
+      defaultEvidenceStatus: 'UNVERIFIED',
     },
   },
 
   agents: {
-    defaults: {
-      // Conformance is the only skill every agent gets unconditionally.
-      // It is also marked `always: true` in its own frontmatter.
-      skills: ["blackheart-conformance"],
+    // Agent profiles inherit the conformance skill. No profile may act on an
+    // unauthorized target regardless of which skills are loaded.
+    defaults: { skills: ['blackheart-conformance'] },
+    'security-engineer': {
+      skills: ['blackheart-conformance', 'ai-security', 'cloud-security',
+               'security-pen-testing', 'red-team', 'senior-security', 'threat-detection'],
     },
-
-    entries: {
-      // Full assessor: methodology + all analysis skills.
-      assessor: {
-        default: true,
-        skills: [
-          "blackheart-conformance",
-          "ai-security",
-          "cloud-security",
-          "dependency-auditor",
-          "red-team",
-          "security-pen-testing",
-          "senior-security",
-          "threat-detection",
-        ],
-      },
-
-      // Static/local analysis only — no active testing surface.
-      "read-only": {
-        skills: ["blackheart-conformance", "dependency-auditor", "senior-security"],
-      },
-
-      // Red team operator — emulation and threat hunting.
-      "red-teamer": {
-        skills: [
-          "blackheart-conformance",
-          "red-team",
-          "threat-detection",
-          "senior-security",
-          "cloud-security",
-        ],
-      },
-
-      // No skills at all. Replaces defaults entirely.
-      locked: { skills: [] },
+    'appsec-reviewer': {
+      skills: ['blackheart-conformance', 'security-pen-testing', 'dependency-auditor',
+               'data-quality-auditor', 'api-design-reviewer'],
     },
-  },
-
-  security: {
-    // Run a local policy command before any skill install continues.
-    // The command receives metadata and the staged source path, and the
-    // install fails closed when it cannot return a valid decision.
-    //
-    // Recommended: point this at the auditor vendored in this repository.
-    //
-    // installPolicy: "./scripts/skill-install-policy.sh",
+    'incident-responder': {
+      // Requires an explicit incident engagement record; see the entry above.
+      skills: ['blackheart-conformance', 'incident-response', 'senior-secops', 'threat-detection'],
+    },
+    'compliance-auditor': {
+      skills: ['blackheart-conformance', 'soc2-audit-prep', 'iso27001-audit-prep',
+               'gdpr-audit-prep', 'compliance-readiness'],
+    },
   },
 }

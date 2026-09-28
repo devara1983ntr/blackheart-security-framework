@@ -7,12 +7,89 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Because this repository contains documentation only, versions track
-documentation maturity rather than software releases.
+This repository is documentation-first, but it also carries executable content:
+a mirror of 388 vendored third-party skills, a validation gate, and two
+automation workflows. Versions therefore track both documentation maturity and
+the state of the executable layer.
 
 ## [Unreleased]
 
 Nothing yet.
+
+## [2.2.0] — 2026-09-28
+
+Expands Layer 5 from a curated 8 skills to the **complete** upstream catalogue,
+and adds continuous verification.
+
+### Changed
+
+- **Vendored scope: 8 → 388 skills.** The complete canonical catalogue from
+  `claude-skills` is now mirrored byte-for-byte at commit `19392f7a`. The earlier
+  8-skill scope was a curation decision; it is now a *promotion* decision —
+  those 8 remain the promoted security skills with hand-written adapters, and
+  the other 380 are available with adapters generated from real scan output.
+- **Mirror layout.** Skills moved from `skills/third-party/<name>/` to
+  `skills/third-party/claude-skills/<group>/skills/<name>/`, preserving
+  upstream's own structure. Done with `git mv`, so the promoted skills keep
+  their history. The mirrored `.gemini`, `.codex`, `.vibe`, and `.hermes`
+  directories were excluded — 458 symlinks re-exposing the same skills.
+- **Full-catalogue security audit.** All 388 skills were scanned with the
+  vendored auditor and every CRITICAL and HIGH finding was adjudicated by hand.
+  Result: **354 PASS, 21 WARN, 13 FAIL**. No skill showed a backdoor, covert
+  channel, credential exfiltration, or safety override. The recurring
+  false-positive classes are documented in `skills/VENDOR.md` §3.1.
+- **`skills/openclaw.example.json5`** now declares all 374 distinct skill names
+  and loads all 20 group directories, so no skill is skipped by a discovery
+  depth limit. The previous executable `installPolicy` hook was replaced with a
+  declarative gate — JSON5 cannot carry functions.
+- **`README.md`** no longer claims the repository contains no third-party code.
+  It does: 388 skills, under MIT, with attribution preserved.
+
+### Added
+
+- **388 `_BLACKHEART-ADAPTER.md` files** — one per skill, recording provenance,
+  audit verdict, per-category adjudication, known defects, and five conditions
+  of use.
+- **`.github/scripts/validate.py`** — a six-check gate: adapter coverage,
+  vendored integrity, link resolution, file-index completeness, secret
+  scanning, and config validation.
+- **`.github/UPSTREAM-MANIFEST.json`** — a SHA-256 per skill, so drift is
+  detectable without re-fetching upstream.
+- **`.github/secret-allowlist.json`** — seven verified placeholders, each with a
+  written reason. The scan was canary-tested: a realistic token still fails the
+  build.
+- **`.github/workflows/validate.yml`** — validation on every push and pull
+  request.
+- **`.github/workflows/upstream-sync.yml`** — daily upstream drift detection.
+
+### Design decision
+
+**Upstream sync opens a pull request and never merges.** The obvious
+alternative — auto-merge on green CI — was rejected. Auto-merging third-party
+code would admit unreviewed changes to the engagement surface with no human
+reading them, defeating the control the framework exists to enforce. Automation
+fetches, diffs, re-vendors, re-audits, and regenerates adapters; a human
+decides. A skill removed upstream is reported and left in place, because
+deleting content is a human decision and not a side effect of a cron job.
+Recorded as invariant 14.
+
+### Fixed
+
+- **Two of the three previously-accepted dangling links** in
+  `security-pen-testing` now resolve, because the full mirror contains the
+  sibling skills they pointed at. The third, a repo-root-relative reference,
+  still does not and remains documented.
+
+### Known issues
+
+- 104 unresolved upstream links across 54 skills. These are upstream
+  cross-skill and shared-`references/` links. Recorded, **not patched** — the
+  mirror stays byte-comparable to upstream so that any local change is visible.
+- 13 skill names are defined at two upstream paths each. Both copies are
+  vendored; one config entry enables both. Mapped in `skills/VENDOR.md` §5.
+- `tech-debt-tracker` ships a sample codebase containing working code that
+  POSTs to live Stripe, Square, and PayPal endpoints. It is a teaching
+  artefact; its adapter marks it **never execute**.
 
 ## [2.1.0] — 2026-09-28
 

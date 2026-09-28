@@ -65,14 +65,23 @@ prevent that.
 [`skills/`](skills/) holds the executable side of the framework. The method
 lives in Layer 0; these are the tools that perform analysis.
 
-Every vendored skill is unmodified upstream content under a permissive licence,
-and every one carries a `_BLACKHEART-ADAPTER.md` stating its governing
-document, authorization gate, **maximum claim**, and stop conditions.
+All 388 vendored skills are unmodified upstream content under a permissive
+licence, and every one carries a `_BLACKHEART-ADAPTER.md` stating its governing
+document, authorization gate, **maximum claim**, and stop conditions. Eight are
+promoted to a standing role in a security engagement; the rest are supporting
+tooling that is available but not relied on for claims.
 
 The [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) wrapper is
 mandatory: it converts tool output into evidence status, applies the severity
 ceiling, and enforces the authorization gate. A scanner match is a hypothesis
 until the framework's evidence standard is met — no tool output bypasses that.
+
+Integrity of Layer 5 is a continuous property, not a one-time review. A SHA-256
+per skill is pinned in [`.github/UPSTREAM-MANIFEST.json`](.github/UPSTREAM-MANIFEST.json)
+and re-checked on every push. Upstream changes are detected daily and arrive as
+a **pull request**, never an automatic merge — automation performs the mechanical
+work of fetching, auditing, and adapting, while the decision to admit new
+third-party code into the engagement surface stays with a human.
 
 ### Layer 0 — Agent
 
@@ -262,6 +271,10 @@ defect, not a simplification.
 13. **A tool's output is a hypothesis, not a finding.** No scanner, vendored or
     otherwise, may set an evidence status. The conformance layer converts;
     it never adopts.
+14. **Third-party code enters by review, never by automation.** Upstream updates
+    are detected, re-audited, and proposed as a pull request. No bot merges
+    third-party code into this repository, because a merge is an admission
+    decision and admission is a human judgement.
 
 ## Extending the framework
 

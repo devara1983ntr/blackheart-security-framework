@@ -1,0 +1,134 @@
+name: upstream-sync
+
+# Keeps the vendored skill mirror current with its upstream sources.
+#
+# Design decision, and the reason it works this way
+# -------------------------------------------------
+# This job NEVER merges. It fetches upstream, detects drift, re-vendors what
+# changed, re-audits it, regenerates the affected Blackhearts adapters, updates
+# the integrity manifest, and opens a pull request. A human reviews the diff and
+# merges.
+#
+# The obvious alternative — auto-merge on green CI — was rejected deliberately.
+# Auto-merging third-party code into a security framework would let unreviewed
+# changes into the engagement surface with no human ever reading them, which
+# defeats the exact control this framework exists to enforce. Automation does
+# the mechanical work; a human does the judgement.
+#
+# Schedule note: GitHub disables scheduled workflows after 60 days of repository
+# inactivity. If updates stop arriving, re-enable it from the Actions tab.
+on:
+  schedule:
+    # 03:17 UTC daily. Off the hour on purpose: scheduled workflows are heavily
+    # contended at :00, and this job is not time-sensitive.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Upstream ref to sync from (blank = default branch)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Detect drift and open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install --quiet --disable-pip-version-check json5
+
+      - name: Configure git identity
+        run: |
+          git config user.name 'blackhearts-sync[bot]'
+          git config user.email 'blackhearts-sync[bot]@users.noreply.github.com'
+
+      - name: Check for upstream drift
+        id: check
+        run: |
+          set -uo pipefail
+          python .github/scripts/sync_upstream.py 2>&1 | tee drift-report.txt
+          # The script exits 0 whether or not there is drift; detect drift by
+          # looking for the "No drift" marker rather than by exit code.
+          if grep -q 'No drift' drift-report.txt; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No upstream drift. Nothing to do."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Upstream drift detected."
+          fi
+
+      - name: Summarise
+        if: steps.check.outputs.changed == 'true'
+        run: cat drift-report.txt
+
+      - name: Re-vendor and re-audit changed skills
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          python .github/scripts/sync_upstream.py --apply --ref "${{ inputs.ref }}"
+
+      - name: Re-validate the repository
+        if: steps.check.outputs.changed == 'true'
+        run: python .github/scripts/validate.py
+
+      - name: Open pull request
+        if: steps.check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automation/upstream-sync
+          commit-message: 'Sync vendored skills from upstream'
+          title: 'Sync vendored skills from upstream claude-skills'
+          body: |
+            ## Automated upstream sync
+
+            Upstream `alirezarezvani/claude-skills` has changed. This PR re-vendors
+            the affected skills, re-audits them, and regenerates their Blackhearts
+            adapters.
+
+            **This PR requires human review and a human merge.** It was opened by a
+            scheduled job and nothing here has been judged by a person yet.
+
+            ### What the operator must check before merging
+
+            - [ ] Read the diff of every changed vendored file. Vendored content is
+                  upstream's, unmodified — confirm nothing was rewritten in transit.
+            - [ ] For each changed skill, read its `_BLACKHEART-ADAPTER.md`. The audit
+                  verdict and the adjudication note were regenerated from a real scan.
+            - [ ] Treat any **new CRITICAL finding** as a blocker. A new HIGH finding
+                  needs a decision recorded in the adapter.
+            - [ ] Confirm no skill gained network egress, credential access, or
+                  subprocess execution that it did not have before.
+            - [ ] If a skill was removed upstream: it has been **left in place** on
+                  purpose. Decide explicitly whether to keep or remove it, and record
+                  the reason. Nothing is deleted automatically.
+            - [ ] Check `FILE-INDEX.txt` was regenerated if files were added or removed.
+
+            ### Provenance of this change
+
+            ```
+            ${{ steps.check.outputs.source || 'see drift-report.txt' }}
+            ```
+
+            Automation performed the mechanical work. The judgement is yours.
+
+            ---
+            *Opened by `.github/workflows/upstream-sync.yml`. This job is configured
+            never to merge.*
+
+      - name: No drift — done
+        if: steps.check.outputs.changed == 'false'
+        run: echo 'Mirror is current with the pinned upstream commit.'

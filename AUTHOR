@@ -23,8 +23,8 @@ record.
 
 | Source | Author | Licence | What was taken |
 |---|---|---|---|
-| [claude-skills](https://github.com/alirezarezvani/claude-skills) | Alireza Rezvani | MIT | 8 security-relevant skills, vendored unmodified |
-| [awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | VoltAgent | MIT | Catalogue index only — no code vendored |
+| [claude-skills](https://github.com/alirezarezvani/claude-skills) | Alireza Rezvani | MIT | The **complete** catalogue — all 388 canonical skills, vendored unmodified at commit `19392f7a08264ed00486a251f5b2098321771f94` |
+| [awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | VoltAgent | MIT | Catalogue index only — no code vendored. It contains zero skills, only ~5,265 external links |
 
 Upstream licence texts are preserved verbatim in [`skills/licenses/`](skills/licenses/).
 

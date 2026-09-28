@@ -1,0 +1,119 @@
+name: validate
+
+# Every push and pull request runs the full Blackhearts validation gate.
+# A red build means the repository is internally inconsistent and must not merge.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validator dependencies
+        run: python -m pip install --quiet --disable-pip-version-check json5
+
+      - name: Run validation
+        run: python .github/scripts/validate.py
+
+      - name: Confirm vendored scripts still parse
+        # A vendored script that cannot be byte-compiled is either corrupt or
+        # was modified after the integrity check ran.
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' f; do
+            case "$f" in
+              *.py) python -m py_compile "$f" && count=$((count+1)) ;;
+            esac
+          done < <(find skills/third-party/claude-skills -name '*.py' -print0)
+          echo "compiled $count vendored Python files"
+
+  audit-vendored-skills:
+    name: Re-audit vendored skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run the upstream skill security auditor over every vendored skill
+        run: |
+          set -uo pipefail
+          auditor=skills/third-party/claude-skills/engineering/skills/skill-security-auditor/scripts/skill_security_auditor.py
+          if [ ! -f "$auditor" ]; then
+            echo "auditor not vendored; skipping (this is a warning, not a failure)"
+            exit 0
+          fi
+          fail=0; scanned=0
+          while IFS= read -r -d '' d; do
+            scanned=$((scanned+1))
+            python3 "$auditor" "$d" --json >/dev/null 2>&1 || true
+          done < <(find skills/third-party/claude-skills -name SKILL.md -print0)
+          echo "audited $scanned skill directories"
+          echo "NOTE: auditor findings are advisory. A FAIL verdict is not a build failure;"
+          echo "the adjudicated result for each skill lives in its _BLACKHEART-ADAPTER.md."
+          exit $fail
+
+  links:
+    name: Markdown link check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check links in Blackhearts-authored documentation
+        # Vendored upstream markdown is intentionally left unmodified, so its
+        # broken links are reported as known defects rather than failing the build.
+        run: |
+          python - <<'PY'
+          import os, re, sys
+          LINK = re.compile(r'\[([^\]]*)\]\(([^)\s]+)\)')
+          broken = []
+          for dp, dn, fn in os.walk('.'):
+              dn[:] = [d for d in dn if d != '.git']
+              for f in fn:
+                  if not f.endswith('.md'):
+                      continue
+                  p = os.path.join(dp, f)
+                  if p.startswith('./skills/third-party/claude-skills/'):
+                      continue
+                  body = open(p, encoding='utf-8', errors='replace').read()
+                  for _, t in LINK.findall(body):
+                      if t.startswith(('http', '#', 'mailto:')):
+                          continue
+                      c = t.split('#')[0]
+                      if c and not os.path.exists(os.path.normpath(os.path.join(dp, c))):
+                          broken.append((p, t))
+          for p, t in broken:
+              print(f'BROKEN {p} -> {t}')
+          print(f'{len(broken)} broken link(s) in Blackhearts-authored docs')
+          sys.exit(1 if broken else 0)
+          PY

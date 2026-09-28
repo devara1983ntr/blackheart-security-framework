@@ -104,10 +104,16 @@ These are not optional and apply to any assessment run under this methodology:
 
 ## Third-party skills
 
-Executable skills under [`skills/third-party/`](skills/third-party/) are
-third-party code. They are vendored **unmodified** from pinned upstream commits
-under MIT, audited before inclusion, and attributed in
-[`skills/VENDOR.md`](skills/VENDOR.md).
+Executable skills under [`skills/third-party/claude-skills/`](skills/third-party/claude-skills/)
+are third-party code — 388 skills, 693 scripts. They are vendored
+**unmodified** from a pinned upstream commit under MIT, audited before
+inclusion, and attributed in [`skills/VENDOR.md`](skills/VENDOR.md). Integrity
+is enforced continuously: `.github/UPSTREAM-MANIFEST.json` records a SHA-256 per
+skill, and CI fails if any vendored byte changes.
+
+Every skill carries a `_BLACKHEART-ADAPTER.md` recording its audit verdict and
+its conditions of use. **A skill without an adapter is unaudited and must not
+be used in an engagement**; the validator fails the build if one appears.
 
 They are not a security boundary, and neither is the skill allowlist. An agent
 able to execute a shell can reach anything on the host regardless of which
@@ -123,6 +129,14 @@ reason and the required process for adopting an individual entry.
 Report it to the **upstream author**, not only here. A vulnerability in vendored
 code is upstream's to fix, and this repository only pins a commit. Include the
 pinned commit in the report.
+
+### Known issues in vendored content
+
+Defects in vendored files are **recorded, not silently patched**, so the mirror
+stays comparable to upstream and any local change shows up as a divergence.
+The current list — unresolved upstream links, duplicated skill names, and one
+sample codebase that must never be executed — is in
+[`skills/VENDOR.md`](skills/VENDOR.md) §4.
 
 ## Secrets
 

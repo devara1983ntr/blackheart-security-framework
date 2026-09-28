@@ -45,3 +45,7 @@ __pycache__/
 node_modules/
 .venv/
 venv/
+
+# Python bytecode from validator runs
+*.pyc
+*.pyo

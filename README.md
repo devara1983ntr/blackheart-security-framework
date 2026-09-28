@@ -117,17 +117,23 @@ operators alike.
 
 ### Executable skills
 
-Eight third-party skills vendored under MIT, each with an adapter binding it to
-the framework. Load [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md)
-before any of them.
+**388 third-party skills** vendored under MIT from a pinned upstream commit,
+each with an adapter binding it to the framework, plus the mandatory
+conformance layer. Eight are promoted to a standing role in a security
+engagement; the rest are engineering, business, and research tooling. Every one
+of the 388 was security-audited and every finding adjudicated — no skill showed
+a backdoor, covert channel, credential exfiltration, or safety override. Load
+[`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) before any of them.
 
 | Document | Purpose |
 |---|---|
 | [`skills/README.md`](skills/README.md) | Integration guide, loading, agent allowlists |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | Mandatory wrapper: authorization gate, status conversion, severity ceiling |
-| [`skills/VENDOR.md`](skills/VENDOR.md) | Attribution, licences, provenance, audit summary |
+| [`skills/VENDOR.md`](skills/VENDOR.md) | Full provenance, complete skill index, audit record, adjudicated findings |
 | [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — reference only, deliberately not installed |
-| [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Working agent-allowlist and gating configuration |
+| [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Validated configuration covering all 374 skill names |
+| [`.github/scripts/validate.py`](.github/scripts/validate.py) | Six-check validation gate, run on every push and pull request |
+| [`.github/workflows/upstream-sync.yml`](.github/workflows/upstream-sync.yml) | Daily upstream drift detection — opens a PR, never merges |
 
 ### Templates and examples
 
@@ -163,12 +169,20 @@ before any of them.
 │
 ├── skills/                            # Executable skills (vendored, MIT)
 │   ├── README.md                      # Integration guide and loading
-│   ├── VENDOR.md                      # Attribution, licences, provenance
-│   ├── openclaw.example.json5         # Agent allowlists and gating
+│   ├── VENDOR.md                      # Provenance, full index, audit record
+│   ├── openclaw.example.json5         # Validated config for all 374 skill names
 │   ├── conformance/SKILL.md           # Mandatory wrapper for all vendored skills
-│   ├── third-party/                   # 8 vendored skills, each + _BLACKHEART-ADAPTER.md
+│   ├── third-party/claude-skills/     # 388 vendored skills across 20 groups
+│   │   └── <group>/skills/<name>/     #   SKILL.md + _BLACKHEART-ADAPTER.md
 │   ├── catalog/                       # Third-party catalogue — reference only
 │   └── licenses/                      # Preserved upstream licences
+│
+├── .github/
+│   ├── UPSTREAM-MANIFEST.json         # Per-skill SHA-256 against the pinned commit
+│   ├── secret-allowlist.json          # Verified placeholders, each justified
+│   ├── scripts/validate.py            # Six-check validation gate
+│   ├── scripts/sync_upstream.py       # Drift detection and re-vendoring
+│   └── workflows/                     # CI on push/PR + daily upstream sync
 │
 ├── docs/
 │   ├── README.md                      # Documentation package guide
@@ -427,8 +441,13 @@ See [`SECURITY.md`](SECURITY.md).
 **Roshan** — <https://github.com/devara1983ntr>
 
 See [`AUTHOR`](AUTHOR) for authorship and third-party attribution.
-This repository contains no third-party source code, vendored libraries, or
-external datasets.
+
+This repository **does** contain third-party source code: a mirror of 388
+skills from `alirezarezvani/claude-skills` (MIT © 2025 Alireza Rezvani) and a
+reference index from `VoltAgent/awesome-openclaw-skills` (MIT © 2026 VoltAgent).
+Both are vendored under MIT with attribution preserved in
+[`skills/licenses/`](skills/licenses/). Full provenance, the complete skill
+index, and the audit record are in [`skills/VENDOR.md`](skills/VENDOR.md).
 
 ---
 

@@ -19,15 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-NOTE ON RESPONSIBLE USE
-
-The MIT License above governs the licensing of this documentation repository
-only. It is not a grant of authority to test any system. Use of the
-methodology described in this repository against systems you do not own or
-have written permission to test may be unlawful under computer-fraud,
-computer-misuse, and equivalent legislation in most jurisdictions.
-
-See SECURITY.md for the responsible-use and authorization policy.

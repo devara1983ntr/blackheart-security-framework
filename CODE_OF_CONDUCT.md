@@ -1,5 +1,7 @@
 # Contributor Covenant Code of Conduct
 
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in this

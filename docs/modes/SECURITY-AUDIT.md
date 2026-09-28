@@ -1,3 +1,12 @@
+# Security Audit Mode
+
+**Document type:** Core operational mode — full-spectrum assessment
+**Purpose:** Maximum authorized adversarial vulnerability assessment across the entire authorized target surface.
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+**Related:** [`AGENT.md`](../../AGENT.md) · [`SECURITY-RESEARCH-MODE.md`](SECURITY-RESEARCH-MODE.md) · [`ZERO-CREDENTIAL-ESCALATION-MODE.md`](ZERO-CREDENTIAL-ESCALATION-MODE.md) · [`../guides/SEVERITY-RATING.md`](../guides/SEVERITY-RATING.md)
+
+---
+
 BLACKHEART X — MAXIMUM AUTHORIZED ADVERSARIAL SECURITY AUDIT
 ===============================================================
 

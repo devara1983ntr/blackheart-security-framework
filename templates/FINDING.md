@@ -1,9 +1,12 @@
 # FINDING-XXX — [Concise Vulnerability Title]
 
 **Status:** CONFIRMED / PARTIALLY CONFIRMED / UNVERIFIED / NOT TESTED / NOT VULNERABLE / OUT OF SCOPE
-**Severity:** [Impact-based severity]
+**Severity:** [Critical / High / Medium / Low / Informational — rated from demonstrated impact per `../docs/guides/SEVERITY-RATING.md`; leave blank if status is UNVERIFIED or NOT TESTED]
+**Evidence ceiling check:** [Does the rated severity stay within what this status permits? Yes/No]
 **Affected Asset:**
 **Affected Endpoint/Component:**
+**Enforcement point:** [Where the security decision is actually made — the fix belongs here]
+**Standard mappings:** [CWE / OWASP / MASVS / ASVS, per `../docs/guides/REFERENCE-MAPPINGS.md`]
 **Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ## Summary

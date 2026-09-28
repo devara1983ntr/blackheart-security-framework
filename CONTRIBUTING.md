@@ -1,5 +1,7 @@
 # Contributing
 
+**Author:** Roshan · **Maintainer:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+
 Thanks for helping improve this framework. This is a documentation project —
 there is no compiled code, no test suite to run, and no package to publish.
 

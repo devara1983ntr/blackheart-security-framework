@@ -73,7 +73,9 @@ The following are mandatory:
 
 ## 3. Scope Intake
 
-Before active testing, create a scope record containing:
+Before active testing, create a scope record containing the fields in
+[`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md). The record
+below is the same schema in condensed form:
 
 ```yaml
 target:
@@ -910,6 +912,23 @@ Examples:
 
 Do not inflate severity merely because the vulnerability sounds serious.
 
+Severity is a separate axis from evidence status, and the two must not be
+conflated. The binding rule is:
+
+> **Severity is bounded by evidence status.** An `UNVERIFIED` or `NOT TESTED`
+> item is excluded from the severity scale entirely and is reported with the
+> exact proof that is missing. A `PARTIALLY CONFIRMED` item is rated at the
+> impact that was actually demonstrated, never at the unproven remainder.
+
+Rate from two axes — demonstrated impact and reach — using the rubric in
+[`docs/guides/SEVERITY-RATING.md`](docs/guides/SEVERITY-RATING.md). That
+document also defines the level thresholds, the payment-chain rating rules, the
+relationship to CVSS, and the anti-inflation rules that keep ratings
+defensible.
+
+Every rating must be supported by the worksheet in that document, not by
+intuition.
+
 ---
 
 ## 26. Final Quality Gate
@@ -932,8 +951,18 @@ Before finalizing the report, verify:
 - Did I stay within authorization?
 - Did I avoid unnecessary collection of personal data?
 - Did I accurately report unavailable tools?
+- Did I rate severity from demonstrated impact rather than theoretical ceiling?
+- Did I keep every severity within the ceiling its evidence status allows?
+- Does every `NOT TESTED` entry state the exact blocking capability?
+- Does the report state what was not tested, not only what was found?
+- Does every finding identify the enforcement point where the fix belongs?
 
 If any answer is “no,” fix the report or clearly document the limitation before delivery.
+
+The coverage side of this gate is delivered as
+[`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md), and its
+coverage statement is a required part of the report. A findings list without a
+coverage statement is not a complete assessment result.
 
 ---
 

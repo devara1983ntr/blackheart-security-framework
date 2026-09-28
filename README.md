@@ -89,12 +89,26 @@ Focused references for specific assessment concerns.
 | [`PAYMENT-PREMIUM-TESTING.md`](docs/guides/PAYMENT-PREMIUM-TESTING.md) | Payment gateways, coupons, entitlement validation |
 | [`DIGITAL-FILE-VALIDATION.md`](docs/guides/DIGITAL-FILE-VALIDATION.md) | Real artifact verification, SHA-256, evidence handling |
 | [`TOOL-AND-ENVIRONMENT.md`](docs/guides/TOOL-AND-ENVIRONMENT.md) | Capability discovery and tool-honesty policy |
+| [`SEVERITY-RATING.md`](docs/guides/SEVERITY-RATING.md) | **Impact × reach severity rubric**, bounded by evidence status |
+| [`REFERENCE-MAPPINGS.md`](docs/guides/REFERENCE-MAPPINGS.md) | CWE, OWASP Web/API/Mobile, MASVS, ASVS, PCI DSS, GDPR |
+| [`REMEDIATION-AND-RETEST.md`](docs/guides/REMEDIATION-AND-RETEST.md) | Root cause, fix patterns, regression tests, retest protocol |
 | [`REPORTING.md`](docs/guides/REPORTING.md) | Report structure and writing standards |
+
+### Reference
+
+| Document | Purpose |
+|---|---|
+| [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Every framework term defined once |
+| [`docs/SKILLS.md`](docs/SKILLS.md) | Competency-to-document map for learning and self-direction |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Layering, precedence order, and framework invariants |
+| [`ROADMAP.md`](ROADMAP.md) | Recognised gaps and explicitly out-of-scope items |
 
 ### Templates and examples
 
 | File | Purpose |
 |---|---|
+| [`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md) | Scope, authorization, capability inventory, tool substitutions |
+| [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md) | Per-boundary coverage with explicit blockers |
 | [`templates/FINDING.md`](templates/FINDING.md) | Individual finding record |
 | [`templates/TEST-LOG.md`](templates/TEST-LOG.md) | Hypothesis/execution journal |
 | [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md) | Full assessment report skeleton |
@@ -109,6 +123,8 @@ Focused references for specific assessment concerns.
 .
 ├── README.md                          # This file — project overview and navigation
 ├── AGENT.md                           # Master agent instruction and execution standard
+├── ARCHITECTURE.md                    # Layering, precedence order, framework invariants
+├── ROADMAP.md                         # Recognised gaps and out-of-scope items
 ├── FILE-INDEX.txt                     # Authoritative flat index of all documents
 ├── LICENSE                            # MIT License
 ├── AUTHOR                             # Authorship and third-party attribution
@@ -119,6 +135,8 @@ Focused references for specific assessment concerns.
 │
 ├── docs/
 │   ├── README.md                      # Documentation package guide
+│   ├── GLOSSARY.md                    # Framework terminology
+│   ├── SKILLS.md                      # Competency-to-document map
 │   ├── modes/                         # Core operational modes
 │   │   ├── SECURITY-AUDIT.md
 │   │   ├── SECURITY-RESEARCH-MODE.md
@@ -133,8 +151,11 @@ Focused references for specific assessment concerns.
 │       ├── EVIDENCE.md
 │       ├── OPERATING-RULES.md
 │       ├── PAYMENT-PREMIUM-TESTING.md
+│       ├── REFERENCE-MAPPINGS.md
+│       ├── REMEDIATION-AND-RETEST.md
 │       ├── REPORTING.md
 │       ├── SCOPE.md
+│       ├── SEVERITY-RATING.md
 │       ├── TOOL-AND-ENVIRONMENT.md
 │       ├── WEB-API-TESTING.md
 │       └── WORKFLOW.md
@@ -143,6 +164,8 @@ Focused references for specific assessment concerns.
 │   └── NEW-PROJECT-BOOTSTRAP.md       # Engagement bootstrap prompt
 │
 └── templates/
+    ├── ENGAGEMENT-RECORD.md           # Scope, authorization, capabilities
+    ├── COVERAGE-MATRIX.md             # Per-boundary coverage and blockers
     ├── FINAL-REPORT.md                # Assessment report skeleton
     ├── FINDING.md                     # Finding record template
     └── TEST-LOG.md                    # Test journal template
@@ -156,7 +179,9 @@ Focused references for specific assessment concerns.
 
 1. **Establish authorization first.** A public URL, a shared link, a hosting
    tenancy, or a similar name is *not* authorization. Record the scope, the
-   authorized party, the environment, and the prohibited actions.
+   authorized party, the environment, and the prohibited actions in
+   [`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md). If
+   authorization is unclear, testing does not begin.
 
 2. **Read [`AGENT.md`](AGENT.md)** end to end. It is the master instruction.
 
@@ -166,18 +191,24 @@ Focused references for specific assessment concerns.
    `ZERO-CREDENTIAL-ESCALATION-MODE.md` for the anonymous surface and for
    coverage control.
 
-4. **Bootstrap the engagement** using
-   [`examples/NEW-PROJECT-BOOTSTRAP.md`](examples/NEW-PROJECT-BOOTSTRAP.md).
+4. **Inventory what you can actually do.** The capability and substitution
+   section of the engagement record is what makes an honest `NOT TESTED` possible
+   later. Fill it in before testing, not after.
 
-5. **Record as you go.** Use [`templates/TEST-LOG.md`](templates/TEST-LOG.md)
+5. **Open the coverage matrix.** [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md)
+   is filled in as you go. Reconstructed at the end, it reconstructs the
+   conclusions too.
+
+6. **Record as you go.** Use [`templates/TEST-LOG.md`](templates/TEST-LOG.md)
    per hypothesis. A test with no record cannot later be distinguished from a
    test that was never run.
 
-6. **Classify honestly** using
-   [`docs/guides/DECISION-MATRIX.md`](docs/guides/DECISION-MATRIX.md).
+7. **Classify, rate, map, remediate.** Work the
+   [reporting decision chain](#the-reporting-decision-chain) in order.
 
-7. **Report** against [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md)
-   and [`docs/guides/REPORTING.md`](docs/guides/REPORTING.md).
+8. **Report** against [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md)
+   and [`docs/guides/REPORTING.md`](docs/guides/REPORTING.md), then pass the
+   [`AGENT.md`](AGENT.md) §26 quality gate.
 
 ### Writing a finding
 
@@ -193,7 +224,8 @@ Attack Chain · Artifact Evidence · Remediation · Regression Test · Limitatio
 
 ### The status taxonomy
 
-Use these terms precisely. They are not interchangeable.
+These are the **only six** statuses, as defined in
+[`AGENT.md`](AGENT.md) §5. Use them precisely. They are not interchangeable.
 
 | Status | Meaning |
 |---|---|
@@ -203,12 +235,56 @@ Use these terms precisely. They are not interchangeable.
 | `NOT TESTED` | Testing could not or did not occur — **state the blocking capability** |
 | `NOT VULNERABLE` | Tested with sufficient coverage; the control held **under the tested conditions** |
 | `OUT OF SCOPE` | Excluded by authorization or assessment boundary |
-| `BLOCKED BY ENVIRONMENT` | The required tool, runtime, or account was unavailable |
-| `INCONCLUSIVE` | Testing was performed but the result is ambiguous |
+
+Two variants circulate in the industry and are often used loosely. They are not
+part of this taxonomy, and each has a correct equivalent here:
+
+| Common variant | Use instead | Why |
+|---|---|---|
+| `BLOCKED BY ENVIRONMENT` | `NOT TESTED`, with the blocking capability stated in the notes | The blocker is a *reason*, not a status. The status is `NOT TESTED`. |
+| `INCONCLUSIVE` | `UNVERIFIED` or `PARTIALLY CONFIRMED` | An ambiguous result is either a hypothesis (unverified) or a demonstrated weakness with an unproven remainder (partially confirmed). |
 
 > Never write `SAFE`, `SECURE`, or `NO VULNERABILITIES` without scoping the
 > statement to the exact condition tested. "Not demonstrated under tested
 > conditions" is a defensible claim. "Secure" is not.
+
+### Severity is a separate axis
+
+Status answers *what the evidence proves*. Severity answers *how much that
+matters* — and it is bounded by status.
+
+| Demonstrated impact | Reach | Rating |
+|---|---|---|
+| Systemic: unauthenticated administrative capability, arbitrary cross-user data at scale | Unauthenticated | Critical |
+| Another user's record, entitlement, order, or file reached | Unauthenticated | Critical |
+| A protected paid artifact actually obtained | Unauthenticated | High |
+| A protected paid artifact actually obtained | Authenticated | High |
+| A security-relevant value manipulated and accepted, nothing protected reached | Any | Medium |
+| Information exposure, no boundary crossed | Authenticated | Low |
+| No demonstrated security consequence | Any | Informational |
+
+Two rules make this reliable:
+
+- **Severity never exceeds the evidence.** An `UNVERIFIED` item is not
+  "potentially critical" — it is excluded from the scale and listed with the
+  exact missing proof.
+- **Rate the demonstrated effect, not the theoretical ceiling.** A manipulated
+  price on your own order is an integrity failure, not free access to
+  everything.
+
+Full rubric, worked examples, and the payment-chain rules are in
+[`docs/guides/SEVERITY-RATING.md`](docs/guides/SEVERITY-RATING.md).
+
+### The reporting decision chain
+
+Four steps, in this order, at the end of an engagement:
+
+```text
+1. DECISION-MATRIX          observed situation → correct status
+2. SEVERITY-RATING          demonstrated impact → severity, within status ceiling
+3. REFERENCE-MAPPINGS       weakness → OWASP / CWE / MASVS / ASVS
+4. REMEDIATION-AND-RETEST   root cause → fix → regression test
+```
 
 ---
 

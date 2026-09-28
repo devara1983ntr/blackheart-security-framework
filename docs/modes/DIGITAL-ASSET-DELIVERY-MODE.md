@@ -1,3 +1,12 @@
+# Digital Asset Delivery Mode
+
+**Document type:** Core operational mode — digital-product and paid-content delivery
+**Purpose:** Real-artifact validation, payment/entitlement integrity, and protected-file delivery testing.
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+**Related:** [`AGENT.md`](../../AGENT.md) · [`ZERO-CREDENTIAL-ESCALATION-MODE.md`](ZERO-CREDENTIAL-ESCALATION-MODE.md) · [`../guides/PAYMENT-PREMIUM-TESTING.md`](../guides/PAYMENT-PREMIUM-TESTING.md)
+
+---
+
 ===============================================================
 REAL-ASSET VALIDATION & DIGITAL-PRODUCT DELIVERY MODE
 ===============================================================

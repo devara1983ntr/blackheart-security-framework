@@ -2,6 +2,7 @@
 
 This directory contains the operating documentation for the BLACKHEART
 authorized adversarial security research framework.
+
 **Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ## Start here
@@ -31,15 +32,47 @@ authorized adversarial security research framework.
 | [`guides/TOOL-AND-ENVIRONMENT.md`](guides/TOOL-AND-ENVIRONMENT.md) | Capability discovery, tool-honesty policy |
 | [`guides/DECISION-MATRIX.md`](guides/DECISION-MATRIX.md) | Finding classification rules and status taxonomy |
 | [`guides/REPORTING.md`](guides/REPORTING.md) | Report structure and executive-summary requirements |
+| [`guides/SEVERITY-RATING.md`](guides/SEVERITY-RATING.md) | Impact × reach severity rubric, bounded by evidence status |
+| [`guides/REFERENCE-MAPPINGS.md`](guides/REFERENCE-MAPPINGS.md) | CWE, OWASP Web/API/Mobile, MASVS, ASVS, PCI DSS, GDPR mappings |
+| [`guides/REMEDIATION-AND-RETEST.md`](guides/REMEDIATION-AND-RETEST.md) | Root cause, fix patterns, regression tests, retest protocol |
+
+## Reference
+
+| Document | Purpose |
+|---|---|
+| [`GLOSSARY.md`](GLOSSARY.md) | Every term the framework uses, defined once |
+| [`SKILLS.md`](SKILLS.md) | Competency-to-document map for learning and self-direction |
+| [`../ARCHITECTURE.md`](../ARCHITECTURE.md) | Framework layering, precedence order, and invariants |
+| [`../ROADMAP.md`](../ROADMAP.md) | Recognised gaps and out-of-scope items |
 
 ## Templates and examples
 
 | File | Purpose |
 |---|---|
+| [`../templates/ENGAGEMENT-RECORD.md`](../templates/ENGAGEMENT-RECORD.md) | Scope, authorization, capability inventory, tool substitutions |
+| [`../templates/COVERAGE-MATRIX.md`](../templates/COVERAGE-MATRIX.md) | Per-boundary test coverage and explicit blockers |
 | [`../templates/FINDING.md`](../templates/FINDING.md) | Individual finding record template |
 | [`../templates/TEST-LOG.md`](../templates/TEST-LOG.md) | Test log and execution journal template |
 | [`../templates/FINAL-REPORT.md`](../templates/FINAL-REPORT.md) | Final report skeleton |
 | [`../examples/NEW-PROJECT-BOOTSTRAP.md`](../examples/NEW-PROJECT-BOOTSTRAP.md) | Guide for bootstrapping a new assessment |
+
+## Suggested reading order
+
+For a first engagement:
+
+1. [`../AGENT.md`](../AGENT.md) — the governing document
+2. [`../templates/ENGAGEMENT-RECORD.md`](../templates/ENGAGEMENT-RECORD.md) — establish scope and capabilities
+3. [`guides/SCOPE.md`](guides/SCOPE.md) and [`guides/OPERATING-RULES.md`](guides/OPERATING-RULES.md) — the boundaries
+4. [`../templates/COVERAGE-MATRIX.md`](../templates/COVERAGE-MATRIX.md) — open it before testing starts
+5. The mode matching the engagement, then the relevant domain guides
+6. [`guides/REPORTING.md`](guides/REPORTING.md), then
+   [`guides/DECISION-MATRIX.md`](guides/DECISION-MATRIX.md) →
+   [`guides/SEVERITY-RATING.md`](guides/SEVERITY-RATING.md) →
+   [`guides/REFERENCE-MAPPINGS.md`](guides/REFERENCE-MAPPINGS.md) →
+   [`guides/REMEDIATION-AND-RETEST.md`](guides/REMEDIATION-AND-RETEST.md)
+
+Unknown terminology: [`GLOSSARY.md`](GLOSSARY.md).
+Structure and precedence: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
 ## Design goal
 

@@ -1,5 +1,8 @@
 # Security Policy & Responsible Use
 
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+**Maintainer:** Roshan — <https://github.com/devara1983ntr>
+
 ## Supported versions
 
 This repository is a **documentation and methodology project**. It ships no

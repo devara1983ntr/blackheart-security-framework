@@ -19,7 +19,7 @@ Unlike shallow vulnerability scanners or checklist-driven tools, BLACKHEART oper
 
 ---
 
-## ⚡ The Three Core Operational Modes
+## ⚡ The Four Core Operational Modes
 
 BLACKHEART defines three primary operational modes, each located at the root of the repository for quick access:
 
@@ -27,6 +27,7 @@ BLACKHEART defines three primary operational modes, each located at the root of 
 |---|---|---|
 | 🛡️ **[`SECURITY-AUDIT.md`](./SECURITY-AUDIT.md)** | **Maximum Authorized Adversarial Security Audit** | Broad attack-surface mapping, technical vulnerability scanning (SQLi, SSRF, XSS, IDOR), reverse engineering, mobile/APK analysis, and full-spectrum attack chaining. |
 | 🔬 **[`SECURITY-RESEARCH-MODE.md`](./SECURITY-RESEARCH-MODE.md)** | **Authorized Adversarial Security Research** | Deep, systematic research methodology for new targets/applications, trust-boundary mapping, authentication lifecycle, API state-machine testing, and safe exploit validation. |
+| 🎯 **[`ZERO-CREDENTIAL-ESCALATION-MODE.md`](./ZERO-CREDENTIAL-ESCALATION-MODE.md)** | **Zero-Credential Discovery, Method Escalation & Coverage Control** | Anonymous attack-surface discovery from zero privilege, continuous method escalation when a technique fails, objective matrices, proof-strength levels, differential testing, chaining, and the final coverage-control layer. |
 | 📦 **[`DIGITAL-ASSET-DELIVERY-MODE.md`](./DIGITAL-ASSET-DELIVERY-MODE.md)** | **Real-Asset & Digital-Product Delivery Verification** | End-to-end payment integrity, price manipulation, entitlement creation, download authorization bypass, and verification of actual downloaded digital artifacts (SHA-256, size, content). |
 
 ### Comparative Summary of Operational Modes
@@ -62,6 +63,7 @@ The framework is organized into modular documentation, operating rules, workflow
 ├── SECURITY-AUDIT.md                   # Core Mode 1: Comprehensive security audit framework
 ├── SECURITY-RESEARCH-MODE.md          # Core Mode 2: Research methodology & execution loop
 ├── DIGITAL-ASSET-DELIVERY-MODE.md      # Core Mode 3: Payment, entitlement & asset delivery audit
+├── ZERO-CREDENTIAL-ESCALATION-MODE.md  # Core Mode 4: Zero-credential discovery, method escalation & coverage control
 │
 └── BLACKHEART-AGENT-DOCUMENTATION/    # Extracted Technical Guides & Templates
     ├── README.md                       # Documentation package introduction
@@ -100,6 +102,7 @@ The framework is organized into modular documentation, operating rules, workflow
 - **[`SECURITY-AUDIT.md`](./SECURITY-AUDIT.md)**: Full-spectrum adversarial vulnerability assessment framework.
 - **[`SECURITY-RESEARCH-MODE.md`](./SECURITY-RESEARCH-MODE.md)**: Research-oriented testing methodology for structured discovery.
 - **[`DIGITAL-ASSET-DELIVERY-MODE.md`](./DIGITAL-ASSET-DELIVERY-MODE.md)**: Focused guide for auditing e-commerce, digital products, and file distribution platforms.
+- **[`ZERO-CREDENTIAL-ESCALATION-MODE.md`](./ZERO-CREDENTIAL-ESCALATION-MODE.md)**: Zero-credential attack-surface discovery, continuous adversarial method escalation, and the gap-closure coverage-control engine.
 
 ### Deep-Dive Domain Guides (`/docs`)
 - **[`docs/ANDROID-TESTING.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/ANDROID-TESTING.md)**: Static/dynamic Android assessment (Manifest, exported components, WebViews, deep links, local storage).

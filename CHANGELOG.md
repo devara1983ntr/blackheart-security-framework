@@ -14,6 +14,73 @@ documentation maturity rather than software releases.
 
 Nothing yet.
 
+## [2.1.0] — 2026-09-28
+
+Integrates audited third-party skills into the framework as a new Layer 5.
+
+### Added
+
+- **`skills/`** — executable analysis skills, vendored and bound to the
+  framework. The method stays in Layer 0; these are the tools that perform
+  analysis.
+- **`skills/conformance/SKILL.md`** — mandatory wrapper. Vendored skills were
+  written by other authors and none knows BLACKHEART's evidence rules, so this
+  converts tool output into evidence status, computes severity separately within
+  the status ceiling, enforces the authorization gate, and requires an
+  enforcement point on every finding carried forward. Marked `always: true`.
+- **8 vendored skills** from
+  [claude-skills](https://github.com/alirezarezvani/claude-skills) (MIT, Alireza
+  Rezvani), pinned to commit `19392f7a`: `ai-security`, `red-team`,
+  `cloud-security`, `security-pen-testing`, `dependency-auditor`,
+  `threat-detection`, `senior-security`, `incident-response`. Chosen for direct
+  overlap with the framework's weakest-covered areas.
+- **8 `_BLACKHEART-ADAPTER.md` files** — per-skill provenance, interface,
+  authorization gate, maximum claim, skill-specific cautions, and coverage
+  contribution. Every adapter states what the skill's output may **not** be used
+  to claim.
+- **`skills/VENDOR.md`** — attribution, licences, provenance, and the reasoning
+  behind every inclusion and non-inclusion decision.
+- **`skills/openclaw.example.json5`** — working agent allowlists, per-skill
+  gating, and install-policy configuration. Contains no secrets.
+- **`skills/catalog/`** — the second source, recorded as reference only.
+
+### Changed
+
+- `ARCHITECTURE.md` adds Layer 5 (skills) to the layering diagram, inserts
+  skill conformance into the precedence order between Layer 1 and the modes,
+  and adds a thirteenth invariant: a tool's output is a hypothesis, not a
+  finding.
+- `README.md`, `SECURITY.md`, and `FILE-INDEX.txt` updated. Index now 76 entries.
+- `AUTHOR` corrected: it previously stated the repository contained no
+  third-party source code, which became untrue when the skills were vendored.
+  It now records both sources, their authors, and their licences.
+
+### Integration audit
+
+Both sources were audited before anything was vendored. No live credentials, no
+malicious code, and no exfiltration paths were found. The security scanner
+raised two flags, both independently verified as **false positives** and
+recorded in the adapters so they are not re-raised on every audit:
+
+- `senior-security` — `__import__('datetime')` flagged as dynamic module
+  loading. The argument is a string literal, not a variable.
+- `security-pen-testing` — `pickle.load()` / `yaml.load()` flagged as unsafe
+  deserialisation. Both are string literals in the scanner's own detection
+  guidance for other people's code; the file makes no such call.
+
+All 13 vendored scripts were executed and verified to run. All 8 vendored skill
+directories were diffed against upstream and confirmed byte-for-byte identical.
+
+### Deliberately not integrated
+
+`awesome-openclaw-skills` contains **zero skills** — it is an index of roughly
+5,265 links to skills on external registries. None were vendored: there is no
+version pinning, no provenance verification, and no way to audit content before
+it executes. Its `security-and-passwords` category lists skills whose purpose is
+credential handling (`credential-manager`, `1password`, `bitwarden`, `dashlane`),
+which is the highest-consequence integration mistake available. The catalogue is
+preserved as a reference index with a documented vetting process instead.
+
 ## [2.0.0] — 2026-09-28
 
 Third-pass expansion. Adds the offensive thinking layer (RED HEART), a new

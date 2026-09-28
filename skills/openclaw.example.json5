@@ -1,0 +1,92 @@
+// BLACKHEART — OpenClaw example configuration
+//
+// Copy to openclaw.json and adjust. This file contains NO secrets.
+// Never commit a real openclaw.json containing credentials.
+//
+// Related: skills/README.md · skills/conformance/SKILL.md · skills/VENDOR.md
+
+{
+  skills: {
+    // <workspace>/skills is the default workspace root and already contains
+    // the vendored skills plus the conformance layer. No extraDirs needed
+    // unless you keep skills outside the workspace.
+    load: {
+      extraDirs: [],
+      watch: true, // default
+    },
+
+    // Per-skill overrides. Keys match the skill's frontmatter `name`,
+    // not its directory path. Quote hyphenated names — this is JSON5.
+    entries: {
+      // --- Conformance: keep enabled everywhere ---
+      "blackheart-conformance": { enabled: true },
+
+      // --- Assessment skills ---
+      "ai-security": { enabled: true },
+      "cloud-security": { enabled: true },
+      "dependency-auditor": { enabled: true },
+      "red-team": { enabled: true },
+      "security-pen-testing": { enabled: true },
+      "senior-security": { enabled: true },
+      "threat-detection": { enabled: true },
+
+      // Incident response touches live evidence, which a testing
+      // authorization does not cover. Off by default; enable deliberately.
+      "incident-response": { enabled: false },
+    },
+  },
+
+  agents: {
+    defaults: {
+      // Conformance is the only skill every agent gets unconditionally.
+      // It is also marked `always: true` in its own frontmatter.
+      skills: ["blackheart-conformance"],
+    },
+
+    entries: {
+      // Full assessor: methodology + all analysis skills.
+      assessor: {
+        default: true,
+        skills: [
+          "blackheart-conformance",
+          "ai-security",
+          "cloud-security",
+          "dependency-auditor",
+          "red-team",
+          "security-pen-testing",
+          "senior-security",
+          "threat-detection",
+        ],
+      },
+
+      // Static/local analysis only — no active testing surface.
+      "read-only": {
+        skills: ["blackheart-conformance", "dependency-auditor", "senior-security"],
+      },
+
+      // Red team operator — emulation and threat hunting.
+      "red-teamer": {
+        skills: [
+          "blackheart-conformance",
+          "red-team",
+          "threat-detection",
+          "senior-security",
+          "cloud-security",
+        ],
+      },
+
+      // No skills at all. Replaces defaults entirely.
+      locked: { skills: [] },
+    },
+  },
+
+  security: {
+    // Run a local policy command before any skill install continues.
+    // The command receives metadata and the staged source path, and the
+    // install fails closed when it cannot return a valid decision.
+    //
+    // Recommended: point this at the auditor vendored in this repository.
+    //
+    // installPolicy: "./scripts/skill-install-policy.sh",
+  },
+}

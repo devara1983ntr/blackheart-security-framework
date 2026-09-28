@@ -115,6 +115,20 @@ operators alike.
 | [`docs/agent/AGENT-OPERATING-PROTOCOL.md`](docs/agent/AGENT-OPERATING-PROTOCOL.md) | Non-negotiables, tool protocol, evidence discipline, stop conditions |
 | [`docs/agent/AGENT-SKILL-CATALOGUE.md`](docs/agent/AGENT-SKILL-CATALOGUE.md) | Named skills with trigger, procedure, output, max claim, and stop |
 
+### Executable skills
+
+Eight third-party skills vendored under MIT, each with an adapter binding it to
+the framework. Load [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md)
+before any of them.
+
+| Document | Purpose |
+|---|---|
+| [`skills/README.md`](skills/README.md) | Integration guide, loading, agent allowlists |
+| [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | Mandatory wrapper: authorization gate, status conversion, severity ceiling |
+| [`skills/VENDOR.md`](skills/VENDOR.md) | Attribution, licences, provenance, audit summary |
+| [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — reference only, deliberately not installed |
+| [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Working agent-allowlist and gating configuration |
+
 ### Templates and examples
 
 | File | Purpose |
@@ -146,6 +160,15 @@ operators alike.
 ├── CONTRIBUTING.md                    # Contribution guidelines
 ├── CODE_OF_CONDUCT.md                 # Contributor Covenant 2.1
 ├── SECURITY.md                        # Security policy and responsible-use policy
+│
+├── skills/                            # Executable skills (vendored, MIT)
+│   ├── README.md                      # Integration guide and loading
+│   ├── VENDOR.md                      # Attribution, licences, provenance
+│   ├── openclaw.example.json5         # Agent allowlists and gating
+│   ├── conformance/SKILL.md           # Mandatory wrapper for all vendored skills
+│   ├── third-party/                   # 8 vendored skills, each + _BLACKHEART-ADAPTER.md
+│   ├── catalog/                       # Third-party catalogue — reference only
+│   └── licenses/                      # Preserved upstream licences
 │
 ├── docs/
 │   ├── README.md                      # Documentation package guide

@@ -11,13 +11,26 @@ Author & Credits
 
 ## Third-party content
 
-This repository contains **no third-party source code, vendored libraries, or
-external datasets.** All documentation is original work authored as part of
-this project.
+The documentation — operational modes, domain guides, templates, examples,
+reference material, and the integration work — is original work authored as
+part of this project.
 
-If third-party material is introduced in a future contribution, it must be
-attributed in this file and in the relevant document, with its original
-license preserved.
+**`skills/third-party/` contains vendored third-party source code.** It is
+authored by others, retains its original licence, and is not relicensed by
+inclusion here. Full provenance is recorded in
+[`skills/VENDOR.md`](skills/VENDOR.md), which is the authoritative attribution
+record.
+
+| Source | Author | Licence | What was taken |
+|---|---|---|---|
+| [claude-skills](https://github.com/alirezarezvani/claude-skills) | Alireza Rezvani | MIT | 8 security-relevant skills, vendored unmodified |
+| [awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) | VoltAgent | MIT | Catalogue index only — no code vendored |
+
+Upstream licence texts are preserved verbatim in [`skills/licenses/`](skills/licenses/).
+
+Any further third-party material introduced in a future contribution must be
+attributed in this file and in the relevant document, with its original licence
+preserved.
 
 ## Citation
 

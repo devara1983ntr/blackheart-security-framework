@@ -102,6 +102,28 @@ These are not optional and apply to any assessment run under this methodology:
 
 ---
 
+## Third-party skills
+
+Executable skills under [`skills/third-party/`](skills/third-party/) are
+third-party code. They are vendored **unmodified** from pinned upstream commits
+under MIT, audited before inclusion, and attributed in
+[`skills/VENDOR.md`](skills/VENDOR.md).
+
+They are not a security boundary, and neither is the skill allowlist. An agent
+able to execute a shell can reach anything on the host regardless of which
+skills it can see. Constrain execution with sandboxing, OS-level isolation, and
+per-resource credentials — not with skill visibility.
+
+`skills/catalog/` records a third-party catalogue that was deliberately **not**
+integrated. See [`skills/catalog/README.md`](skills/catalog/README.md) for the
+reason and the required process for adopting an individual entry.
+
+### Reporting a vulnerability in a vendored skill
+
+Report it to the **upstream author**, not only here. A vulnerability in vendored
+code is upstream's to fix, and this repository only pins a commit. Include the
+pinned commit in the report.
+
 ## Secrets
 
 This repository must never contain credentials, API keys, tokens, session

@@ -121,11 +121,50 @@ The framework's most specialised area, and the one most often reported wrongly.
 | Designing a runnable regression test | [`guides/REMEDIATION-AND-RETEST.md`](guides/REMEDIATION-AND-RETEST.md) |
 | Running a retest and classifying the outcome | [`guides/REMEDIATION-AND-RETEST.md`](guides/REMEDIATION-AND-RETEST.md) |
 
-## 9. Professional practice
+## 9. AI and agentic systems
+
+| Competency | Document |
+|---|---|
+| Mapping an agent's action surface before probing it | [`../templates/AGENT-THREAT-MODEL.md`](../templates/AGENT-THREAT-MODEL.md) |
+| Testing direct and indirect prompt injection | [`guides/AGENTIC-AI-SECURITY.md`](guides/AGENTIC-AI-SECURITY.md) §5 |
+| Testing tool-calling abuse and authorization at the tool layer | [`guides/AGENTIC-AI-SECURITY.md`](guides/AGENTIC-AI-SECURITY.md) §6 |
+| Assessing excessive agency across functionality, permissions, autonomy | [`guides/AGENTIC-AI-SECURITY.md`](guides/AGENTIC-AI-SECURITY.md) §9 |
+| Testing RAG retrieval authorization across tenants | [`guides/AGENTIC-AI-SECURITY.md`](guides/AGENTIC-AI-SECURITY.md) §7 |
+| Recognising the compound private-data + untrusted-content + exfiltration risk | [`guides/AGENTIC-AI-SECURITY.md`](guides/AGENTIC-AI-SECURITY.md) §4 |
+| Running an autonomous agent without confabulating evidence | [`agent/AGENT-OPERATING-PROTOCOL.md`](agent/AGENT-OPERATING-PROTOCOL.md) |
+| Executing named skills with their stop conditions | [`agent/AGENT-SKILL-CATALOGUE.md`](agent/AGENT-SKILL-CATALOGUE.md) |
+
+## 10. Cloud and identity
+
+| Competency | Document |
+|---|---|
+| Enumerating human and non-human identities | [`guides/CLOUD-IDENTITY.md`](guides/CLOUD-IDENTITY.md) §2 |
+| Establishing effective default-deny policy behaviour | [`guides/CLOUD-IDENTITY.md`](guides/CLOUD-IDENTITY.md) §3 |
+| Recognising and testing the confused deputy pattern | [`guides/CLOUD-IDENTITY.md`](guides/CLOUD-IDENTITY.md) §4 |
+| Multi-tenant boundary testing | [`guides/CLOUD-IDENTITY.md`](guides/CLOUD-IDENTITY.md) §8 |
+| Dependency reachability determination | [`guides/SUPPLY-CHAIN.md`](guides/SUPPLY-CHAIN.md) §2 |
+| Build, publish, and update-channel integrity | [`guides/SUPPLY-CHAIN.md`](guides/SUPPLY-CHAIN.md) §4 |
+
+## 11. Adversary emulation
+
+| Competency | Document |
+|---|---|
+| Modelling a specific adversary rather than a generic one | [`modes/RED-HEART-ADVERSARY-EMULATION.md`](modes/RED-HEART-ADVERSARY-EMULATION.md) §2 |
+| Constructing and evidencing attack paths | [`guides/ATTACK-PATHS.md`](guides/ATTACK-PATHS.md) |
+| Rating a chain from its demonstrated destination | [`guides/ATTACK-PATHS.md`](guides/ATTACK-PATHS.md) |
+| Reasoning about post-exploitation without establishing persistence | [`modes/RED-HEART-ADVERSARY-EMULATION.md`](modes/RED-HEART-ADVERSARY-EMULATION.md) §8 |
+| Reviewing whether an adversary would have been detected | [`guides/ADVERSARY-EMULATION.md`](guides/ADVERSARY-EMULATION.md) |
+| Structuring an engagement with rules of engagement and abort conditions | [`modes/RED-HEART-ADVERSARY-EMULATION.md`](modes/RED-HEART-ADVERSARY-EMULATION.md) §10 |
+| Stating methodology alignment honestly, including limits | [`guides/METHODOLOGY-STANDARDS.md`](guides/METHODOLOGY-STANDARDS.md) |
+
+## 12. Professional practice
 
 | Competency | Document |
 |---|---|
 | Refusing to fabricate a result | [`../AGENT.md`](../AGENT.md) §27 · [`guides/OPERATING-RULES.md`](guides/OPERATING-RULES.md) Rule 3 |
+| Declining a task because it is outside authorization | [`agent/AGENT-OPERATING-PROTOCOL.md`](agent/AGENT-OPERATING-PROTOCOL.md) §8 |
+| Refusing credentials to continue an assessment | [`agent/AGENT-OPERATING-PROTOCOL.md`](agent/AGENT-OPERATING-PROTOCOL.md) §8 |
+| Claiming methodology alignment only where it holds | [`guides/METHODOLOGY-STANDARDS.md`](guides/METHODOLOGY-STANDARDS.md) |
 | Refusing to test outside authorization | [`../AGENT.md`](../AGENT.md) §2 · [`guides/SCOPE.md`](guides/SCOPE.md) |
 | Reporting tool limitations honestly | [`guides/TOOL-AND-ENVIRONMENT.md`](guides/TOOL-AND-ENVIRONMENT.md) |
 | Operating at controlled aggressiveness | [`guides/OPERATING-RULES.md`](guides/OPERATING-RULES.md) Rule 10 |

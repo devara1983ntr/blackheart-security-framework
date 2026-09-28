@@ -14,6 +14,96 @@ documentation maturity rather than software releases.
 
 Nothing yet.
 
+## [2.0.0] — 2026-09-28
+
+Third-pass expansion. Adds the offensive thinking layer (RED HEART), a new
+Layer 0 for AI agent execution, and six new domain guides covering ground
+the framework previously left to improvisation. Closes four ROADMAP gaps.
+
+### Added — RED HEART, the offensive thinking layer
+
+- **`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`** — the framework's
+  adversarial counterpart. BLACKHEART governs what may be claimed; RED HEART
+  governs how an assessor thinks about the adversary. Covers adversary
+  modelling, operational objectives, engagement goals (Expose / Affect /
+  Elicit), path construction, chaining discipline, evasion reasoning,
+  post-exploitation within authorization, human and process targets, and rules
+  of engagement with hard abort conditions. Closes the failure mode where each
+  control holds individually but the chain walks straight past the boundary.
+- **`docs/guides/ATTACK-PATHS.md`** — path construction as a graph, with four
+  explicit evidence states per edge (Demonstrated / Inferred / Hypothesised /
+  Blocked). Establishes that a path is only as strong as its weakest evidenced
+  edge, and that severity follows the demonstrated destination rather than the
+  component findings.
+- **`docs/guides/ADVERSARY-EMULATION.md`** — engagement structure adapted from
+  the MITRE Engage model: prepare / operate / understand, the five approaches,
+  blended objectives, safety planning, and the detection review that ordinary
+  assessment does not produce.
+- **`templates/ATTACK-PATH.md`** — path record with per-edge evidence, blocked
+  steps as results, unproven edges with the test that would close them, and a
+  detection review table.
+
+### Added — Layer 0, the AI agent layer
+
+- **`docs/agent/AGENT-OPERATING-PROTOCOL.md`** — an agent fails differently
+  from a human: it confabulates evidence, drifts scope, reports intent as
+  accomplishment. Those failures are systematic, so they get a written protocol
+  rather than an assumption of diligence. Defines five non-negotiables, the
+  pre-flight check, the tool-use protocol with its capture-before-interpretation
+  rule, evidence and status discipline, escalation discipline, and hard stop
+  conditions including the refusal to request credentials.
+- **`docs/agent/AGENT-SKILL-CATALOGUE.md`** — 48 named skills across eight
+  groups, each specified as trigger, procedure, output, maximum claim, stop
+  condition, and the common failure it prevents. A procedure without a stop
+  condition and a max claim is not a skill, and the catalogue states that rule
+  explicitly.
+
+### Added — domain guides
+
+- **`docs/guides/AGENTIC-AI-SECURITY.md`** — LLM and agentic assessment:
+  action-surface mapping before probing, the four test layers, the compound
+  private-data + untrusted-content + exfiltration risk, direct and indirect
+  injection, tool-layer authorization tested independently of the model,
+  retrieval authorization, memory persistence, excessive agency across
+  functionality/permissions/autonomy, output handling, and inter-agent trust.
+  Includes the requirement to report reproduction rate for probabilistic
+  results.
+- **`docs/guides/CLOUD-IDENTITY.md`** — IAM and policy assessment, the
+  default-deny test, the confused deputy pattern, storage and secret exposure,
+  and multi-tenant boundary testing. States the boundary explicitly: the
+  customer tenancy is in scope, the provider platform never is.
+- **`docs/guides/SUPPLY-CHAIN.md`** — dependency inventory, reachability
+  determination as the step that separates an assessment from a scan report,
+  build and release integrity, secrets in dependencies, and agent plugin
+  supply chains.
+- **`docs/guides/METHODOLOGY-STANDARDS.md`** — alignment to PTES, NIST SP
+  800-115, OSSTMM, MITRE Engage, and OWASP, with the limits stated rather than
+  implied. Includes a claim sheet of what may and may not be asserted.
+- **`templates/AGENT-THREAT-MODEL.md`** — action surface, per-tool permission
+  scope, every input channel, the compound-risk question, trust boundaries with
+  actual enforcement points, and a test plan derived from the model rather than
+  from a generic list.
+
+### Changed
+
+- `ARCHITECTURE.md` introduces **Layer 0 (agent)** above the core, updates the
+  mode and guide tables, extends precedence to seven ranks, and adds two
+  invariants: a path is as strong as its weakest evidenced edge, and untrusted
+  content is data rather than instruction.
+- `AGENT.md` adds attack-path construction to the pipeline, expands §22 into
+  path-and-chain analysis, and records that the operating protocol governs
+  whoever executes the framework.
+- `REFERENCE-MAPPINGS.md` adds the OWASP Top 10 for LLM Applications (2025), the
+  agentic risk categories, and a section separating adversary-behaviour
+  mappings from weakness-class mappings.
+- `SKILLS.md` gains three competency groups — AI and agentic systems, cloud and
+  identity, and adversary emulation.
+- `GLOSSARY.md` adds adversary-emulation and agentic terminology.
+- `ROADMAP.md` records four closed gaps and a "Recently closed" table so they
+  are not re-proposed.
+- `README.md`, `docs/README.md`, and `FILE-INDEX.txt` updated for 11 new
+  documents; index now 52 entries.
+
 ## [1.1.0] — 2026-09-28
 
 Second-pass audit and framework expansion. Closes the substantive gaps found in

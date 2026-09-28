@@ -213,7 +213,57 @@ obligations.
 
 ---
 
-## 7. Using mappings in a report
+## 7. AI and agentic systems
+
+### OWASP Top 10 for LLM Applications (2025)
+
+| ID | Risk | BLACKHEART coverage |
+|---|---|---|
+| LLM01 | Prompt Injection | [`AGENTIC-AI-SECURITY.md`](AGENTIC-AI-SECURITY.md) §5 — direct and indirect |
+| LLM02 | Sensitive Information Disclosure | §4 compound risk · §7 retrieval · §10 prompt exposure |
+| LLM03 | Supply Chain | [`SUPPLY-CHAIN.md`](SUPPLY-CHAIN.md) §7 |
+| LLM04 | Data and Model Poisoning | §8 memory persistence · §7 corpus injection |
+| LLM05 | Improper Output Handling | §11 output sinks |
+| LLM06 | Excessive Agency | §6 tool execution · §9 functionality/permissions/autonomy |
+| LLM07 | System Prompt Leakage | §10 |
+| LLM08 | Vector and Embedding Weaknesses | §7 retrieval authorization |
+| LLM09 | Misinformation | §11 output verification |
+| LLM10 | Unbounded Consumption | §14 — tested only within hard bounds |
+
+### Agentic risk categories
+
+| Risk | Question | Coverage |
+|---|---|---|
+| Agent goal hijack | Can the agent's objective be redirected mid-task? | [`AGENTIC-AI-SECURITY.md`](AGENTIC-AI-SECURITY.md) §5 |
+| Tool misuse and exploitation | Can the agent be coerced into calling tools beyond its intent? | §6 |
+| Identity and privilege abuse | Can the agent act with borrowed or over-broad credentials? | §6, §9 |
+| Agentic supply chain compromise | Can a tool, plugin, or connected server be poisoned? | §12, [`SUPPLY-CHAIN.md`](SUPPLY-CHAIN.md) §7 |
+| Unexpected code execution | Does agent-generated or agent-triggered code run privileged? | §11 |
+| Memory and context poisoning | Does attacker state persist and bias future sessions? | §8 |
+| Insecure inter-agent communication | Are agent messages authenticated? | §12 |
+| Cascading agent failures | Does one compromised agent corrupt others? | §12 |
+| Human-agent trust exploitation | Can approval be socially engineered? | §6 confirmation, §9 autonomy |
+| Rogue agents | Are agents operating outside monitoring or governance? | §2 inventory, [`../templates/AGENT-THREAT-MODEL.md`](../../templates/AGENT-THREAT-MODEL.md) §8 |
+
+> The agentic taxonomy is newer and moves faster than the LLM Top 10.
+> Confirm current identifiers before citing, and state the version used.
+
+---
+
+## 8. Adversary behaviour
+
+| Concern | Reference |
+|---|---|
+| Adversary tactics and techniques | MITRE ATT&CK — behavioural mapping in reporting |
+| Engagement structure, goals, safety planning | MITRE Engage — see [`ADVERSARY-EMULATION.md`](ADVERSARY-EMULATION.md) |
+
+These classify **adversary behaviour** rather than vulnerability classes. They
+are used to describe what was emulated and whether it would have been detected,
+not to classify a weakness.
+
+---
+
+## 9. Using mappings in a report
 
 1. **Map to the recipient's framework, not every framework.** Five mappings on
    one finding is noise, not thoroughness.

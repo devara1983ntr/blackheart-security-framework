@@ -27,6 +27,19 @@ It is documentation only: no code, no scanners, no automation, and deliberately
 none. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for why that is the correct
 shape for a methodology framework.
 
+## Recently closed
+
+Gaps that were on this list and are now filled. Recorded so they are not
+re-proposed.
+
+| Gap | Closed by |
+|---|---|
+| Cloud and infrastructure assessment | [`docs/guides/CLOUD-IDENTITY.md`](docs/guides/CLOUD-IDENTITY.md) — IAM, policy, tenant boundary, confused deputy, cloud secrets |
+| Agent instruction accessibility for agents | [`docs/agent/AGENT-OPERATING-PROTOCOL.md`](docs/agent/AGENT-OPERATING-PROTOCOL.md) — Layer 0 of the architecture |
+| Depth on adversary emulation and attack paths | [`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md) · [`docs/guides/ATTACK-PATHS.md`](docs/guides/ATTACK-PATHS.md) |
+| Alignment to recognised methodology standards | [`docs/guides/METHODOLOGY-STANDARDS.md`](docs/guides/METHODOLOGY-STANDARDS.md) |
+| AI/agentic application assessment | [`docs/guides/AGENTIC-AI-SECURITY.md`](docs/guides/AGENTIC-AI-SECURITY.md) |
+
 ## Recognised gaps
 
 Ordered by how much they weaken the framework when left unaddressed.
@@ -51,19 +64,7 @@ deliberately rejected hypothesis to demonstrate negative-result reporting.
 vulnerability, no invented statistics. A fabricated example teaching accurate
 behaviour would violate the framework's own non-fabrication rule.
 
-### 2. Cloud and infrastructure assessment
-
-**Gap.** The framework treats third-party and vendor infrastructure as
-observation-only, which is correct, but offers no method for assessing an
-*in-scope* cloud or container environment once the client owns it.
-
-**Would consist of.** Identity and IAM boundary testing, storage and bucket
-exposure, secrets in managed configuration, and container escape reasoning.
-
-**Constraint.** Must not read as authorization to test any provider's own
-infrastructure. Ownership of the account is what brings it into scope.
-
-### 3. GraphQL and modern API surface shapes
+### 2. GraphQL and modern API surface shapes
 
 **Gap.** [`docs/guides/WEB-API-TESTING.md`](docs/guides/WEB-API-TESTING.md)
 assumes REST-shaped surfaces. GraphQL introspection, batching abuse, field-level
@@ -72,7 +73,7 @@ authorization, and WebSocket subscription authorization are not covered.
 **Would consist of.** A guide covering introspection exposure, query-depth and
 cost controls, field-level authorization, and subscription authorization.
 
-### 4. Source-code review as a distinct mode
+### 3. Source-code review as a distinct mode
 
 **Gap.** [`AGENT.md`](AGENT.md) §17 covers static and source analysis, but only
 as a technique within other modes. There is no mode for a source-led engagement
@@ -82,7 +83,7 @@ where the codebase is the primary target.
 inventory across services, and secret scanning with the framework's evidence
 discipline applied to source findings.
 
-### 5. Accessibility of the instruction set for agent use
+### 4. Accessibility of the instruction set for agent use
 
 **Gap.** The framework is written for a human reader and for an AI agent
 alike, but nothing states which parts are addressed to which.
@@ -91,7 +92,7 @@ alike, but nothing states which parts are addressed to which.
 agent instruction, reducing the chance that a human-facing instruction is
 executed as an action.
 
-### 6. Deeper coverage-control tooling
+### 5. Deeper coverage-control tooling
 
 **Gap.**
 [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md) is a manual
@@ -104,7 +105,7 @@ starter matrix.
 probes targets would sit outside the framework's authorization model, which is
 built on explicit human scoping.
 
-### 7. Translation
+### 6. Translation
 
 **Gap.** English only.
 

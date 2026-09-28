@@ -267,6 +267,85 @@ over by a static claim.
 
 ---
 
+## Adversary emulation
+
+**Adversary emulation** — Structuring an engagement against a *defined*
+adversary — a specific actor class with a specific objective, capability, and
+access — rather than against a generic checklist. Produces two outputs ordinary
+assessments do not: whether the adversary's route works, and whether anyone
+would have noticed. See
+[`modes/RED-HEART-ADVERSARY-EMULATION.md`](modes/RED-HEART-ADVERSARY-EMULATION.md).
+
+**Operational objective** — The specific end-state an engagement tests for. An
+objective of "find vulnerabilities" is not an objective; "demonstrate whether a
+low-privilege user can reach another tenant's data" is.
+
+**RED HEART** — The framework's offensive thinking layer. BLACKHEART governs
+what may be *claimed*; RED HEART governs how an assessor *thinks about the
+adversary*. On conflict, BLACKHEART wins.
+
+**Attack path** — A modelled route from an entry position to an objective,
+composed of edges. Each edge is either **Demonstrated** (walked during the
+engagement), **Inferred**, **Hypothesised**, or **Blocked**.
+
+**Intrusion path** — The adversary's route in: entry, foothold, privilege,
+objective. Distinguished from an **attack chain**, which is post-discovery
+composition of existing findings.
+
+**Attack chain** — Two or more individually-weaker findings whose combination
+produces impact greater than the sum. See [`guides/ATTACK-PATHS.md`](guides/ATTACK-PATHS.md).
+
+**Confused deputy** — A service induced to act with permissions its caller does
+not possess. The dominant cloud-specific weakness class, and a recurring
+pattern in agentic systems.
+
+**Rules of Engagement (RoE)** — The agreed limits on an engagement: time
+windows, rate limits, prohibited actions, data ceilings, maximum impact, and
+abort conditions. The most explicit limits apply to the most intrusive work.
+
+**Abort condition** — A predefined event that ends an engagement immediately,
+with resumption decided by the client. Not advisory.
+
+**Blast radius** — The largest credible impact reachable from a given position.
+
+---
+
+## AI and agentic systems
+
+**Action surface** — For an agent, the set of tools, data stores, and external
+services it can reach. The real attack surface, as opposed to the chat
+interface. Map it before testing; see
+[`../templates/AGENT-THREAT-MODEL.md`](../templates/AGENT-THREAT-MODEL.md).
+
+**Prompt injection** — Input that causes a model to depart from its
+instructions. **Direct** arrives through the user channel; **indirect** arrives
+through content the system retrieves — documents, pages, email, or tool output.
+The indirect case is the serious one.
+
+**Excessive agency** — An agent holding more capability, permission, or autonomy
+than its task requires. Assessed as three separate properties — functionality,
+permissions, autonomy — because each needs a different fix.
+
+**Tool authorization** — The access control enforced at the tool itself,
+independent of the model. Testable directly without involving the model, and
+preferable for that reason: a control existing only in the system prompt is a
+request, not a control.
+
+**Memory poisoning** — Attacker-influenced content that persists in agent state
+and demonstrably alters behaviour in a later session. Storing a string is not
+poisoning; a behaviour change is.
+
+**Compound AI risk** — The simultaneous presence of private data reachability,
+untrusted content processing, and an external exfiltration path. Not a single
+vulnerability but a combination, and assessed with all three legs evidenced
+separately.
+
+**Indirect trust** — Treating retrieved or tool-returned content as instruction
+rather than as data. For an assessor and for an agent alike, this is the
+highest-risk failure mode in agentic work.
+
+---
+
 ## Process and integrity
 
 **Non-fabrication rule** — Never invent evidence of any kind: files, hashes,

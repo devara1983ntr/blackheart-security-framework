@@ -70,6 +70,7 @@ self-contained operating document.
 | [`docs/modes/SECURITY-RESEARCH-MODE.md`](docs/modes/SECURITY-RESEARCH-MODE.md) | Structured research loop, trust boundaries, safe exploit validation | Investigating an unfamiliar target |
 | [`docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md`](docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md) | Payment integrity, entitlement, download authorization, real-artifact validation | The target sells digital goods or premium access |
 | [`docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md`](docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md) | Zero-credential discovery, method escalation, coverage control | Exhausting the anonymous surface and preventing premature closure |
+| [`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md) | **RED HEART** — adversary modelling, attack paths, chaining, post-exploitation, detection review | Thinking like a defined adversary rather than testing controls one at a time |
 
 ### Domain guides
 
@@ -103,11 +104,24 @@ Focused references for specific assessment concerns.
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Layering, precedence order, and framework invariants |
 | [`ROADMAP.md`](ROADMAP.md) | Recognised gaps and explicitly out-of-scope items |
 
+### AI agent layer
+
+How an autonomous agent operates this framework, and the skills it selects.
+Layer 0 of the architecture — it governs execution for agents and human
+operators alike.
+
+| Document | Purpose |
+|---|---|
+| [`docs/agent/AGENT-OPERATING-PROTOCOL.md`](docs/agent/AGENT-OPERATING-PROTOCOL.md) | Non-negotiables, tool protocol, evidence discipline, stop conditions |
+| [`docs/agent/AGENT-SKILL-CATALOGUE.md`](docs/agent/AGENT-SKILL-CATALOGUE.md) | Named skills with trigger, procedure, output, max claim, and stop |
+
 ### Templates and examples
 
 | File | Purpose |
 |---|---|
 | [`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md) | Scope, authorization, capability inventory, tool substitutions |
+| [`templates/AGENT-THREAT-MODEL.md`](templates/AGENT-THREAT-MODEL.md) | AI/agentic action surface, tools, input channels |
+| [`templates/ATTACK-PATH.md`](templates/ATTACK-PATH.md) | Path edges with evidence states, detection review |
 | [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md) | Per-boundary coverage with explicit blockers |
 | [`templates/FINDING.md`](templates/FINDING.md) | Individual finding record |
 | [`templates/TEST-LOG.md`](templates/TEST-LOG.md) | Hypothesis/execution journal |
@@ -137,18 +151,27 @@ Focused references for specific assessment concerns.
 │   ├── README.md                      # Documentation package guide
 │   ├── GLOSSARY.md                    # Framework terminology
 │   ├── SKILLS.md                      # Competency-to-document map
+│   ├── agent/                         # Layer 0 — agent operating protocol
+│   │   ├── AGENT-OPERATING-PROTOCOL.md
+│   │   └── AGENT-SKILL-CATALOGUE.md
 │   ├── modes/                         # Core operational modes
 │   │   ├── SECURITY-AUDIT.md
 │   │   ├── SECURITY-RESEARCH-MODE.md
 │   │   ├── DIGITAL-ASSET-DELIVERY-MODE.md
-│   │   └── ZERO-CREDENTIAL-ESCALATION-MODE.md
+│   │   ├── ZERO-CREDENTIAL-ESCALATION-MODE.md
+│   │   └── RED-HEART-ADVERSARY-EMULATION.md
 │   └── guides/                        # Domain guides
+│       ├── ADVERSARY-EMULATION.md
+│       ├── AGENTIC-AI-SECURITY.md
 │       ├── ANDROID-TESTING.md
+│       ├── ATTACK-PATHS.md
 │       ├── AUTH-AUTHZ.md
 │       ├── BUSINESS-LOGIC.md
+│       ├── CLOUD-IDENTITY.md
 │       ├── DECISION-MATRIX.md
 │       ├── DIGITAL-FILE-VALIDATION.md
 │       ├── EVIDENCE.md
+│       ├── METHODOLOGY-STANDARDS.md
 │       ├── OPERATING-RULES.md
 │       ├── PAYMENT-PREMIUM-TESTING.md
 │       ├── REFERENCE-MAPPINGS.md
@@ -156,6 +179,7 @@ Focused references for specific assessment concerns.
 │       ├── REPORTING.md
 │       ├── SCOPE.md
 │       ├── SEVERITY-RATING.md
+│       ├── SUPPLY-CHAIN.md
 │       ├── TOOL-AND-ENVIRONMENT.md
 │       ├── WEB-API-TESTING.md
 │       └── WORKFLOW.md
@@ -165,6 +189,8 @@ Focused references for specific assessment concerns.
 │
 └── templates/
     ├── ENGAGEMENT-RECORD.md           # Scope, authorization, capabilities
+    ├── AGENT-THREAT-MODEL.md          # AI/agentic action surface
+    ├── ATTACK-PATH.md                 # Path edges and detection review
     ├── COVERAGE-MATRIX.md             # Per-boundary coverage and blockers
     ├── FINAL-REPORT.md                # Assessment report skeleton
     ├── FINDING.md                     # Finding record template

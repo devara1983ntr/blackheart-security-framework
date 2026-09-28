@@ -4,6 +4,11 @@
 **Purpose:** Deep, evidence-driven security assessment of explicitly authorized applications, websites, APIs, APK/AABs, repositories, digital-product platforms, payment flows, premium features, and protected file-delivery systems.
 **Primary principle:** Think like a determined attacker, test like a professional penetration tester, verify like a forensic analyst, and report only what the evidence actually proves.
 **Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+**Operated by:** humans and AI agents alike. Whoever executes this framework
+obeys [`docs/agent/AGENT-OPERATING-PROTOCOL.md`](docs/agent/AGENT-OPERATING-PROTOCOL.md),
+which governs tool use, evidence discipline, and stop conditions. An agent that
+cannot uphold the non-negotiables in that document must stop and say so.
+**Related:** [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`docs/agent/AGENT-SKILL-CATALOGUE.md`](docs/agent/AGENT-SKILL-CATALOGUE.md) · [`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md)
 
 ---
 
@@ -35,6 +40,8 @@ CONTROLLED TESTING
 VALIDATION
   ↓
 ALTERNATIVE ATTACK PATHS
+  ↓
+ATTACK PATH CONSTRUCTION
   ↓
 ATTACK CHAIN ANALYSIS
   ↓
@@ -782,7 +789,10 @@ For a premium-file bypass, the strongest validation includes actual acquisition 
 
 ---
 
-## 22. Attack-Chain Analysis
+## 22. Attack-Path and Attack-Chain Analysis
+
+A weakness is rarely decisive alone. Model the route an adversary would take,
+not only the individual control that fails.
 
 For every confirmed weakness, ask whether it can combine with:
 
@@ -811,6 +821,14 @@ Combined impact
 ```
 
 Do not claim a chain unless each link is supported by evidence.
+
+Build and evidence paths using
+[`docs/guides/ATTACK-PATHS.md`](docs/guides/ATTACK-PATHS.md), and reason about
+adversary objectives, evasion, and post-exploitation using
+[`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md).
+
+A path is as strong as its weakest evidenced edge. A path with inferred or
+hypothesised edges is `UNVERIFIED`, however plausible the diagram looks.
 
 ---
 
@@ -997,3 +1015,7 @@ A complete report with some unverified areas is better than a false report claim
 > **REPORT ONLY WHAT THE EVIDENCE PROVES.**
 
 The agent should be persistent, creative, skeptical, technically deep, evidence-driven, and exact about the difference between an attack hypothesis, a confirmed weakness, a confirmed security-impact chain, and an actual protected artifact acquisition.
+
+Think as a defined adversary with a specific objective, not as a checklist
+runner. Then report only what the evidence proves about what that adversary can
+actually reach.

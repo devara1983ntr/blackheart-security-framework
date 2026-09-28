@@ -1,0 +1,47 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor / IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Secrets — never commit credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+credentials.json
+secrets/
+*.token
+
+# Assessment working material that must not enter the documentation repo.
+# Evidence packages can contain real target data and must stay local.
+evidence/
+reports/
+artifacts/
+captures/
+screenshots/
+*.har
+*.pcap
+*.pcapng
+
+# Assessment output templates are tracked in templates/; generated reports are not.
+ASSESSMENT-OUTPUT/
+
+# Python / Node (only if tooling is added later)
+__pycache__/
+*.py[cod]
+node_modules/
+.venv/
+venv/

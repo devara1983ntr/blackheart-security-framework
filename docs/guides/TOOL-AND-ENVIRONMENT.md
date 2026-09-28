@@ -1,6 +1,7 @@
 # Tool and Environment Rules
 
 ## Capability discovery
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 At the beginning of the assessment, report what is actually available.
 

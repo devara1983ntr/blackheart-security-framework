@@ -1,6 +1,7 @@
 # Authentication and Authorization Assessment
 
 ## Authentication questions
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 - Can an account be created without required verification?
 - Can authentication state be bypassed?

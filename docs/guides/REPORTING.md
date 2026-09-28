@@ -1,6 +1,7 @@
 # Reporting Standard
 
 ## Required report sections
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 1. Cover / assessment identity
 2. Scope and authorization summary

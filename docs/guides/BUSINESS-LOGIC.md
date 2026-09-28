@@ -1,6 +1,7 @@
 # Business-Logic and State-Machine Testing
 
 ## Goal
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Identify flaws that arise because the workflow permits an impossible or unintended business state.
 

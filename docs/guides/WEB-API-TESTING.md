@@ -1,6 +1,7 @@
 # Web and API Security Testing
 
 ## Inventory
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Create a request map for each observed or discovered endpoint:
 

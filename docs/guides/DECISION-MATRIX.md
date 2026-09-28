@@ -14,3 +14,4 @@
 | Test not possible | NOT TESTED | State exact blocking capability |
 | Third-party asset not authorized | OUT OF SCOPE | Record dependency without active testing |
 | Control held under tested conditions | NOT VULNERABLE | State exact coverage; avoid universal claims |
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework

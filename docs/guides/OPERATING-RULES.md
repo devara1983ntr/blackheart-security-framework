@@ -1,6 +1,7 @@
 # Operating Rules
 
 ## Rule 1 — Evidence before conclusions
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Never report a vulnerability solely because a pattern looks suspicious.
 

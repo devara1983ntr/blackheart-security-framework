@@ -4,6 +4,7 @@
 **Severity:** [Impact-based severity]
 **Affected Asset:**
 **Affected Endpoint/Component:**
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ## Summary
 

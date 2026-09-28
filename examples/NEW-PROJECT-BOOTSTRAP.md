@@ -1,6 +1,7 @@
 # New Project Bootstrap Prompt
 
 Copy this wrapper together with `AGENT.md` when starting a new authorized assessment.
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ```text
 NEW PROJECT — BLACKHEART AUTHORIZED ADVERSARIAL SECURITY ASSESSMENT

@@ -3,6 +3,7 @@
 **Document type:** Master agent instruction / `AGENT.md`
 **Purpose:** Deep, evidence-driven security assessment of explicitly authorized applications, websites, APIs, APK/AABs, repositories, digital-product platforms, payment flows, premium features, and protected file-delivery systems.
 **Primary principle:** Think like a determined attacker, test like a professional penetration tester, verify like a forensic analyst, and report only what the evidence actually proves.
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ---
 

@@ -5,6 +5,7 @@
 **Actor/role:**
 **Object:**
 **Environment:**
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 ## Intended Security Property
 

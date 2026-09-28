@@ -5,11 +5,16 @@
 (1) zero-credential adversarial attack-surface discovery from absolute zero privilege,
 (2) continuous adversarial method escalation ("one method failed ≠ test complete"),
 and (3) the final gap-closure and coverage-control engine.
-**Relationship:** Extends `AGENT.md`, `SECURITY-AUDIT.md`, `SECURITY-RESEARCH-MODE.md` and
-`DIGITAL-ASSET-DELIVERY-MODE.md`. Where any of those documents is silent on coverage control,
-state management, differential testing, proof strength, or environmental boundaries, this
-document governs. It never relaxes the non-fabrication rule, the authorization boundary, or the
-tool-honesty requirement established in `AGENT.md`.
+**Relationship:** Extends [`AGENT.md`](../../AGENT.md), [`SECURITY-AUDIT.md`](SECURITY-AUDIT.md),
+[`SECURITY-RESEARCH-MODE.md`](SECURITY-RESEARCH-MODE.md) and
+[`DIGITAL-ASSET-DELIVERY-MODE.md`](DIGITAL-ASSET-DELIVERY-MODE.md). Where any of those documents is
+silent on coverage control, state management, differential testing, proof strength, or environmental
+boundaries, this document governs. It never relaxes the non-fabrication rule, the authorization
+boundary, or the tool-honesty requirement established in `AGENT.md`.
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
+
+**Responsible use:** see [`../../SECURITY.md`](../../SECURITY.md). This document grants no
+authorization to test any system.
 
 **Contents:**
 

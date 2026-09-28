@@ -1,6 +1,7 @@
 # BLACKHEART Security Assessment Report
 
 ## 1. Assessment Identity
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 **Target:**
 **Version / Build / Hash:**

@@ -1,6 +1,7 @@
 # Payment, Premium, Entitlement and Digital-Product Testing
 
 ## Objective
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Determine whether an authorized target incorrectly grants paid access, premium functionality, entitlement, or digital-product delivery when the intended payment/authorization condition has not actually been satisfied.
 

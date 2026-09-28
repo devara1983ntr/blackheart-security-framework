@@ -1,6 +1,7 @@
 # End-to-End Assessment Workflow
 
 ## Phase 0 — Scope intake
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Capture target, authorization, environment, accounts, allowed assets, payment scope, file-delivery scope, and prohibited actions.
 

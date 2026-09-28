@@ -1,6 +1,7 @@
 # Scope and Authorization Rules
 
 ## 1. Scope hierarchy
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Use this order of authority:
 

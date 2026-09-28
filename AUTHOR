@@ -1,0 +1,25 @@
+Author & Credits
+================
+
+## Author
+
+**Roshan** — <https://github.com/devara1983ntr>
+
+- Project author and maintainer
+- Designed the BLACKHEART adversarial security research framework
+- Wrote the operational modes, domain guides, templates, and bootstrap examples
+
+## Third-party content
+
+This repository contains **no third-party source code, vendored libraries, or
+external datasets.** All documentation is original work authored as part of
+this project.
+
+If third-party material is introduced in a future contribution, it must be
+attributed in this file and in the relevant document, with its original
+license preserved.
+
+## Citation
+
+If you reference this framework in academic or professional work, please cite
+the repository rather than reproducing its content verbatim.

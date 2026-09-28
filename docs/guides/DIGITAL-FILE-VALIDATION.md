@@ -1,6 +1,7 @@
 # Digital File Validation and Real Artifact Evidence
 
 ## Purpose
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 When an authorized security test obtains a protected digital artifact, validate the actual file rather than using a placeholder.
 

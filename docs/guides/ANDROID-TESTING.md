@@ -1,6 +1,7 @@
 # Android / APK / AAB Security Testing
 
 ## Static assessment
+**Author:** Roshan · **Project:** BLACKHEART Adversarial Security Research Framework
 
 Inventory:
 

@@ -1,157 +1,322 @@
-# BLACKHEART — Authorized Adversarial Security Research Agent Framework
+<div align="center">
 
-> **Adversarial Cybersecurity Research & Penetration Testing Framework**
-> *Think like a determined attacker, test like a professional penetration tester, verify like a forensic analyst, and report only what the evidence proves.*
+# BLACKHEART
 
----
+### Adversarial Security Research Framework
 
-## 📖 Executive Summary & Overview
+**An evidence-first methodology and agent instruction set for authorized
+application, API, mobile, payment, and digital-product security assessments.**
 
-**BLACKHEART** is an advanced, evidence-driven cybersecurity research and penetration testing agent framework. It provides structured methodology, rigid evidence-handling protocols, operational modes, and execution guidelines for conducting authorized adversarial security audits across diverse targets.
+[Documentation](#documentation) · [Repository Structure](#repository-structure) ·
+[Quick Start](#quick-start) · [Responsible Use](#responsible-use) · [License](#license)
 
-Unlike shallow vulnerability scanners or checklist-driven tools, BLACKHEART operates with a true **BLACKHEART attacker mindset**—aggressively testing security boundaries, validating state machines, challenging client-side trust assumptions, and chaining vulnerabilities to prove real-world business and security impact.
-
-### Key Goals & Core Principles
-1. **Evidence-First Verification**: Never assume a vulnerability exists based solely on suspicious code or static indicators. Validate with concrete proof and reproducible request/response chains.
-2. **Adversarial Rigor**: Move beyond OWASP Top 10 surface checks to investigate complex business logic, payment flows, entitlement states, digital delivery mechanisms, and mobile IPC boundaries.
-3. **Strict Authorization Boundaries**: Operate aggressively within authorized scope while strictly preventing collateral impact, third-party targets, or non-consensual data collection.
-4. **Tool Honesty & Non-Fabrication**: Maintain complete transparency regarding tool availability and execution results. Never fabricate exploits, transaction IDs, hashes, or screenshots.
+</div>
 
 ---
 
-## ⚡ The Four Core Operational Modes
+## Overview
 
-BLACKHEART defines three primary operational modes, each located at the root of the repository for quick access:
+**BLACKHEART** is a structured framework for conducting **authorized** adversarial
+security assessments. It provides operating modes, domain guides, report templates,
+and a decision taxonomy that together define *how* to test, *what evidence* is
+required, and *what may honestly be concluded*.
 
-| Operational Mode Document | Purpose & Core Focus | Key Investigation Surface |
+It is a methodology and instruction set — **not a scanner, not a toolkit, and not
+a collection of exploits.** It is written for security engineers, penetration
+testers, security researchers, and practitioners who need an assessment to be
+reproducible, evidence-linked, and defensible.
+
+### The problem this solves
+
+Most security assessments fail in one of two directions:
+
+- **False confidence** — a 200 response is treated as "the endpoint is exposed,"
+  or a client-side filter is mistaken for an authorization control, so a
+  non-vulnerability is reported as a breach.
+- **Unfalsifiable reporting** — a finding is asserted without evidence, without
+  a stated attacker privilege, and without separating an intermediate
+  behaviour from actual security impact.
+
+BLACKHEART is built to prevent both. Its governing rule:
+
+> **Report only what the evidence proves.**
+
+## Core Principles
+
+| Principle | What it means in practice |
+|---|---|
+| **Evidence before conclusions** | A suspicious pattern is a hypothesis, not a finding. Status is earned by proof, not suspicion. |
+| **No artificial stopping** | A failed technique closes *that technique*, never the security objective. Method escalation is mandatory. |
+| **Zero fabrication** | No invented hashes, transactions, responses, screenshots, artifacts, or exploitation results. Ever. |
+| **Confirmed by impact, not possibility** | "A price parameter is editable" is not "payment bypass." Each escalation needs its own proof. |
+| **Tool honesty** | If a tool was unavailable, the report says so and names the alternative actually used. |
+| **Third-party boundaries** | A vendor endpoint in client code is documented, not attacked. Authorization never inherits. |
+| **Minimum necessary data** | Prove the authorization failure with the smallest sufficient proof. Do not harvest real user data. |
+| **Negative results are evidence** | A correctly-rejected attack is documented, because it proves a control exists. |
+
+---
+
+## Documentation
+
+### Core operational modes
+
+The four modes define how an assessment is conducted. Each is a complete,
+self-contained operating document.
+
+| Mode | Focus | Read it when |
 |---|---|---|
-| 🛡️ **[`SECURITY-AUDIT.md`](./SECURITY-AUDIT.md)** | **Maximum Authorized Adversarial Security Audit** | Broad attack-surface mapping, technical vulnerability scanning (SQLi, SSRF, XSS, IDOR), reverse engineering, mobile/APK analysis, and full-spectrum attack chaining. |
-| 🔬 **[`SECURITY-RESEARCH-MODE.md`](./SECURITY-RESEARCH-MODE.md)** | **Authorized Adversarial Security Research** | Deep, systematic research methodology for new targets/applications, trust-boundary mapping, authentication lifecycle, API state-machine testing, and safe exploit validation. |
-| 🎯 **[`ZERO-CREDENTIAL-ESCALATION-MODE.md`](./ZERO-CREDENTIAL-ESCALATION-MODE.md)** | **Zero-Credential Discovery, Method Escalation & Coverage Control** | Anonymous attack-surface discovery from zero privilege, continuous method escalation when a technique fails, objective matrices, proof-strength levels, differential testing, chaining, and the final coverage-control layer. |
-| 📦 **[`DIGITAL-ASSET-DELIVERY-MODE.md`](./DIGITAL-ASSET-DELIVERY-MODE.md)** | **Real-Asset & Digital-Product Delivery Verification** | End-to-end payment integrity, price manipulation, entitlement creation, download authorization bypass, and verification of actual downloaded digital artifacts (SHA-256, size, content). |
+| [`AGENT.md`](AGENT.md) | Master agent instruction, scope intake, evidence taxonomy, quality gate | Always — this is the entry point |
+| [`docs/modes/SECURITY-AUDIT.md`](docs/modes/SECURITY-AUDIT.md) | Full-spectrum adversarial vulnerability assessment | Running a broad technical assessment |
+| [`docs/modes/SECURITY-RESEARCH-MODE.md`](docs/modes/SECURITY-RESEARCH-MODE.md) | Structured research loop, trust boundaries, safe exploit validation | Investigating an unfamiliar target |
+| [`docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md`](docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md) | Payment integrity, entitlement, download authorization, real-artifact validation | The target sells digital goods or premium access |
+| [`docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md`](docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md) | Zero-credential discovery, method escalation, coverage control | Exhausting the anonymous surface and preventing premature closure |
 
-### Comparative Summary of Operational Modes
+### Domain guides
 
-```text
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           BLACKHEART FRAMEWORK                           │
-└─────────────────────────────────────────────────────────────────────────┘
-                                     │
-         ┌───────────────────────────┼───────────────────────────┐
-         ▼                           ▼                           ▼
-┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
-│ SECURITY AUDIT  │         │ RESEARCH MODE   │         │ DELIVERY MODE   │
-├─────────────────┤         ├─────────────────┤         ├─────────────────┤
-│ • Attack Surface│         │ • Research Loop │         │ • Price/Cart    │
-│ • Technical Vulns│        │ • Trust Bounds  │         │ • Webhooks/Keys │
-│ • Mobile/APK    │         │ • Auth/API Authz│         │ • Entitlements  │
-│ • Exploit Chain │         │ • Hypothesis Loop│        │ • File Hashes   │
-└─────────────────┘         └─────────────────┘         └─────────────────┘
-```
+Focused references for specific assessment concerns.
+
+| Guide | Covers |
+|---|---|
+| [`OPERATING-RULES.md`](docs/guides/OPERATING-RULES.md) | Behavioural rules, non-fabrication, safety constraints |
+| [`SCOPE.md`](docs/guides/SCOPE.md) | Target intake schema, authorization verification, scope hierarchy |
+| [`WORKFLOW.md`](docs/guides/WORKFLOW.md) | The 13-phase assessment lifecycle |
+| [`EVIDENCE.md`](docs/guides/EVIDENCE.md) | Evidence hierarchy, chain of custody, redaction |
+| [`DECISION-MATRIX.md`](docs/guides/DECISION-MATRIX.md) | **Finding classification rules** — read this before writing a report |
+| [`AUTH-AUTHZ.md`](docs/guides/AUTH-AUTHZ.md) | Authentication lifecycle, BOLA/IDOR, RBAC testing |
+| [`BUSINESS-LOGIC.md`](docs/guides/BUSINESS-LOGIC.md) | Workflow skipping, races, state-machine violations |
+| [`WEB-API-TESTING.md`](docs/guides/WEB-API-TESTING.md) | Endpoint discovery, parameter tampering, API testing |
+| [`ANDROID-TESTING.md`](docs/guides/ANDROID-TESTING.md) | APK/AAB, WebView, intent and IPC security |
+| [`PAYMENT-PREMIUM-TESTING.md`](docs/guides/PAYMENT-PREMIUM-TESTING.md) | Payment gateways, coupons, entitlement validation |
+| [`DIGITAL-FILE-VALIDATION.md`](docs/guides/DIGITAL-FILE-VALIDATION.md) | Real artifact verification, SHA-256, evidence handling |
+| [`TOOL-AND-ENVIRONMENT.md`](docs/guides/TOOL-AND-ENVIRONMENT.md) | Capability discovery and tool-honesty policy |
+| [`REPORTING.md`](docs/guides/REPORTING.md) | Report structure and writing standards |
+
+### Templates and examples
+
+| File | Purpose |
+|---|---|
+| [`templates/FINDING.md`](templates/FINDING.md) | Individual finding record |
+| [`templates/TEST-LOG.md`](templates/TEST-LOG.md) | Hypothesis/execution journal |
+| [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md) | Full assessment report skeleton |
+| [`examples/NEW-PROJECT-BOOTSTRAP.md`](examples/NEW-PROJECT-BOOTSTRAP.md) | Engagement bootstrap prompt |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | Authoritative flat index of every document |
 
 ---
 
-## 🏛️ Framework Architecture & File Structure
-
-The framework is organized into modular documentation, operating rules, workflows, templates, and bootstrap examples:
+## Repository Structure
 
 ```text
 .
-├── README.md                           # Main repository documentation & guide (this file)
-├── AGENT.md                            # Master agent system instructions & execution standard
-├── FILE-INDEX.txt                      # Complete repository documentation index
-├── SECURITY-AUDIT.md                   # Core Mode 1: Comprehensive security audit framework
-├── SECURITY-RESEARCH-MODE.md          # Core Mode 2: Research methodology & execution loop
-├── DIGITAL-ASSET-DELIVERY-MODE.md      # Core Mode 3: Payment, entitlement & asset delivery audit
-├── ZERO-CREDENTIAL-ESCALATION-MODE.md  # Core Mode 4: Zero-credential discovery, method escalation & coverage control
+├── README.md                          # This file — project overview and navigation
+├── AGENT.md                           # Master agent instruction and execution standard
+├── FILE-INDEX.txt                     # Authoritative flat index of all documents
+├── LICENSE                            # MIT License
+├── AUTHOR                             # Authorship and third-party attribution
+├── CHANGELOG.md                       # Version history
+├── CONTRIBUTING.md                    # Contribution guidelines
+├── CODE_OF_CONDUCT.md                 # Contributor Covenant 2.1
+├── SECURITY.md                        # Security policy and responsible-use policy
 │
-└── BLACKHEART-AGENT-DOCUMENTATION/    # Extracted Technical Guides & Templates
-    ├── README.md                       # Documentation package introduction
-    │
-    ├── docs/                           # Focused technical domain guides
-    │   ├── ANDROID-TESTING.md          # Android APK/AAB, WebViews, Intent, & IPC security
-    │   ├── AUTH-AUTHZ.md               # Authentication lifecycle, BOLA/IDOR, & RBAC testing
-    │   ├── BUSINESS-LOGIC.md           # Workflow reordering, race conditions, & state machines
-    │   ├── DECISION-MATRIX.md          # Finding classification standard & status rules
-    │   ├── DIGITAL-FILE-VALIDATION.md  # Artifact hash calculation & evidence handling
-    │   ├── EVIDENCE.md                 # Raw traffic capture, redaction, & evidence standard
-    │   ├── OPERATING-RULES.md          # Behavioral safety rules & scope constraints
-    │   ├── PAYMENT-PREMIUM-TESTING.md  # Payment gateways, coupons, & entitlement validation
-    │   ├── REPORTING.md                # Structure for reporting findings & executive summaries
-    │   ├── SCOPE.md                    # Target intake schema & authorization verification
-    │   ├── TOOL-AND-ENVIRONMENT.md     # Capability discovery & tool-honesty policy
-    │   ├── WEB-API-TESTING.md          # Web app, REST, GraphQL, & API vulnerability testing
-    │   └── WORKFLOW.md                 # End-to-end assessment lifecycle
-    │
-    ├── examples/                       # Reference examples & bootstrapping guides
-    │   └── NEW-PROJECT-BOOTSTRAP.md    # Guide for initiating testing on a new target
-    │
-    └── templates/                      # Standardized markdown report templates
-        ├── FINAL-REPORT.md             # Complete executive & technical assessment report
-        ├── FINDING.md                  # Individual vulnerability finding template
-        └── TEST-LOG.md                 # Operational test log & execution journal template
+├── docs/
+│   ├── README.md                      # Documentation package guide
+│   ├── modes/                         # Core operational modes
+│   │   ├── SECURITY-AUDIT.md
+│   │   ├── SECURITY-RESEARCH-MODE.md
+│   │   ├── DIGITAL-ASSET-DELIVERY-MODE.md
+│   │   └── ZERO-CREDENTIAL-ESCALATION-MODE.md
+│   └── guides/                        # Domain guides
+│       ├── ANDROID-TESTING.md
+│       ├── AUTH-AUTHZ.md
+│       ├── BUSINESS-LOGIC.md
+│       ├── DECISION-MATRIX.md
+│       ├── DIGITAL-FILE-VALIDATION.md
+│       ├── EVIDENCE.md
+│       ├── OPERATING-RULES.md
+│       ├── PAYMENT-PREMIUM-TESTING.md
+│       ├── REPORTING.md
+│       ├── SCOPE.md
+│       ├── TOOL-AND-ENVIRONMENT.md
+│       ├── WEB-API-TESTING.md
+│       └── WORKFLOW.md
+│
+├── examples/
+│   └── NEW-PROJECT-BOOTSTRAP.md       # Engagement bootstrap prompt
+│
+└── templates/
+    ├── FINAL-REPORT.md                # Assessment report skeleton
+    ├── FINDING.md                     # Finding record template
+    └── TEST-LOG.md                    # Test journal template
 ```
 
 ---
 
-## 📚 Complete Documentation Index
+## Quick Start
 
-### Core Agent Instructions & Modes
-- **[`AGENT.md`](./AGENT.md)**: Master agent instruction manual detailing mission lifecycle, scope intake, evidence taxonomy, and quality controls.
-- **[`FILE-INDEX.txt`](./FILE-INDEX.txt)**: Plain-text list index of all framework documentation files.
-- **[`SECURITY-AUDIT.md`](./SECURITY-AUDIT.md)**: Full-spectrum adversarial vulnerability assessment framework.
-- **[`SECURITY-RESEARCH-MODE.md`](./SECURITY-RESEARCH-MODE.md)**: Research-oriented testing methodology for structured discovery.
-- **[`DIGITAL-ASSET-DELIVERY-MODE.md`](./DIGITAL-ASSET-DELIVERY-MODE.md)**: Focused guide for auditing e-commerce, digital products, and file distribution platforms.
-- **[`ZERO-CREDENTIAL-ESCALATION-MODE.md`](./ZERO-CREDENTIAL-ESCALATION-MODE.md)**: Zero-credential attack-surface discovery, continuous adversarial method escalation, and the gap-closure coverage-control engine.
+### For a new engagement
 
-### Deep-Dive Domain Guides (`/docs`)
-- **[`docs/ANDROID-TESTING.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/ANDROID-TESTING.md)**: Static/dynamic Android assessment (Manifest, exported components, WebViews, deep links, local storage).
-- **[`docs/AUTH-AUTHZ.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/AUTH-AUTHZ.md)**: Authentication state confusion, token handling, BOLA/IDOR, and vertical/horizontal privilege escalation.
-- **[`docs/BUSINESS-LOGIC.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/BUSINESS-LOGIC.md)**: Workflow skipping, race conditions, state-machine violations, and limit bypasses.
-- **[`docs/DECISION-MATRIX.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/DECISION-MATRIX.md)**: Status classification rules (`CONFIRMED`, `PARTIALLY CONFIRMED`, `UNVERIFIED`, `NOT TESTED`, `NOT VULNERABLE`, `OUT OF SCOPE`).
-- **[`docs/DIGITAL-FILE-VALIDATION.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/DIGITAL-FILE-VALIDATION.md)**: Real artifact verification (SHA-256, byte count, MIME validation).
-- **[`docs/EVIDENCE.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/EVIDENCE.md)**: Raw request/response capture, redaction standards, and evidence chain of custody.
-- **[`docs/OPERATING-RULES.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/OPERATING-RULES.md)**: Safety guidelines, non-fabrication rules, and scope restriction rules.
-- **[`docs/PAYMENT-PREMIUM-TESTING.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/PAYMENT-PREMIUM-TESTING.md)**: Price manipulation, coupon stacking, order-ID substitution, and webhook replay.
-- **[`docs/REPORTING.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/REPORTING.md)**: Standardized rules for drafting high-impact technical reports.
-- **[`docs/SCOPE.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/SCOPE.md)**: Intake record schema for target assets, environments, and boundaries.
-- **[`docs/TOOL-AND-ENVIRONMENT.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/TOOL-AND-ENVIRONMENT.md)**: Capability discovery and tool-honesty requirements.
-- **[`docs/WEB-API-TESTING.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/WEB-API-TESTING.md)**: Endpoint discovery, parameter tampering, and API vulnerability testing.
-- **[`docs/WORKFLOW.md`](./BLACKHEART-AGENT-DOCUMENTATION/docs/WORKFLOW.md)**: Phase-by-phase assessment workflow from scope intake to final reporting.
+1. **Establish authorization first.** A public URL, a shared link, a hosting
+   tenancy, or a similar name is *not* authorization. Record the scope, the
+   authorized party, the environment, and the prohibited actions.
 
-### Report Templates & Bootstrapping (`/templates` & `/examples`)
-- **[`templates/FINAL-REPORT.md`](./BLACKHEART-AGENT-DOCUMENTATION/templates/FINAL-REPORT.md)**: Template for compiling complete security assessment reports.
-- **[`templates/FINDING.md`](./BLACKHEART-AGENT-DOCUMENTATION/templates/FINDING.md)**: Template for individual vulnerability documentation.
-- **[`templates/TEST-LOG.md`](./BLACKHEART-AGENT-DOCUMENTATION/templates/TEST-LOG.md)**: Journal template for tracking hypotheses, inputs, and results.
-- **[`examples/NEW-PROJECT-BOOTSTRAP.md`](./BLACKHEART-AGENT-DOCUMENTATION/examples/NEW-PROJECT-BOOTSTRAP.md)**: Step-by-step guide for bootstrapping an assessment on a new project.
+2. **Read [`AGENT.md`](AGENT.md)** end to end. It is the master instruction.
 
----
+3. **Choose your mode.** Technical breadth → `SECURITY-AUDIT.md`. Unfamiliar
+   target → `SECURITY-RESEARCH-MODE.md`. Paid/digital products →
+   `DIGITAL-ASSET-DELIVERY-MODE.md`. Always pair with
+   `ZERO-CREDENTIAL-ESCALATION-MODE.md` for the anonymous surface and for
+   coverage control.
 
-## 🔄 Assessment Workflow & Operating Model
+4. **Bootstrap the engagement** using
+   [`examples/NEW-PROJECT-BOOTSTRAP.md`](examples/NEW-PROJECT-BOOTSTRAP.md).
 
-Every assessment executed under the BLACKHEART framework follows a strict, 5-stage lifecycle:
+5. **Record as you go.** Use [`templates/TEST-LOG.md`](templates/TEST-LOG.md)
+   per hypothesis. A test with no record cannot later be distinguished from a
+   test that was never run.
+
+6. **Classify honestly** using
+   [`docs/guides/DECISION-MATRIX.md`](docs/guides/DECISION-MATRIX.md).
+
+7. **Report** against [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md)
+   and [`docs/guides/REPORTING.md`](docs/guides/REPORTING.md).
+
+### Writing a finding
+
+Every finding uses the same 17-field structure:
 
 ```text
-[1. Scope & Intake] ➔ [2. Discovery & Mapping] ➔ [3. Hypothesis & Testing] ➔ [4. Chain & Validate] ➔ [5. Report & Remediate]
+Finding ID · Title · Status · Severity · Affected Asset
+Security Property · Preconditions · Normal Workflow · Attack Hypothesis
+Reproduction · Observed Evidence · State Before/After
+Security Boundary Failure · Root Cause · Actual Impact
+Attack Chain · Artifact Evidence · Remediation · Regression Test · Limitations
 ```
 
-1. **Scope & Authorization Intake**: Verify authorization boundaries, define target assets (domains, endpoints, APKs), and establish synthetic test identities.
-2. **Environment Discovery & Mapping**: Discover active tools, enumerate endpoints/components, map trust boundaries, and catalog API paths.
-3. **Hypothesis-Driven Testing**: Formulate explicit attack hypotheses (e.g., "Can Order ID substitution grant unauthorized access?") and test systematically.
-4. **Validation & Chain Analysis**: Confirm vulnerabilities with direct request/response proof, test for chained impacts, and calculate SHA-256 hashes of delivered artifacts.
-5. **Documentation & Reporting**: Compile findings into structured reports using standardized evidence taxonomies and root-cause remediations.
+### The status taxonomy
+
+Use these terms precisely. They are not interchangeable.
+
+| Status | Meaning |
+|---|---|
+| `CONFIRMED` | Direct evidence demonstrates the weakness **and** its stated impact |
+| `PARTIALLY CONFIRMED` | The weakness is demonstrated; a material link in the impact chain is not |
+| `UNVERIFIED` | Credible hypothesis; evidence is insufficient |
+| `NOT TESTED` | Testing could not or did not occur — **state the blocking capability** |
+| `NOT VULNERABLE` | Tested with sufficient coverage; the control held **under the tested conditions** |
+| `OUT OF SCOPE` | Excluded by authorization or assessment boundary |
+| `BLOCKED BY ENVIRONMENT` | The required tool, runtime, or account was unavailable |
+| `INCONCLUSIVE` | Testing was performed but the result is ambiguous |
+
+> Never write `SAFE`, `SECURE`, or `NO VULNERABILITIES` without scoping the
+> statement to the exact condition tested. "Not demonstrated under tested
+> conditions" is a defensible claim. "Secure" is not.
 
 ---
 
-## 🛡️ Safety, Scope & Responsible Use
+## Technologies & Methodologies
 
-- **Strict Authorization Required**: BLACKHEART methodology is intended exclusively for authorized security research, penetration testing, and defensive auditing.
-- **Third-Party Infrastructure Protection**: Discovered dependencies (CDNs, payment processors, cloud storage) must not be tested unless explicitly authorized.
-- **Minimization of Real Data Impact**: When validating against production environments, prefer synthetic identities and canary records. Never dump or exfiltrate sensitive PII.
-- **Non-Destructive Execution**: Do not perform destructive actions, denial of service, or unauthorized account modifications.
+This repository documents methodology, not an implementation stack. The
+following are the domains and techniques the framework actually addresses.
+
+**Assessment domains**
+
+- Web application security · REST/JSON API security · GraphQL · WebSocket & SSE
+- Authentication lifecycle (registration, login, OAuth, OTP/MFA, recovery,
+  session invalidation, token lifecycle)
+- Authorization: BOLA/IDOR, BFLA, horizontal and vertical privilege escalation,
+  field-level authorization, role/privilege escalation matrices
+- Business logic and state-machine analysis
+- Payment, entitlement, and premium-feature integrity
+- Digital-product delivery, signed URLs, and real-artifact validation
+- Android/APK/AAB: manifest, exported components, deep links, WebView, JavaScript
+  bridges, IPC, network security configuration
+- OSINT and attack-surface reconnaissance
+- Client-side trust, storage, cache, and stale-state analysis
+- Secret discovery and classification
+- Rate limiting, replay, race conditions, and time/expiration logic
+
+**Techniques**
+
+- Differential testing across identities and roles
+- Identity-confusion and object-substitution testing
+- Mass assignment / property pollution
+- Parser, content-type, and method-override differentials
+- Proof-strength classification and attack-chaining
+- Evidence chain-of-custody and forensic artifact validation
+
+**Practitioner tooling referenced as methodology** (availability is always
+verified and reported, never assumed): `curl`, `git`, `openssl`, `jq`,
+`python3`, proxy/interceptor tooling, `adb`, `apktool`, `JADX`, `Frida`.
 
 ---
 
-## 📄 License & Credits
+## Responsible Use
 
-- **Framework**: BLACKHEART Adversarial Security Agent Documentation
+> **This repository grants no authorization to test any system.**
+
+The framework is intended exclusively for systems you **own**, systems you have
+**written permission** to test, and explicitly authorized lab, staging, or
+sandbox environments.
+
+**Prohibited in all engagements:**
+
+- Testing systems you do not own or have written permission to test
+- Attacking third-party SaaS, CDN, payment-provider, or cloud infrastructure
+  discovered in client code
+- Credential theft, brute force, phishing, or session hijacking
+- Denial-of-service, stress testing, or deliberate service degradation
+- Real payments, deliberate financial loss, or bulk extraction of personal data
+- Destructive modification of production data
+- Fabricated evidence of any kind
+
+Unauthorized access to computer systems is unlawful in most jurisdictions.
+The techniques in this repository are published for **defensive** and
+**authorized** use.
+
+Full policy: **[`SECURITY.md`](SECURITY.md)**
+
+---
+
+## Contributing
+
+Contributions are welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for scope,
+rules, and the required `FILE-INDEX.txt` update when adding or moving a document.
+
+Please read the hard rules before submitting: no fabrication, no secrets, no
+removal of original content without justification, and precise use of the
+status taxonomy.
+
+Participation is governed by the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security Reports
+
+Defects in the methodology — anything that could lead a practitioner to an
+incorrect or unsafe conclusion — are prioritised. Report privately; do **not**
+open a public issue containing live secrets or real target data.
+See [`SECURITY.md`](SECURITY.md).
+
+---
+
+## Author
+
+**Roshan** — <https://github.com/devara1983ntr>
+
+See [`AUTHOR`](AUTHOR) for authorship and third-party attribution.
+This repository contains no third-party source code, vendored libraries, or
+external datasets.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+The license covers the documentation in this repository only and **confers no
+authorization to test any system**. See [`SECURITY.md`](SECURITY.md).
+
+## Disclaimer
+
+Provided "as is", without warranty of any kind. The author is not liable for
+any use of, or damage arising from, the use of this material. Users are
+responsible for ensuring they operate within the law and within a valid
+authorization scope.

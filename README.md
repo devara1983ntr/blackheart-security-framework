@@ -130,9 +130,9 @@ a backdoor, covert channel, credential exfiltration, or safety override. Load
 | [`skills/README.md`](skills/README.md) | Integration guide, loading, agent allowlists |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | Mandatory wrapper: authorization gate, status conversion, severity ceiling |
 | [`skills/VENDOR.md`](skills/VENDOR.md) | Full provenance, complete skill index, audit record, adjudicated findings |
-| [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — reference only, deliberately not installed |
+| [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — all 30 categories vendored as a reference index, nothing executed |
 | [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Validated configuration covering all 374 skill names |
-| [`.github/scripts/validate.py`](.github/scripts/validate.py) | Six-check validation gate, run on every push and pull request |
+| [`.github/scripts/validate.py`](.github/scripts/validate.py) | Seven-check validation gate, run on every push and pull request |
 | [`.github/workflows/upstream-sync.yml`](.github/workflows/upstream-sync.yml) | Daily upstream drift detection — opens a PR, never merges |
 
 ### Templates and examples
@@ -174,13 +174,13 @@ a backdoor, covert channel, credential exfiltration, or safety override. Load
 │   ├── conformance/SKILL.md           # Mandatory wrapper for all vendored skills
 │   ├── third-party/claude-skills/     # 388 vendored skills across 20 groups
 │   │   └── <group>/skills/<name>/     #   SKILL.md + _BLACKHEART-ADAPTER.md
-│   ├── catalog/                       # Third-party catalogue — reference only
+│   ├── catalog/                       # Complete third-party catalogue index (30 categories)
 │   └── licenses/                      # Preserved upstream licences
 │
 ├── .github/
 │   ├── UPSTREAM-MANIFEST.json         # Per-skill SHA-256 against the pinned commit
 │   ├── secret-allowlist.json          # Verified placeholders, each justified
-│   ├── scripts/validate.py            # Six-check validation gate
+│   ├── scripts/validate.py            # Seven-check validation gate
 │   ├── scripts/sync_upstream.py       # Drift detection and re-vendoring
 │   └── workflows/                     # CI on push/PR + daily upstream sync
 │

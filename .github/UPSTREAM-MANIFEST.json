@@ -1558,5 +1558,142 @@
    "sha256": "af694607f91623a86fd642cadea4846a24058cb35ae7ea59504e1d251e65cddf",
    "files": 8
   }
+ },
+ "catalog": {
+  "upstream_repo": "https://github.com/VoltAgent/awesome-openclaw-skills",
+  "upstream_commit": "f274daa9d24c0803c8f94a4630aa4922ca4b950e",
+  "upstream_date": "2026-09-28",
+  "licence": "MIT (c) 2026 VoltAgent",
+  "note": "Verbatim reference index. No code is executed from this source. Per-file SHA-256 lets the catalogue be verified without re-fetching upstream.",
+  "files": {
+   "skills/catalog/categories/ai-and-llms.md": {
+    "sha256": "7a8a87b581369e01bf9689690bd88e8bb99c7ae9ba8a01ac96ced05a161382c5",
+    "bytes": 24238
+   },
+   "skills/catalog/categories/apple-apps-and-services.md": {
+    "sha256": "9a0cfe172e0f3cdfa4c3e93e56eb6b4e9b66b3ad987c670a3edd643006e293c0",
+    "bytes": 6027
+   },
+   "skills/catalog/categories/browser-and-automation.md": {
+    "sha256": "4ad43439607a57090afa8a0811c0aded433f623b24132e8b75c2771413038a83",
+    "bytes": 48192
+   },
+   "skills/catalog/categories/calendar-and-scheduling.md": {
+    "sha256": "92801e1fdc82105bc024a172832e2ee613a46e2461ad3a3f9a98aeb32ebc3669",
+    "bytes": 9623
+   },
+   "skills/catalog/categories/clawdbot-tools.md": {
+    "sha256": "0cf34d991441b56889ed3fa98617d82f5a33eaefe4315eb79f7bb378e6c8feeb",
+    "bytes": 4760
+   },
+   "skills/catalog/categories/cli-utilities.md": {
+    "sha256": "e9ac343a8229e51e71792083473d36201f1beec4538528e3049687855fa136a3",
+    "bytes": 26942
+   },
+   "skills/catalog/categories/coding-agents-and-ides.md": {
+    "sha256": "f19070f688a810445b60ff4a4ffd001e90f863e2cdf3d9d593b6b20bf7ede958",
+    "bytes": 187027
+   },
+   "skills/catalog/categories/communication.md": {
+    "sha256": "f2724c7ba100ec770f21d88a01e6d1f14440e8f3ffee0a6af72c76778636f270",
+    "bytes": 21542
+   },
+   "skills/catalog/categories/data-and-analytics.md": {
+    "sha256": "7efebd825020cf785df3a13ff3158f0084854f9ce47850ec773917f79bf30a11",
+    "bytes": 4809
+   },
+   "skills/catalog/categories/devops-and-cloud.md": {
+    "sha256": "57a598821fbd82f4ff0cdaea27664cd022b354809a1b07f72f8b28c7a31dcb2b",
+    "bytes": 58073
+   },
+   "skills/catalog/categories/gaming.md": {
+    "sha256": "f57bfa94d4a9e446df8c6c27e271aefab54ecd0bf3bae20e30382e06b169bafc",
+    "bytes": 3429
+   },
+   "skills/catalog/categories/git-and-github.md": {
+    "sha256": "8b895e67e310607cb193c6923c88c5c9e4f3f52a592f0714d5f983ad6968efd1",
+    "bytes": 24161
+   },
+   "skills/catalog/categories/health-and-fitness.md": {
+    "sha256": "63721c6dae7098e4ccaa5b6795139193043a17021ca4c138cec7a44e27ba17ae",
+    "bytes": 12910
+   },
+   "skills/catalog/categories/image-and-video-generation.md": {
+    "sha256": "3a8e26582b3ba6b14811df76271fe1401c9bde132c8e091b918a9261edbe7b81",
+    "bytes": 25730
+   },
+   "skills/catalog/categories/ios-and-macos-development.md": {
+    "sha256": "28efa0a53d6a747e9f24b119d91b975163500d64af4fdce0f8af52107281e279",
+    "bytes": 4347
+   },
+   "skills/catalog/categories/marketing-and-sales.md": {
+    "sha256": "74c6bc8b140d3088e61e103bb3ce045fddf4ebd16aea01e55b4c73f171698143",
+    "bytes": 16580
+   },
+   "skills/catalog/categories/media-and-streaming.md": {
+    "sha256": "6aac31d95fdcb10cea4fa717bb8c4dab3ef3bfc6bcdbddaea2df718cfd31fea6",
+    "bytes": 12357
+   },
+   "skills/catalog/categories/moltbook.md": {
+    "sha256": "b2de9d464e0ad6ed5e3321290cbddd6a9fa19ba58d0141afa1a1e46bc3de4df2",
+    "bytes": 4433
+   },
+   "skills/catalog/categories/notes-and-pkm.md": {
+    "sha256": "9cf77ce254d029835aae5d37c1782a52f79f794f288bd2df18aa56b71ce318ef",
+    "bytes": 9828
+   },
+   "skills/catalog/categories/pdf-and-documents.md": {
+    "sha256": "0a0912779b0acae387bd68f2f7e8cbcc00d0e0e8004b0ee7e34582ad8422ac50",
+    "bytes": 15277
+   },
+   "skills/catalog/categories/personal-development.md": {
+    "sha256": "fba28b91388461bc64dc3adb0c6f25d0a3662677fd9ac4456f8b15cb85ad5e6e",
+    "bytes": 7130
+   },
+   "skills/catalog/categories/productivity-and-tasks.md": {
+    "sha256": "3f21799c846de2eae7013156ef552f3fecb64d54e80d0d14bf8d220d4fa005f5",
+    "bytes": 32087
+   },
+   "skills/catalog/categories/search-and-research.md": {
+    "sha256": "74e6e6683336776489304e61aea309d1d4441c7b9e78fcc3ebfd95ecd6607cd9",
+    "bytes": 53750
+   },
+   "skills/catalog/categories/security-and-passwords.md": {
+    "sha256": "1ce434f463a1e4894ccdd5dcbc18a7079592d22a59b2c5c2bac2aed2e622a55a",
+    "bytes": 7572
+   },
+   "skills/catalog/categories/self-hosted-and-automation.md": {
+    "sha256": "353304f57c998c5a27adefdb8e2f3bb6cbaebd7a4e0c71e1f00c5d5233bf9772",
+    "bytes": 4370
+   },
+   "skills/catalog/categories/shopping-and-e-commerce.md": {
+    "sha256": "e5f73f63dd5fcc993ce877dbd4599f14bac3396d1b1a9326fc5e00825cafe7c2",
+    "bytes": 6464
+   },
+   "skills/catalog/categories/smart-home-and-iot.md": {
+    "sha256": "dbe2cdd756ed8f8bfef8e481f46f26fcf375724621b9d6c45c2a5b6ea0984a24",
+    "bytes": 5446
+   },
+   "skills/catalog/categories/speech-and-transcription.md": {
+    "sha256": "35361435f0c59dbf92fac9890bfafbc6d6ade327cded787cab9343baf0e86856",
+    "bytes": 6110
+   },
+   "skills/catalog/categories/transportation.md": {
+    "sha256": "7602189b932af2d900ab372579fa64c06cee4888ebd28507e1ae43506b84e94b",
+    "bytes": 17187
+   },
+   "skills/catalog/categories/web-and-frontend-development.md": {
+    "sha256": "6486f6791420993b1b76552d598299790698081a89a1ac4791e7d1892d28a1e4",
+    "bytes": 143089
+   },
+   "skills/catalog/upstream-README.md": {
+    "sha256": "8b1632936b7cbd57dae27306562adedd163e47a7f0b4ac87a2618de62bd285fb",
+    "bytes": 135540
+   },
+   "skills/catalog/upstream-CONTRIBUTING.md": {
+    "sha256": "428e4c68cd455e7be31e6dfd89cd45850d3c31a541a5a98d832765683fbe021d",
+    "bytes": 3650
+   }
+  }
  }
 }

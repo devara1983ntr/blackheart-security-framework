@@ -5,7 +5,7 @@
 # A file that exists but is not listed here, or a listed path that does not
 # exist, fails CI.
 #
-# Total entries: 2894
+# Total entries: 2926
 
 .github/UPSTREAM-MANIFEST.json
 .github/scripts/sync_upstream.py
@@ -59,8 +59,40 @@ docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md
 examples/NEW-PROJECT-BOOTSTRAP.md
 skills/README.md
 skills/VENDOR.md
+skills/catalog/CATEGORY-INDEX.md
 skills/catalog/README.md
-skills/catalog/security-and-passwords.index.md
+skills/catalog/categories/ai-and-llms.md
+skills/catalog/categories/apple-apps-and-services.md
+skills/catalog/categories/browser-and-automation.md
+skills/catalog/categories/calendar-and-scheduling.md
+skills/catalog/categories/clawdbot-tools.md
+skills/catalog/categories/cli-utilities.md
+skills/catalog/categories/coding-agents-and-ides.md
+skills/catalog/categories/communication.md
+skills/catalog/categories/data-and-analytics.md
+skills/catalog/categories/devops-and-cloud.md
+skills/catalog/categories/gaming.md
+skills/catalog/categories/git-and-github.md
+skills/catalog/categories/health-and-fitness.md
+skills/catalog/categories/image-and-video-generation.md
+skills/catalog/categories/ios-and-macos-development.md
+skills/catalog/categories/marketing-and-sales.md
+skills/catalog/categories/media-and-streaming.md
+skills/catalog/categories/moltbook.md
+skills/catalog/categories/notes-and-pkm.md
+skills/catalog/categories/pdf-and-documents.md
+skills/catalog/categories/personal-development.md
+skills/catalog/categories/productivity-and-tasks.md
+skills/catalog/categories/search-and-research.md
+skills/catalog/categories/security-and-passwords.md
+skills/catalog/categories/self-hosted-and-automation.md
+skills/catalog/categories/shopping-and-e-commerce.md
+skills/catalog/categories/smart-home-and-iot.md
+skills/catalog/categories/speech-and-transcription.md
+skills/catalog/categories/transportation.md
+skills/catalog/categories/web-and-frontend-development.md
+skills/catalog/upstream-CONTRIBUTING.md
+skills/catalog/upstream-README.md
 skills/conformance/SKILL.md
 skills/licenses/awesome-openclaw-skills-LICENSE
 skills/licenses/claude-skills-LICENSE

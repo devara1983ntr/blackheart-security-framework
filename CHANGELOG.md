@@ -19,7 +19,8 @@ Nothing yet.
 ## [2.2.0] — 2026-09-28
 
 Expands Layer 5 from a curated 8 skills to the **complete** upstream catalogue,
-and adds continuous verification.
+vendors the **full** third-party discovery index, and adds continuous
+verification.
 
 ### Changed
 
@@ -44,17 +45,26 @@ and adds continuous verification.
   declarative gate — JSON5 cannot carry functions.
 - **`README.md`** no longer claims the repository contains no third-party code.
   It does: 388 skills, under MIT, with attribution preserved.
+- **Third-party catalogue: 1 category → all 30.** The `awesome-openclaw-skills`
+  index had been vendored as a single category (54 URLs). It is now vendored in
+  full — 30 category files, the upstream README, and the contribution rules, 33
+  files and ~5,270 unique URLs, all byte-identical to `f274daa`. Still
+  reference-only: nothing from it is executed. A per-category inventory is in
+  `skills/catalog/CATEGORY-INDEX.md`.
 
 ### Added
 
 - **388 `_BLACKHEART-ADAPTER.md` files** — one per skill, recording provenance,
   audit verdict, per-category adjudication, known defects, and five conditions
   of use.
-- **`.github/scripts/validate.py`** — a six-check gate: adapter coverage,
-  vendored integrity, link resolution, file-index completeness, secret
-  scanning, and config validation.
-- **`.github/UPSTREAM-MANIFEST.json`** — a SHA-256 per skill, so drift is
-  detectable without re-fetching upstream.
+- **`.github/scripts/validate.py`** — a seven-check gate: adapter coverage,
+  skill integrity, catalogue integrity, link resolution, file-index
+  completeness, secret scanning, and config validation. Every check was
+  canary-tested: tampering with a vendored skill, tampering with a vendored
+  catalogue file, deleting an adapter, planting a realistic token, breaking the
+  config, and removing an index entry each fail the build.
+- **`.github/UPSTREAM-MANIFEST.json`** — a SHA-256 per skill *and* per vendored
+  catalogue file, so drift in either source is detectable without re-fetching.
 - **`.github/secret-allowlist.json`** — seven verified placeholders, each with a
   written reason. The scan was canary-tested: a realistic token still fails the
   build.
@@ -75,6 +85,16 @@ Recorded as invariant 14.
 
 ### Fixed
 
+- **The validation gate no longer trips over its own bytecode.** A local Python
+  run created `__pycache__/*.pyc`, which the file walker treated as unindexed
+  content and failed the build. Bytecode is now excluded.
+- **A missing `json5` module produced a raw `ModuleNotFoundError`** instead of a
+  usable message. It now explains what to install and why stdlib `json` cannot
+  read a JSON5 file.
+- **Verbatim catalogue files were being treated as Blackhearts-authored** by the
+  link checker, so upstream's own repo-relative links failed the build. Vendored
+  paths are now declared explicitly and shared with the CI link job, so the two
+  cannot drift apart.
 - **Two of the three previously-accepted dangling links** in
   `security-pen-testing` now resolve, because the full mirror contains the
   sibling skills they pointed at. The third, a repo-root-relative reference,

@@ -4,26 +4,43 @@
 **Source:** <https://github.com/VoltAgent/awesome-openclaw-skills> @ `f274daa9d24c0803c8f94a4630aa4922ca4b950e`
 **Licence:** MIT — Copyright (c) 2026 VoltAgent · [`../licenses/awesome-openclaw-skills-LICENSE`](../licenses/awesome-openclaw-skills-LICENSE)
 
-> **No skill from this source is vendored, and none should be installed from
-> it automatically.** This file is a reference record. The full category index
-> is preserved verbatim at
-> [`security-and-passwords.index.md`](security-and-passwords.index.md).
+> **No skill from this source is vendored as executable content, and none
+> should be installed from it automatically.** This directory is a **complete
+> reference record** of the catalogue, preserved verbatim so nothing is lost and
+> every entry stays searchable.
 
 ## What this source actually is
 
-`awesome-openclaw-skills` contains **zero skills**. It is a discovery index:
+`awesome-openclaw-skills` contains **zero skills**. It is a discovery index.
+
+## What is vendored here
+
+The **entire** catalogue, byte-for-byte, so that "use everything" is honoured
+for the index even though none of it may be executed:
 
 ```text
-README.md            1,265 lines
-categories/*.md      30 category files
-SKILL.md files       0
-Unique URLs          ~5,265
-Distinct registries  clawskills.sh, clawhub.ai
+upstream-README.md          Master index              (862 URLs)
+upstream-CONTRIBUTING.md    Upstream contribution rules
+categories/*.md             All 30 category files     (5,270 unique URLs)
+README.md                   This policy document (Blackhearts-authored)
+```
+
+```text
+Upstream layout            Count
+README.md                  1,265 lines
+categories/*.md            30 category files
+SKILL.md files             0
+Unique URLs                5,270
+Distinct registries        clawskills.sh, clawhub.ai
 ```
 
 Every entry is a link to a skill hosted elsewhere by an independent publisher.
+All 33 files here are verified byte-identical to upstream at
+`f274daa9d24c0803c8f94a4630aa4922ca4b950e`. Vendoring an index of links is
+risk-free — nothing here executes. **Resolving** those links is what carries
+risk, and that is what the vetting process below governs.
 
-## Why nothing was integrated from it
+## Why nothing is executed from it
 
 Resolving those links means installing executable content from thousands of
 unrelated publishers, and it would contradict this framework's own supply-chain
@@ -40,7 +57,7 @@ No transitive control   each entry is an independent trust decision
 [`../../docs/guides/SUPPLY-CHAIN.md`](../../docs/guides/SUPPLY-CHAIN.md) holds
 that reachability and provenance decide whether something is a finding or a
 non-issue. Here, neither is established for any entry. Under the framework's
-own rules, every one of the 5,265 is **`UNVERIFIED` at best, and `NOT TESTED`
+own rules, every one of the 5,270 is **`UNVERIFIED` at best, and `NOT TESTED`
 in practice** — an index is not an assessment.
 
 ### The category that decides it
@@ -130,7 +147,7 @@ Reviewable           yes, statically scanned and the findings verified
 Repeatable           yes, re-vendor by commit hash
 ```
 
-A catalogue of 5,265 unpinned external links has none of these. That is the
+A catalogue of 5,270 unpinned external links has none of these. That is the
 difference between integrating a dependency and accumulating links, and it is
 the reason this directory is a reference rather than a source.
 

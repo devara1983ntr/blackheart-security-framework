@@ -16,23 +16,36 @@ claim it.
 
 Licence texts are preserved verbatim in [`skills/licenses/`](licenses/).
 
-### 1.1 `awesome-openclaw-skills` — index only, deliberately not integrated
+### 1.1 `awesome-openclaw-skills` — complete index vendored, no code executed
 
-That repository contains **zero skills**. It is a curated list of ~5,265 external URLs pointing
-at skills hosted on third-party sites. Nothing from it is vendored, and no link in it is
-followed automatically.
+That repository contains **zero skills**. It is a curated list of ~5,270
+external URLs pointing at skills hosted on third-party sites.
 
-This is a deliberate divergence from a literal "use everything" instruction, and it is the one
-place where that instruction cannot be honoured without breaking the framework's own rules. The
-index points at unpinned, unaudited, externally hosted code — including credential managers —
-with no provenance chain and no way to diff what changed between two runs. Fetching it would
-mean importing unreviewed code with no version pin, which is precisely the supply-chain risk
-Blackhearts is built to catch.
+**The whole index is now vendored verbatim** at [`skills/catalog/`](catalog/):
+all 30 category files, the upstream README, and the upstream contribution
+rules — 33 files, all byte-identical to `f274daa`. Nothing from it is executed,
+and no link in it is followed automatically.
 
-It is vendored as a **reference index** at [`skills/catalog/`](catalog/), so nothing is lost and
-the catalogue stays searchable. Anything adopted from it must go through the eight-step vetting
-process in [`skills/catalog/README.md`](catalog/README.md): resolve the real source, pin a
-commit, audit, write an adapter, vendor, and register. See §7 for the current shortlist.
+```text
+upstream-README.md          master index
+upstream-CONTRIBUTING.md    contribution rules
+categories/*.md             all 30 categories, 5,210 unique URLs
+CATEGORY-INDEX.md           per-category entry counts (Blackhearts-authored)
+README.md                   the vetting policy (Blackhearts-authored)
+```
+
+Vendoring an index of links carries no execution risk, so the "don't miss
+anything" requirement is fully honoured here. What carries risk is *resolving*
+those links: the index points at unpinned, unaudited, externally hosted code —
+including credential managers — with no provenance chain and no way to diff what
+changed between two runs. Fetching it would mean importing unreviewed code with
+no version pin, which is precisely the supply-chain risk Blackhearts is built to
+catch.
+
+Anything adopted from it must go through the eight-step vetting process in
+[`skills/catalog/README.md`](catalog/README.md): resolve the real source, pin a
+commit, audit, write an adapter, vendor, and register. See §7 for the current
+shortlist.
 
 ---
 
@@ -702,10 +715,11 @@ Everything below is authored here, not vendored. It is the only content added to
 |---|---|
 | `claude-skills/**/_BLACKHEART-ADAPTER.md` (388 files) | Per-skill provenance, audit verdict, adjudication, and conditions of use. |
 | `.github/UPSTREAM-MANIFEST.json` | Per-skill SHA-256 against the pinned commit. |
-| `.github/scripts/validate.py` | The six-check validation gate. |
+| `.github/scripts/validate.py` | The seven-check validation gate. |
 | `.github/scripts/sync_upstream.py` | Drift detection and re-vendoring. |
 | `.github/secret-allowlist.json` | Seven verified placeholders, each justified. |
 | `.github/workflows/*.yml` | CI and upstream sync. |
+| `catalog/CATEGORY-INDEX.md` | Measured per-category entry counts for the vendored index. |
 
 ---
 
@@ -746,7 +760,7 @@ Before trusting any vendored skill in an engagement:
 2. Confirm the recorded upstream commit still matches `.github/UPSTREAM-MANIFEST.json`.
 3. Read `skills/conformance/SKILL.md`. It governs authorization, evidence status, and severity.
 4. Treat every tool result as `UNVERIFIED` until independently demonstrated.
-5. Run `python3 .github/scripts/validate.py` and require all six checks to pass.
+5. Run `python3 .github/scripts/validate.py` and require all seven checks to pass.
 
 **License summary.** Blackhearts is MIT. `claude-skills` is MIT © 2025 Alireza Rezvani.
 `awesome-openclaw-skills` is MIT © 2026 VoltAgent. Vendoring is permitted with attribution,

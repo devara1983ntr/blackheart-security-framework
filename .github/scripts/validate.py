@@ -57,10 +57,18 @@ class Result:
 
 
 def walk_files(root):
-    """Yield repo-relative paths of every tracked file, deterministically."""
+    """Yield repo-relative paths of every tracked file, deterministically.
+
+    Bytecode caches are skipped. They are build output, not repository content,
+    and a validator that trips over them trains people to ignore its output.
+    """
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d != ".git")
+        dirnames[:] = sorted(
+            d for d in dirnames if d not in (".git", "__pycache__")
+        )
         for name in sorted(filenames):
+            if name.endswith((".pyc", ".pyo")):
+                continue
             full = os.path.join(dirpath, name)
             yield os.path.relpath(full, REPO).replace(os.sep, "/")
 
@@ -147,6 +155,63 @@ def check_integrity(r):
     r.add("integrity", ok, detail)
 
 
+# Paths holding verbatim third-party content. Links inside these are upstream's
+# own repo-relative links, which do not all resolve in a partial vendoring.
+# They are reported as known defects and never auto-fixed, so the copy stays
+# byte-comparable to its source. Everything Blackhearts authors is enforced.
+VENDORED_PREFIXES = (
+    "skills/third-party/claude-skills/",
+    "skills/catalog/categories/",
+)
+VENDORED_FILES = (
+    "skills/catalog/upstream-README.md",
+    "skills/catalog/upstream-CONTRIBUTING.md",
+)
+
+
+def is_vendored(rel):
+    return rel.startswith(VENDORED_PREFIXES) or rel in VENDORED_FILES
+
+
+def check_catalog(r):
+    """The vendored catalogue index must stay byte-identical to its source.
+
+    It is a reference index, not executable content, but it is still third-party
+    material: if it is edited locally, the record of what upstream published is
+    no longer trustworthy. Same rule as the skill mirror, different source.
+    """
+    with open(MANIFEST) as fh:
+        man = json.load(fh)
+    cat = man.get("catalog")
+    if not cat:
+        r.add("catalog", False, "manifest has no catalogue section")
+        return
+    drift, missing = [], []
+    for rel, meta in cat["files"].items():
+        full = os.path.join(REPO, rel)
+        if not os.path.isfile(full):
+            missing.append(rel)
+            continue
+        with open(full, "rb") as fh:
+            if hashlib.sha256(fh.read()).hexdigest() != meta["sha256"]:
+                drift.append(rel)
+    on_disk = {p for p in walk_files(REPO)
+               if p.startswith("skills/catalog/categories/")
+               or p in ("skills/catalog/upstream-README.md",
+                        "skills/catalog/upstream-CONTRIBUTING.md")}
+    extra = sorted(on_disk - set(cat["files"]))
+    ok = not (drift or missing or extra)
+    detail = (f"{len(cat['files'])} catalogue files verified byte-identical to "
+              f"{cat['upstream_commit'][:7]}")
+    if drift:
+        detail += f"; DRIFT: {drift[:5]}"
+    if missing:
+        detail += f"; MISSING: {missing[:5]}"
+    if extra:
+        detail += f"; UNEXPECTED: {extra[:5]}"
+    r.add("catalog", ok, detail)
+
+
 def check_links(r):
     broken = []
     total = 0
@@ -154,10 +219,7 @@ def check_links(r):
         if not rel.endswith(".md"):
             continue
         full = os.path.join(REPO, rel)
-        # Only documentation this project authored is a link-integrity
-        # obligation. Vendored upstream markdown is left unmodified, so its
-        # broken links are reported as defects rather than silently fixed.
-        vendored = rel.startswith("skills/third-party/claude-skills/")
+        vendored = is_vendored(rel)
         with open(full, encoding="utf-8", errors="replace") as fh:
             body = fh.read()
         for _, target in MD_LINK.findall(body):
@@ -275,6 +337,13 @@ def frontmatter_name(skill_dir):
 def check_config(r):
     try:
         import json5
+    except ImportError:
+        r.add("config", False,
+              "cannot parse the example config: the 'json5' module is not installed. "
+              "Run `python3 -m pip install json5` (CI does this automatically). "
+              "The config is JSON5, not JSON — stdlib json cannot read it by design.")
+        return
+    try:
         with open(CONFIG) as fh:
             cfg = json5.load(fh)
     except Exception as exc:
@@ -312,6 +381,7 @@ def main():
     r = Result()
     check_adapters(r)
     check_integrity(r)
+    check_catalog(r)
     check_links(r)
     check_index(r)
     check_secrets(r)

@@ -49,7 +49,7 @@ skills/
 │           └── <skill>/
 │               ├── SKILL.md       Unmodified upstream content
 │               └── _BLACKHEART-ADAPTER.md
-├── catalog/                       Reference index only — no code
+├── catalog/                       Complete upstream index (30 categories), reference only
 └── licenses/                      Preserved upstream licence texts
 ```
 
@@ -260,4 +260,4 @@ not integrated — it is a liability.
 | [`../docs/agent/AGENT-SKILL-CATALOGUE.md`](../docs/agent/AGENT-SKILL-CATALOGUE.md) | BLACKHEART's own 48 skills |
 | [`../docs/agent/AGENT-OPERATING-PROTOCOL.md`](../docs/agent/AGENT-OPERATING-PROTOCOL.md) | How an agent must operate |
 | [`../docs/guides/SUPPLY-CHAIN.md`](../docs/guides/SUPPLY-CHAIN.md) | Why provenance decides what is a finding |
-| [`VENDOR.md`](VENDOR.md) | Attribution, licences, and the catalogue decision |
+| [`VENDOR.md`](VENDOR.md) | Attribution, licences, audit record, and the catalogue decision |

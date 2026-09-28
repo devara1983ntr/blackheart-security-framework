@@ -103,7 +103,11 @@ jobs:
                   if not f.endswith('.md'):
                       continue
                   p = os.path.join(dp, f)
-                  if p.startswith('./skills/third-party/claude-skills/'):
+                  vendored = (p.startswith('./skills/third-party/claude-skills/')
+                              or p.startswith('./skills/catalog/categories/')
+                              or p in ('./skills/catalog/upstream-README.md',
+                                       './skills/catalog/upstream-CONTRIBUTING.md'))
+                  if vendored:
                       continue
                   body = open(p, encoding='utf-8', errors='replace').read()
                   for _, t in LINK.findall(body):
@@ -114,6 +118,7 @@ jobs:
                           broken.append((p, t))
           for p, t in broken:
               print(f'BROKEN {p} -> {t}')
-          print(f'{len(broken)} broken link(s) in Blackhearts-authored docs')
+          print(f'{len(broken)} broken link(s) in Blackhearts-authored docs '
+                '(verbatim upstream files are skipped by design)')
           sys.exit(1 if broken else 0)
           PY

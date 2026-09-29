@@ -21,7 +21,7 @@ for the index even though none of it may be executed:
 ```text
 upstream-README.md          Master index              (862 URLs)
 upstream-CONTRIBUTING.md    Upstream contribution rules
-categories/*.md             All 30 category files     (5,270 unique URLs)
+categories/*.md             All 30 category files     (5,210 unique URLs)
 README.md                   This policy document (Blackhearts-authored)
 ```
 
@@ -30,14 +30,23 @@ Upstream layout            Count
 README.md                  1,265 lines
 categories/*.md            30 category files
 SKILL.md files             0
-Unique URLs                5,270
+Unique URLs                5,267
 Distinct registries        clawskills.sh, clawhub.ai
 ```
 
 Every entry is a link to a skill hosted elsewhere by an independent publisher.
-All 33 files here are verified byte-identical to upstream at
+All 32 files here are verified byte-identical to upstream at
 `f274daa9d24c0803c8f94a4630aa4922ca4b950e`. Vendoring an index of links is
-risk-free — nothing here executes. **Resolving** those links is what carries
+risk-free — nothing here executes.
+
+Two upstream files are deliberately not vendored, and the omission is recorded
+rather than implied. `.github/workflows/pr-check.yml` is upstream's own
+pull-request gate: it fails any pull request whose description lacks a ClawHub
+link, which has no meaning here. `.claude/settings.local.json` is a
+machine-local permission list naming one contributor's absolute home path —
+the one file in either source that names a private filesystem path, and not
+something to mirror into another repository. Neither carries catalogue
+content, and neither is executable here. **Resolving** those links is what carries
 risk, and that is what the vetting process below governs.
 
 ## Why nothing is executed from it
@@ -57,7 +66,7 @@ No transitive control   each entry is an independent trust decision
 [`../../docs/guides/SUPPLY-CHAIN.md`](../../docs/guides/SUPPLY-CHAIN.md) holds
 that reachability and provenance decide whether something is a finding or a
 non-issue. Here, neither is established for any entry. Under the framework's
-own rules, every one of the 5,270 is **`UNVERIFIED` at best, and `NOT TESTED`
+own rules, every one of the 5,267 is **`UNVERIFIED` at best, and `NOT TESTED`
 in practice** — an index is not an assessment.
 
 ### The category that decides it
@@ -147,7 +156,7 @@ Reviewable           yes, statically scanned and the findings verified
 Repeatable           yes, re-vendor by commit hash
 ```
 
-A catalogue of 5,270 unpinned external links has none of these. That is the
+A catalogue of 5,267 unpinned external links has none of these. That is the
 difference between integrating a dependency and accumulating links, and it is
 the reason this directory is a reference rather than a source.
 

@@ -325,7 +325,7 @@ control, it is a vulnerability.
 
 ## CI: 6 gates, 3 workflows
 
-`validate.py` — 7 checks, every push and pull request:
+`validate.py` — 8 checks, every push and pull request:
 
 | Check | What it proves |
 |---|---|
@@ -336,6 +336,7 @@ control, it is a vulnerability.
 | `index` | 4,400 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 15-entry allowlist |
 | `config` | JSON5 parses; 374/374 skills declared |
+| `history` | no commit subject anywhere contains an unexpanded `$(name)` or `${name}` token |
 
 `gap_audit.py` — 20 groups:
 and answers the question `validate.py` cannot: is the right set of things
@@ -362,6 +363,24 @@ control.
 
 `validate.yml` runs on push and PR. `pages.yml` deploys and re-runs the two
 site gates before publishing.
+
+### Commit messages
+
+Four Dependabot squash-merge subjects once shipped as the literal text
+`ci: bump $(title)`, because GitHub does not expand `$()` in a squash commit
+title. They were corrected in a history-only rewrite that left the tree
+byte-identical, and the live default branch now reads:
+
+```
+ci: bump actions/checkout from 4 to 7
+ci: bump actions/setup-python from 5 to 7
+ci: bump peter-evans/create-pull-request from 6 to 8
+ci: bump actions/upload-pages-artifact from 3 to 5
+```
+
+`validate.py`'s `history` check keeps it that way. It reads every ref, not
+just the default branch, so a leftover backup ref carrying the old subjects
+fails the build too.
 
 ### Protecting `main`
 

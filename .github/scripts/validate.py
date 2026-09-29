@@ -473,6 +473,50 @@ def check_config(r):
     r.add("config", ok, detail)
 
 
+def check_history(r):
+    """No commit subject may contain an unexpanded template token.
+
+    Four Dependabot squash-merge subjects shipped as the literal text
+    `ci: bump $(title)`, because GitHub does not expand `$()` in a squash
+    commit title and the token cannot be patched afterwards. They were
+    rewritten in a history-only rewrite that left the tree byte-identical.
+
+    This check exists so that cannot recur unnoticed. It reads every commit
+    reachable from every ref, not just the default branch, so a leftover
+    backup ref carrying the old subjects is caught too.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(
+            ["git", "log", "--all", "--format=%H%x09%s"],
+            cwd=REPO, capture_output=True, text=True, timeout=60,
+        ).stdout
+    except Exception as exc:
+        r.add("history", False, f"could not read git history: {exc}")
+        return
+
+    # $(name) and ${name} -- both forms, with the delimiter required. An
+    # earlier version used `\$\{?\w+\}?`, which cannot match `$(title)` at
+    # all: after `$` the next character is `(`, not a word character, so the
+    # check passed on exactly the history it was written to catch.
+    token = re.compile(r"\$\(\s*[A-Za-z_]\w*\s*\)|\$\{\s*[A-Za-z_]\w*\s*\}")
+    bad = []
+    for line in out.splitlines():
+        if "\t" not in line:
+            continue
+        sha, subject = line.split("\t", 1)
+        if token.search(subject):
+            bad.append(f"{sha[:7]} {subject[:60]}")
+
+    commits = len([l for l in out.splitlines() if l])
+    if bad:
+        r.add("history", False,
+              f"{len(bad)} commit subject(s) contain an unexpanded token: {bad[:3]}")
+    else:
+        r.add("history", True,
+              f"{commits} commits; no subject contains an unexpanded token")
+
+
 def main():
     r = Result()
     check_adapters(r)
@@ -482,6 +526,7 @@ def main():
     check_index(r)
     check_secrets(r)
     check_config(r)
+    check_history(r)
 
     width = max(len(n) for n, _, _ in r.checks)
     print("Blackhearts validation")

@@ -125,7 +125,7 @@ library alone and are what CI enforces on every push.
 
 | # | Suite | Count |
 |---|---|---|
-| 8.1 | `validate.py` | 7/7 |
+| 8.1 | `validate.py` | 8/8 |
 | 8.2 | `gap_audit.py` | 20/20 |
 | 8.3 | `check_site.py` | 115/115 |
 | 8.4 | `audit_seo.py` | clean |
@@ -156,8 +156,10 @@ library alone and are what CI enforces on every push.
 | 10.4 | `CODEOWNERS`, Dependabot config, issue/PR templates present | ✅ |
 | 10.5 | No temp, backup, log or editor-dropping files in the tree | ✅ |
 | 10.6 | Working tree clean; local `main` == `origin/main` | ✅ |
-| 10.7 | Commit messages accurate and readable | ✅ |
+| 10.7 | Commit messages accurate and readable; `validate.py` `history` fails on any unexpanded `$(name)` token in any ref | ✅ |
 | 10.8 | Branches: `main` only, or stale branches verified empty before deletion | ✅ |
+| 10.9 | No leftover backup refs (`refs/original/`) keeping superseded commits reachable | ✅ |
+| 10.10 | Repository settings (description, topics, branch protection) applied via `repo_settings.py` | ⏳ needs a token |
 
 ## 11. Deployment
 

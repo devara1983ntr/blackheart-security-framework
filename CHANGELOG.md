@@ -41,6 +41,21 @@ and the state of the executable layer.
   and the gradient is applied inside `@supports`.
 
 ### Added
+- **`validate.py` `history` check (now 8 checks).** Four Dependabot squash
+  subjects had shipped as the literal `ci: bump $(title)`; they were corrected
+  in an earlier history-only rewrite, and this check keeps them corrected. It
+  reads every ref rather than only the default branch, so a leftover backup ref
+  carrying the old subjects fails the build as well.
+
+  The first version of the guard was `\$\{?\w+\}?`, which **cannot match
+  `$(title)`** — after `$` comes `(`, not a word character — so it passed on
+  exactly the history it was written to catch. A negative test pointing a ref
+  back at the pre-rewrite state caught it; the corrected pattern matches both
+  `$(name)` and `${name}` and now fails on all four commits with a non-zero
+  exit.
+- **`.github/CODEOWNERS`** was added; the local `refs/original/` backup ref left
+  behind by the history rewrite was removed, since it was the only thing
+  keeping the pre-rewrite commits reachable.
 - **`.github/scripts/repo_settings.py`** — applies the repository settings a
   commit cannot: the page description, 25 topics, branch protection on `main`
   (require green checks, refuse force-push and deletion, resolve conversations),

@@ -13,7 +13,10 @@ import subprocess
 import sys
 import time
 
-OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/shots"
+# Scratch output directory for a local screenshot helper. It is not a trust
+# boundary and nothing security-relevant is written there. Bandit flags the
+# literal /tmp path, so it is suppressed here, at the line, with the reason.
+OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/shots"  # nosec B108
 os.makedirs(OUT, exist_ok=True)
 PORT = 8099
 

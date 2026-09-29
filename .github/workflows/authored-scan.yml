@@ -1,0 +1,92 @@
+name: authored-scan
+
+# Static analysis of the code Blackhearts actually wrote, plus a parse check on
+# the configuration that runs everything else.
+#
+# Why this exists
+# ---------------
+# Two gaps, both real, neither previously covered by a gate:
+#
+# 1. The workflows are the control. `validate.py` is eight checks, `gap_audit.py`
+#    twenty groups, and `validate.yml` runs them — but nothing checked that the
+#    workflow files themselves are well-formed. GitHub does not run a workflow
+#    whose YAML it cannot parse, and it does not fail a build over it: the error
+#    appears in the Actions tab and the repository keeps looking healthy. A
+#    typo could therefore disable the control protecting everything else, and
+#    every gate in this repository lives inside the thing that breaks.
+#
+# 2. The authored tooling was unscanned. `validate.py`, the generators, and the
+#    site gates are ~3,800 lines of first-party Python with filesystem access,
+#    subprocess calls and network probes. Nothing analysed them as code.
+#
+# Scope, deliberately
+# -------------------
+# Blackhearts-authored content only: `.github/scripts/` and `site/`. The
+# vendored mirror and the catalogue are third-party content, pinned and verified
+# byte-for-byte by the integrity check — they are not this repository's code to
+# fix, and a finding there is an upstream defect to record, not a build failure.
+#
+# Why the scanner version is pinned
+# ---------------------------------
+# An unpinned scanner turns a third-party release into a build failure with no
+# change to this repository. Dependabot cannot manage these pins: by policy this
+# repository ships no authored dependency manifest, so there is nothing for it
+# to read. Bumping them is therefore a deliberate, reviewed act — which is the
+# correct shape for the tools that judge the code.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# No `paths:` filter, on purpose. A path filter and a *required* status check
+# are a known trap: when a pull request does not touch the filtered path the
+# check never reports, and the pull request waits forever on a status that can
+# no longer arrive. This job runs on every change, which is what makes it safe
+# to require.
+permissions:
+  contents: read
+
+concurrency:
+  group: authored-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Scan authored code and configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Install the scanning tools
+        run: |
+          python -m pip install --quiet --disable-pip-version-check \
+            'bandit==1.9.4' 'pyyaml==6.0.3' 'json5==0.15.0'
+
+      - name: Every authored configuration file parses, and every workflow is well-formed
+        # Answers two questions: does each authored YAML/JSON/JSON5 file parse,
+        # and does each workflow have the keys GitHub requires (`name`, `on`,
+        # `jobs`) with a runner and at least one step per job.
+        run: python3 .github/scripts/check_authored_config.py
+
+      - name: The capability audit's claims are checkable
+        # docs/CAPABILITY-AUDIT.md states what this framework can and cannot do,
+        # and cites the file that implements each capability. This re-resolves
+        # every cited path and re-derives every published count, so a row whose
+        # evidence has moved fails the build instead of being read as fact.
+        run: python3 .github/scripts/verify_capability_audit.py
+
+      - name: Static analysis of Blackhearts-authored Python, failing on MEDIUM and above
+        # LOW-severity findings are not reported here. They are real but
+        # expected in test tooling (subprocess, temporary directories, an
+        # `assert` in a probe); the four MEDIUM findings that existed when this
+        # job was added are suppressed **at their line**, with the reason, not
+        # by disabling a check class globally. Anything new at MEDIUM or above
+        # fails this job.
+        run: bandit -r .github/scripts site -ll

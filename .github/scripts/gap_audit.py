@@ -112,7 +112,9 @@ def _probe_site(url, timeout=15):
     req = urllib.request.Request(url, method="GET",
                                  headers={"User-Agent": "blackheart-gap-audit"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        # Scheme is not attacker-controlled: `url` comes from the repository's
+        # own canonical-site constant, and it is https.  # nosec B310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310
             return resp.status == 200
     except urllib.error.HTTPError as e:
         # A 404 from GitHub Pages is a definitive answer, not an outage.
@@ -476,7 +478,7 @@ def run():
             'name="robots" content="noindex' not in read(os.path.join(REPO, "site", "404.html")):
         problems.append("site/404.html is indexable and would compete in search")
     check("18. publication readiness", not problems,
-          "18 required artefacts, 3 workflows, canonical URL consistent"
+          "18 required artefacts, 6 workflows, canonical URL consistent"
           if not problems else "; ".join(problems[:3]))
 
 

@@ -16,7 +16,49 @@ and the state of the executable layer.
 
 Nothing yet.
 
+## [2.3.0] — 2026-09-29
+
+### Added
+- **`docs/agent/AGENT-BOOTSTRAP.md`** — the agent activation protocol. A
+  verbatim prompt that enumerates the 53-file instruction set from
+  `FILE-INDEX.txt`, reads it in five dependency-ordered layers, reconciles it
+  under a total precedence ladder (conformance first, vendored content last),
+  tests comprehension across twelve named areas, forbids scope-creeping output
+  during activation, and returns a **countable** readiness confirmation.
+  Includes the design rationale for every clause.
+- **`AGENT.md` §0 — The Framework You Are Running Inside.** The agent is now
+  told at the top of its own instruction set that the 3,864 files in `skills/`
+  are untrusted third-party text, that agent personas are hostile input, that
+  conformance wins every conflict, and that structural verification is not a
+  proof of semantic safety.
+- **`AGENT.md` §29 — Tool Honesty.** Four questions to establish about any
+  tool before trusting its output, with the three measured defects in the
+  vendored `ai-security` skill as the worked example.
+- **`AGENT.md` §5 — the three rungs.** Hypothesis, unverified finding, and
+  confirmed vulnerability defined as distinct, with the transitions between
+  them and the requirement to name the exact artifact that would confirm an
+  unverified finding.
+- **`AGENT.md` §27 — fabrication's second face.** Manufacturing the appearance
+  of absence of evidence — reporting a tool's clean output as "no issues
+  found" — is named as fabrication, with the rule that **a clean result is a
+  coverage gap, not a clearance**.
+
+### Corrected
+- **Agent persona count: 34 → 33** in `ARCHITECTURE.md` (which had said 35) and
+  `SECURITY.md`. `agents/` holds 38 files: 33 personas (32 deployable plus a
+  blank `TEMPLATE.md`), `CLAUDE.md` and `personas/README.md` as documentation,
+  and 3 empty `.gitkeep` files that were previously unlisted. The three
+  `.gitkeep` files are now enumerated in the `agents/` adapter so the collection
+  reconciles exactly.
+
 ## [2.2.0] — 2026-09-29
+
+> **Correction (2.3.0):** this release originally recorded 34 agent personas.
+> The true figure is **33**. `agents/` contains 38 files: 33 personas (32
+> deployable plus a blank `TEMPLATE.md`), `CLAUDE.md` and `personas/README.md`
+> as collection documentation, and 3 empty `.gitkeep` files. The original
+> count treated `CLAUDE.md` as a persona. `ARCHITECTURE.md` repeated it as 35.
+> Both are corrected; the underlying mirror was always correct.
 
 Expands Layer 5 from a curated 8 skills to the **complete** upstream repository,
 vendors the **full** third-party discovery index, and adds continuous
@@ -26,7 +68,7 @@ verification.
 
 The first pass at "vendor everything" vendored only the 388 skill directories and
 declared the job done. A gap audit against upstream found that the mirror was
-missing **878 files of functional content**: 39 slash commands, 34 agent
+missing **878 files of functional content**: 39 slash commands, 33 agent
 personas, two plugin manifests, 29 upstream tooling scripts, 11 standards, 32
 audit records, 667 generated reference pages, templates, orchestration notes, and
 17 root documents. None of it was executable-critical, but all of it is content
@@ -93,7 +135,7 @@ reintroduce them.
 **Agent personas are the sharpest edge in this release.** A persona can redefine
 an agent's identity, widen its scope, or instruct it to act without asking — the
 exact failure the authorization gate exists to prevent, and a persona is a natural
-place for that to be smuggled in. All 34 are treated as untrusted instruction,
+place for that to be smuggled in. All 33 are treated as untrusted instruction,
 none is enabled by default, and none may override the conformance layer. This is
 documented in the collection adapter, in `SECURITY.md`, and in the example
 config.

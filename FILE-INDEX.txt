@@ -5,7 +5,7 @@
 # A file that exists but is not listed here, or a listed path that does not
 # exist, fails CI.
 #
-# Total entries: 4364
+# Total entries: 4365
 
 .github/UPSTREAM-MANIFEST.json
 .github/scripts/gen_adapters.py
@@ -31,6 +31,7 @@ SECURITY.md
 docs/GLOSSARY.md
 docs/README.md
 docs/SKILLS.md
+docs/agent/AGENT-BOOTSTRAP.md
 docs/agent/AGENT-OPERATING-PROTOCOL.md
 docs/agent/AGENT-SKILL-CATALOGUE.md
 docs/guides/ADVERSARY-EMULATION.md

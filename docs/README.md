@@ -49,6 +49,7 @@ How an autonomous agent operates this framework, and the skills it selects.
 
 | Document | Purpose |
 |---|---|
+| [`agent/AGENT-BOOTSTRAP.md`](agent/AGENT-BOOTSTRAP.md) | **Activation protocol** — the verbatim prompt used to load this framework into an agent, with its response contract and design rationale |
 | [`agent/AGENT-OPERATING-PROTOCOL.md`](agent/AGENT-OPERATING-PROTOCOL.md) | Agent non-negotiables, tool protocol, evidence discipline, stop conditions |
 | [`agent/AGENT-SKILL-CATALOGUE.md`](agent/AGENT-SKILL-CATALOGUE.md) | Named skills with trigger, procedure, output, max claim, and stop |
 

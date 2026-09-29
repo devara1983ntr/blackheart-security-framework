@@ -66,7 +66,7 @@ prevent that.
 lives in Layer 0; these are the tools that perform analysis.
 
 The whole of Layer 5's vendored surface is unmodified upstream content under a
-permissive licence: **3,864 files** — 388 skills, 39 slash commands, 35 agent
+permissive licence: **3,864 files** — 388 skills, 39 slash commands, 33 agent
 personas, plugin manifests, tooling, standards, audit records, and
 documentation. Every area carries a `_BLACKHEART-ADAPTER.md` stating its
 governing document, authorization gate, **maximum claim**, and stop conditions.

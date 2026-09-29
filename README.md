@@ -129,6 +129,19 @@ only runs scanners would have shipped those silently. See
 
 ---
 
+## Activate an agent
+
+```bash
+git clone https://github.com/devara1983ntr/My-Hack.git
+```
+
+Then hand the agent the prompt in
+[`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md). It enumerates
+the 53-file instruction set from `FILE-INDEX.txt`, reconciles them under a stated
+precedence order, and returns a **countable** readiness confirmation instead of
+an unfalsifiable one. It activates nothing: the agent will not ask for a target
+and will not begin work until you supply one and say so explicitly.
+
 ## Quick start
 
 ```bash
@@ -203,7 +216,8 @@ automated; judgement is not.*
 | | |
 |---|---|
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | layers, data flow, invariants, trade-offs |
-| [`AGENT.md`](AGENT.md) | how an agent is expected to behave |
+| [`AGENT.md`](AGENT.md) | how an agent is expected to behave — 30 sections |
+| [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md) | **activation prompt** — loads the framework into an agent and verifies the load |
 | [`SECURITY.md`](SECURITY.md) | threat model, disclosure, secret handling |
 | [`CHANGELOG.md`](CHANGELOG.md) | full version history |
 | [`ROADMAP.md`](ROADMAP.md) | what is next |

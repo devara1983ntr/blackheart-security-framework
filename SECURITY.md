@@ -105,7 +105,7 @@ These are not optional and apply to any assessment run under this methodology:
 ## Third-party skills
 
 Executable skills under [`skills/third-party/claude-skills/`](skills/third-party/claude-skills/)
-are third-party code — 3,864 files: 388 skills, 39 slash commands, 34 agent
+are third-party code — 3,864 files: 388 skills, 39 slash commands, 33 agent
 personas, plugin manifests, upstream tooling, standards, audit records, and
 documentation. They are vendored **unmodified** from a pinned upstream commit
 under MIT, audited before inclusion, and attributed in
@@ -114,7 +114,7 @@ under MIT, audited before inclusion, and attributed in
 and CI fails if any vendored byte changes.
 
 **Agent personas are the sharpest edge here.** A persona can redefine an agent's
-identity, widen its scope, or instruct it to act without asking. All 34 are
+identity, widen its scope, or instruct it to act without asking. All 33 are
 vendored as untrusted instruction, and none is enabled by default in the example
 config. No persona may widen scope, disable the authorization gate, or authorize
 a target. Where a persona conflicts with `skills/conformance/SKILL.md`,

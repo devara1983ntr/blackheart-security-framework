@@ -90,6 +90,12 @@ Nothing yet.
   request template carrying the five commands a contributor must run, and
   `dependabot.yml` scoped to Actions and pip — deliberately **not** the vendored
   mirror, which is pinned and reviewed by a human.
+- **Audit groups 18 and 19** added: publication readiness, and a placeholder
+  sweep. Group 19 excludes `templates/`, where `FINDING-XXX` and `TEST-XXX` are
+  the convention and a template with nothing to fill in is not a template, and
+  excludes itself, because a checker that flags its own pattern table reports a
+  false positive forever and a permanently-red gate is a gate people learn to
+  ignore.
 - **Audit group 18** added: publication readiness. Verifies the required
   artefacts exist, all three workflows are present, the canonical URL is
   consistent across the site, and the 404 cannot be indexed.

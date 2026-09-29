@@ -349,6 +349,43 @@ def run():
           if not problems else "; ".join(problems[:3]))
 
 
+    # 19 --------------------------------------------------------------
+    # No leftover placeholders in authored content.
+    #
+    # Templates/ is excluded: FINDING-XXX and TEST-XXX are the convention, and
+    # a template with nothing to fill in is not a template. Everything else is
+    # scanned for markers that would survive into a published document.
+    # A `[bracketed]` placeholder in prose is also allowed, because the
+    # documentation uses that notation deliberately and deliberately.
+    PLACEHOLDERS = (r"\bTODO\b", r"\bFIXME\b", r"\bWIP\b",
+                    r"lorem ipsum", r"REPLACE_ME", r"CHANGEME",
+                    r"INSERT[_ ]HERE", r"<your[-_ ]", r"\bexample\.com/your")
+    offenders = []
+    for dirpath, dirnames, filenames in os.walk(REPO):
+        dirnames[:] = [d for d in dirnames
+                       if d not in (".git", "third-party", "catalog", "__pycache__",
+                                    "templates", "licenses")]
+        for name in filenames:
+            if not name.endswith((".md", ".html", ".yml", ".yaml", ".txt",
+                                  ".json", ".py", ".css", ".json5")):
+                continue
+            rel = os.path.relpath(os.path.join(dirpath, name), REPO)
+            if rel in ("FILE-INDEX.txt", os.path.relpath(os.path.abspath(__file__), REPO)):
+                # This file is excluded because it necessarily contains the
+                # very markers it searches for. A checker that flags its own
+                # pattern table would be reporting a false positive forever,
+                # and a permanently-red gate is a gate people learn to ignore.
+                continue
+            body = read(os.path.join(dirpath, name))
+            for pat in PLACEHOLDERS:
+                for m in re.finditer(pat, body, re.I):
+                    lineno = body[:m.start()].count("\n") + 1
+                    offenders.append(f"{rel}:{lineno} {m.group(0)}")
+    check("19. no leftover placeholders", not offenders,
+          "templates excluded; no TODO/FIXME/placeholder markers elsewhere"
+          if not offenders else f"{len(offenders)}: {offenders[:3]}")
+
+
 def main():
     run()
     width = max(len(n) for n, _, _ in RESULTS)

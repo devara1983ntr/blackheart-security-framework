@@ -90,6 +90,12 @@ Nothing yet.
   request template carrying the five commands a contributor must run, and
   `dependabot.yml` scoped to Actions and pip — deliberately **not** the vendored
   mirror, which is pinned and reviewed by a human.
+- **Publication-disclosure control** in audit group 18: no documentation file
+  may cite the Pages URL without stating that it is not published, while Pages
+  is disabled. The README described a 404 URL as the "documentation site" and
+  the correction initially did not land, because an edit script reported success
+  without its anchor matching. The control is now a gate, and the fix was
+  confirmed by reading the committed file back rather than trusting the script.
 - **Audit groups 18 and 19** added: publication readiness, and a placeholder
   sweep. Group 19 excludes `templates/`, where `FINDING-XXX` and `TEST-XXX` are
   the convention and a template with nothing to fill in is not a template, and

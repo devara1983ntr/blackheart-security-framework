@@ -340,6 +340,31 @@ def run():
                       ('"@type"', "structured data")):
         if req not in idx:
             problems.append(f"site/index.html missing {what}")
+    # A documentation file must never present the Pages URL as live unless the
+    # site is actually published. The README linked to a URL that returned 404
+    # while describing it as the "documentation site", which is exactly the
+    # unfalsifiable claim this project exists to reject. If Pages is enabled
+    # this condition lifts; until then the disclosure must be present
+    # whereverver the URL appears in authored documentation.
+    pages_live = False  # flip when GitHub Pages is enabled and deployed
+    for dp, dn, fn in os.walk(REPO):
+        dn[:] = [d for d in dn if d not in (".git", "third-party", "catalog",
+                                           "__pycache__", "site")]
+        for f in fn:
+            if not f.endswith(".md"):
+                continue
+            rel = os.path.relpath(os.path.join(dp, f), REPO)
+            body = read(os.path.join(dp, f))
+            if "devara1983ntr.github.io" not in body:
+                continue
+            low = body.lower()
+            # "no build step" is not a publication disclosure; accepting it
+            # here made the control pass on a README that claimed a live site.
+            disclosed = ("not published" in low or "not live" in low
+                         or "not enabled" in low or "is unpublished" in low)
+            if not pages_live and not disclosed:
+                problems.append(f"{rel} cites the Pages URL with no publication disclosure")
+
     # the 404 must not be indexed, or it competes with real pages
     if os.path.isfile(os.path.join(REPO, "site", "404.html")) and \
             'name="robots" content="noindex' not in read(os.path.join(REPO, "site", "404.html")):

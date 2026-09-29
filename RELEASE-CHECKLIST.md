@@ -80,6 +80,7 @@ library alone and are what CI enforces on every push.
 | 4.9 | `prefers-reduced-motion` honoured for every transition and animation | ✅ |
 | 4.10 | Colour contrast meets AA in both themes, **measured** in a browser, not asserted | ✅ |
 | 4.11 | All controls reachable and operable by keyboard | ✅ |
+| 4.12 | Every document parses as well-formed HTML; `lang`, `charset` and viewport present on all six pages | ✅ |
 
 ## 5. SEO
 
@@ -93,6 +94,7 @@ library alone and are what CI enforces on every push.
 | 5.6 | `apple-touch-icon` is a **PNG** — iOS ignores SVG and would fall back to a page screenshot | ✅ |
 | 5.7 | JSON-LD `SoftwareSourceCode` parses | ✅ |
 | 5.8 | `robots.txt` welcomes Googlebot and declares the sitemap | ✅ |
+| 5.11 | `hreflang` declared on every indexable page; markup parsed for correct nesting, not pattern-matched | ✅ |
 | 5.9 | No third-party runtime — no CDN, no webfont, no tracker | ✅ |
 | 5.10 | Every page cross-links to every other; no orphan page | ✅ |
 
@@ -127,7 +129,7 @@ library alone and are what CI enforces on every push.
 |---|---|---|
 | 8.1 | `validate.py` | 8/8 |
 | 8.2 | `gap_audit.py` | 20/20 |
-| 8.3 | `check_site.py` | 115/115 |
+| 8.3 | `check_site.py` | 118/118 |
 | 8.4 | `audit_seo.py` | clean |
 | 8.5 | `check_contrast.py` | clean, both themes, gradient stops included |
 | 8.6 | `test_interactions.py` | 81/81 |

@@ -7,109 +7,134 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-This repository is documentation-first, but it also carries executable content:
-a mirror of 388 vendored third-party skills, a validation gate, and two
-automation workflows. Versions therefore track both documentation maturity and
-the state of the executable layer.
+This repository is documentation-first, but it also carries executable content: a
+complete mirror of a third-party catalogue (3,864 files), a validation gate, and
+two automation workflows. Versions therefore track both documentation maturity
+and the state of the executable layer.
 
 ## [Unreleased]
 
 Nothing yet.
 
-## [2.2.0] — 2026-09-28
+## [2.2.0] — 2026-09-29
 
-Expands Layer 5 from a curated 8 skills to the **complete** upstream catalogue,
+Expands Layer 5 from a curated 8 skills to the **complete** upstream repository,
 vendors the **full** third-party discovery index, and adds continuous
 verification.
 
-### Changed
+### The completeness gap this release closes
 
-- **Vendored scope: 8 → 388 skills.** The complete canonical catalogue from
-  `claude-skills` is now mirrored byte-for-byte at commit `19392f7a`. The earlier
-  8-skill scope was a curation decision; it is now a *promotion* decision —
-  those 8 remain the promoted security skills with hand-written adapters, and
-  the other 380 are available with adapters generated from real scan output.
-- **Mirror layout.** Skills moved from `skills/third-party/<name>/` to
-  `skills/third-party/claude-skills/<group>/skills/<name>/`, preserving
-  upstream's own structure. Done with `git mv`, so the promoted skills keep
-  their history. The mirrored `.gemini`, `.codex`, `.vibe`, and `.hermes`
-  directories were excluded — 458 symlinks re-exposing the same skills.
-- **Full-catalogue security audit.** All 388 skills were scanned with the
-  vendored auditor and every CRITICAL and HIGH finding was adjudicated by hand.
-  Result: **354 PASS, 21 WARN, 13 FAIL**. No skill showed a backdoor, covert
-  channel, credential exfiltration, or safety override. The recurring
-  false-positive classes are documented in `skills/VENDOR.md` §3.1.
-- **`skills/openclaw.example.json5`** now declares all 374 distinct skill names
-  and loads all 20 group directories, so no skill is skipped by a discovery
-  depth limit. The previous executable `installPolicy` hook was replaced with a
-  declarative gate — JSON5 cannot carry functions.
-- **`README.md`** no longer claims the repository contains no third-party code.
-  It does: 388 skills, under MIT, with attribution preserved.
-- **Third-party catalogue: 1 category → all 30.** The `awesome-openclaw-skills`
-  index had been vendored as a single category (54 URLs). It is now vendored in
-  full — 30 category files, the upstream README, and the contribution rules, 33
-  files and ~5,270 unique URLs, all byte-identical to `f274daa`. Still
-  reference-only: nothing from it is executed. A per-category inventory is in
-  `skills/catalog/CATEGORY-INDEX.md`.
+The first pass at "vendor everything" vendored only the 388 skill directories and
+declared the job done. A gap audit against upstream found that the mirror was
+missing **878 files of functional content**: 39 slash commands, 34 agent
+personas, two plugin manifests, 29 upstream tooling scripts, 11 standards, 32
+audit records, 667 generated reference pages, templates, orchestration notes, and
+17 root documents. None of it was executable-critical, but all of it is content
+the catalogue ships, and its absence was invisible because **nothing was checking
+for it**.
 
 ### Added
 
-- **388 `_BLACKHEART-ADAPTER.md` files** — one per skill, recording provenance,
-  audit verdict, per-category adjudication, known defects, and five conditions
-  of use.
-- **`.github/scripts/validate.py`** — a seven-check gate: adapter coverage,
-  skill integrity, catalogue integrity, link resolution, file-index
-  completeness, secret scanning, and config validation. Every check was
-  canary-tested: tampering with a vendored skill, tampering with a vendored
-  catalogue file, deleting an adapter, planting a realistic token, breaking the
-  config, and removing an index entry each fail the build.
-- **`.github/UPSTREAM-MANIFEST.json`** — a SHA-256 per skill *and* per vendored
-  catalogue file, so drift in either source is detectable without re-fetching.
-- **`.github/secret-allowlist.json`** — seven verified placeholders, each with a
-  written reason. The scan was canary-tested: a realistic token still fails the
-  build.
-- **`.github/workflows/validate.yml`** — validation on every push and pull
-  request.
-- **`.github/workflows/upstream-sync.yml`** — daily upstream drift detection.
+- **The rest of the upstream repository**, vendored verbatim: `commands/`,
+  `agents/`, `scripts/`, `standards/`, `audit/`, `docs/`, `templates/`,
+  `orchestration/`, `custom-gpt/`, `assets/`, `.claude-plugin/`,
+  `.codex-plugin/`, `.claude/`, and the 17 root documents. The mirror is now
+  upstream's tree in full — **3,864 files**, every one byte-identical to
+  `19392f7`.
+- **12 collection adapters** covering commands, agent personas, upstream tooling,
+  standards, audit history, documentation, templates, and the plugin manifests.
+- **`.github/scripts/gen_adapters.py`**, **`gen_collection_adapters.py`**,
+  **`gen_config.py`**, **`gen_manifest.py`** — adapter, config, and manifest
+  generation are now reproducible scripts in the repository rather than
+  throwaway code. Anything the mirror's contents determine is generated from the
+  mirror, so drift between content and record is a build failure.
+- **`.github/scripts/sync_upstream.py` rewritten** to compare the **whole mirror
+  file by file**. The previous version compared per-skill digests, which would
+  have let all the non-skill content drift undetected — the same blind spot that
+  allowed the gap above.
+- **The example config now loads `commands/` and `agents/`**, and declares that
+  vendored personas are *not* enabled by default: adopting a persona is an
+  explicit decision, not a default.
 
-### Design decision
+### Changed
 
-**Upstream sync opens a pull request and never merges.** The obvious
-alternative — auto-merge on green CI — was rejected. Auto-merging third-party
-code would admit unreviewed changes to the engagement surface with no human
-reading them, defeating the control the framework exists to enforce. Automation
-fetches, diffs, re-vendors, re-audits, and regenerates adapters; a human
-decides. A skill removed upstream is reported and left in place, because
-deleting content is a human decision and not a side effect of a cron job.
-Recorded as invariant 14.
+- **Integrity is now file-level, not per-skill.** `.github/UPSTREAM-MANIFEST.json`
+  records a SHA-256 for all 3,864 vendored files and 399 adapters. The
+  validator distinguishes vendored files, Blackhearts-local adapters, and
+  unaccounted extras, so "extra file" always means "unaccounted for".
+- **The adapter gate now requires collection adapters too.** A vendored
+  command, persona, or plugin manifest without one fails the build.
 
 ### Fixed
 
-- **The validation gate no longer trips over its own bytecode.** A local Python
-  run created `__pycache__/*.pyc`, which the file walker treated as unindexed
-  content and failed the build. Bytecode is now excluded.
-- **A missing `json5` module produced a raw `ModuleNotFoundError`** instead of a
-  usable message. It now explains what to install and why stdlib `json` cannot
-  read a JSON5 file.
-- **Verbatim catalogue files were being treated as Blackhearts-authored** by the
-  link checker, so upstream's own repo-relative links failed the build. Vendored
-  paths are now declared explicitly and shared with the CI link job, so the two
-  cannot drift apart.
-- **Two of the three previously-accepted dangling links** in
-  `security-pen-testing` now resolve, because the full mirror contains the
-  sibling skills they pointed at. The third, a repo-root-relative reference,
-  still does not and remains documented.
+- **`sync_upstream.py` was left broken** by the manifest schema change — it read
+  `manifest["skills"]`, which no longer exists. Found by running the script
+  rather than assuming it worked.
+- **The config generator emitted invalid JSON5** on first run: the
+  `commands/` and `agents/` paths were emitted *after* the `extraDirs` array was
+  closed, so they were not being loaded at all. Caught by parsing the file.
+- **`playwright-pro/skills/coverage` lost its adapter** during bulk extraction,
+  because `tar` replaced the directory. Caught by the integrity check, restored
+  from git, and verified.
+
+### Deliberately not vendored
+
+| Excluded | Files | Reason |
+|---|---:|---|
+| `.gemini/`, `.codex/`, `.vibe/`, `.hermes/` | 1,574 | Symlink farms — all mode `120000`, each pointing at a skill already vendored. Verified by mode, not assumed. |
+| `.gitignore` | 1 | Would apply to this repository's git behaviour across the mirror subtree, silently untracking vendored files. |
+| `.github/` | 23 | Upstream's own CI, not catalogue content. |
+
+Recorded in the manifest under `exclusions` so the sync workflow will not
+reintroduce them.
+
+### Security note
+
+**Agent personas are the sharpest edge in this release.** A persona can redefine
+an agent's identity, widen its scope, or instruct it to act without asking — the
+exact failure the authorization gate exists to prevent, and a persona is a natural
+place for that to be smuggled in. All 34 are treated as untrusted instruction,
+none is enabled by default, and none may override the conformance layer. This is
+documented in the collection adapter, in `SECURITY.md`, and in the example
+config.
+
+### Design decision (unchanged)
+
+**Upstream sync opens a pull request and never merges.** Auto-merge on green CI
+was rejected: it would admit unreviewed third-party code to the engagement
+surface with no human reading it, defeating the control the framework exists to
+enforce. Automation fetches, diffs, re-vendors, re-audits, and regenerates
+adapters; a human decides. A file removed upstream is reported and left in
+place, because deleting content is a human decision and not a side effect of a
+cron job. Recorded as invariant 14.
+
+### Also landed earlier in this release
+
+- **Vendored scope: 8 → 388 skills**, byte-for-byte at `19392f7a`, with
+  hand-written analysis kept for the eight promoted security skills. Full
+  catalogue audit: **354 PASS, 21 WARN, 13 FAIL**, every CRITICAL and HIGH
+  finding adjudicated by hand. No backdoor, covert channel, credential
+  exfiltration, or safety override anywhere.
+- **Third-party discovery index: 1 category → all 30**, ~5,270 URLs, all
+  byte-identical to `f274daa`, still reference-only. Per-category counts in
+  `skills/catalog/CATEGORY-INDEX.md`.
+- **The seven-check validation gate and the daily upstream-sync workflow**, both
+  canary-tested: tampering with a vendored skill, tampering with a vendored
+  catalogue file, deleting an adapter, planting a realistic token, breaking the
+  config, and removing an index entry each fail the build.
+- **`README.md` no longer claims the repository contains no third-party code.**
+  It does.
 
 ### Known issues
 
-- 104 unresolved upstream links across 54 skills. These are upstream
-  cross-skill and shared-`references/` links. Recorded, **not patched** — the
-  mirror stays byte-comparable to upstream so that any local change is visible.
+- 159 unresolved links inside verbatim upstream content, reported rather than
+  patched so the mirror stays byte-comparable to its source. None is in
+  Blackhearts-authored documentation.
 - 13 skill names are defined at two upstream paths each. Both copies are
   vendored; one config entry enables both. Mapped in `skills/VENDOR.md` §5.
-- `tech-debt-tracker` ships a sample codebase containing working code that
-  POSTs to live Stripe, Square, and PayPal endpoints. It is a teaching
-  artefact; its adapter marks it **never execute**.
+- `tech-debt-tracker` ships a sample codebase containing working code that POSTs
+  to live Stripe, Square, and PayPal endpoints. A teaching artefact; its adapter
+  marks it **never execute**.
 
 ## [2.1.0] — 2026-09-28
 

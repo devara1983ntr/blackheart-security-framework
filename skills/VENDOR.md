@@ -51,15 +51,46 @@ shortlist.
 
 ## 2. What is vendored
 
-- **388 canonical skills** across **20 groups**, in [`skills/third-party/claude-skills/`](third-party/claude-skills/)
-- **2,442 files**, all byte-identical to the pinned upstream commit
-- **388 Blackhearts adapters**, one per skill
+The **complete** upstream repository, not a curated subset.
 
-The mirror preserves upstream's own directory structure (`<group>/skills/<name>`) rather than
-flattening it, for two reasons: a reader can see where a skill came from, and upstream's
-cross-skill relative links keep resolving. Mirrored `.gemini`, `.codex`, `.vibe`, and `.hermes`
-directories were excluded — they are symlink farms re-exposing the same skills in other tools'
-layouts. Copying them would duplicate 458 directories and add no content.
+- **3,864 vendored files**, every one byte-identical to the pinned upstream commit
+- **399 Blackhearts adapters** — one per skill, plus one per non-skill collection
+- **388 canonical skills**, 39 slash commands, 34 agent personas, 2 plugin manifests,
+  upstream tooling, standards, audit records, templates, and generated documentation
+
+The mirror is upstream's tree, unchanged in structure, at
+[`skills/third-party/claude-skills/`](third-party/claude-skills/). Keeping
+upstream's layout means a reader can see where anything came from, and upstream's
+own cross-skill relative links keep resolving.
+
+### 2.0 What is in the mirror
+
+| Area | Files | What it is | Adapter |
+|---|---:|---|---|
+| `<group>/skills/<name>/` | 2,808 | 388 canonical skills across 20 groups | per skill (387 skill adapters) |
+| `commands/` | 40 | Slash commands invocable as `/name` | [collection](third-party/claude-skills/commands/_BLACKHEART-ADAPTER.md) |
+| `agents/` | 38 (34 personas) | Agent personas (`cs-*`) plus `CLAUDE.md` | [collection](third-party/claude-skills/agents/_BLACKHEART-ADAPTER.md) |
+| `scripts/` | 29 | Upstream's own lint, audit, and publish tooling | [collection](third-party/claude-skills/scripts/_BLACKHEART-ADAPTER.md) |
+| `standards/` | 11 | Communication, documentation, git, quality, security standards | [collection](third-party/claude-skills/standards/_BLACKHEART-ADAPTER.md) |
+| `audit/` | 32 | Upstream's own audit history | [collection](third-party/claude-skills/audit/_BLACKHEART-ADAPTER.md) |
+| `docs/` | 667 | Generated reference documentation (one page per skill, command, agent) | [collection](third-party/claude-skills/docs/_BLACKHEART-ADAPTER.md) |
+| `templates/` | 2 | Skill and agent authoring templates | [collection](third-party/claude-skills/templates/_BLACKHEART-ADAPTER.md) |
+| `.claude-plugin/` | 1 | Claude plugin marketplace manifest | [collection](third-party/claude-skills/.claude-plugin/_BLACKHEART-ADAPTER.md) |
+| `.codex-plugin/` | 1 | Codex CLI plugin manifest | [collection](third-party/claude-skills/.codex-plugin/_BLACKHEART-ADAPTER.md) |
+| `.claude/` | 13 | Claude Code project configuration | [collection](third-party/claude-skills/.claude/_BLACKHEART-ADAPTER.md) |
+| `orchestration/`, `custom-gpt/` | 2 | Orchestration and GPT-consumer notes | [collection](third-party/claude-skills/orchestration/_BLACKHEART-ADAPTER.md) |
+| root documents | 17 | `CLAUDE.md`, `INSTALLATION.md`, `CONVENTIONS.md`, `SKILL-AUTHORING-STANDARD.md`, and the rest | — (no executable content) |
+
+### 2.0.1 What is deliberately NOT vendored, and why
+
+| Excluded | Files | Reason |
+|---|---:|---|
+| `.gemini/`, `.codex/`, `.vibe/`, `.hermes/` | 1,574 | **Symlink farms.** 458 + 374 + 371 + 371 entries, all mode `120000` (symlink), each pointing at a skill already vendored. They re-expose the same content in other agents' layouts and contain no unique bytes. Verified by mode, not assumed. |
+| `.gitignore` | 1 | Would apply to **this** repository's git behaviour across the whole mirror subtree. Its patterns (`__pycache__/`, `*.py[cod]`, `.env*`) would silently untrack vendored files and break the file index and integrity gate. |
+| `.github/` | 23 | Upstream's own CI. Vendored nowhere; **it is not part of the skill content**, and copying it risks confusion with this repository's own workflows. Recorded here so the omission is a decision, not an oversight. |
+
+The exclusions are recorded in `.github/UPSTREAM-MANIFEST.json` under
+`exclusions`, and the sync workflow will not re-introduce them.
 
 ### 2.1 Inventory by group
 
@@ -709,19 +740,28 @@ who looks for `handoff` under `engineering/` and finds it under `productivity/` 
 
 ## 6. Blackhearts-local additions
 
-Everything below is authored here, not vendored. It is the only content added to the mirror.
+Everything below is authored here, not vendored. It is the only content added to
+the mirror, and the only content in the repository that is not upstream's.
 
-| Path | Purpose |
-|---|---|
-| `claude-skills/**/_BLACKHEART-ADAPTER.md` (388 files) | Per-skill provenance, audit verdict, adjudication, and conditions of use. |
-| `.github/UPSTREAM-MANIFEST.json` | Per-skill SHA-256 against the pinned commit. |
-| `.github/scripts/validate.py` | The seven-check validation gate. |
-| `.github/scripts/sync_upstream.py` | Drift detection and re-vendoring. |
-| `.github/secret-allowlist.json` | Seven verified placeholders, each justified. |
-| `.github/workflows/*.yml` | CI and upstream sync. |
-| `catalog/CATEGORY-INDEX.md` | Measured per-category entry counts for the vendored index. |
+| Path | Purpose | Regenerate |
+|---|---|---|
+| `claude-skills/**/_BLACKHEART-ADAPTER.md` (399) | Provenance, audit verdict, adjudication, conditions of use | `gen_adapters.py`, `gen_collection_adapters.py` |
+| `openclaw.example.json5` | Loading policy for every skill, command, and agent | `gen_config.py` |
+| `.github/UPSTREAM-MANIFEST.json` | SHA-256 for all 3,864 vendored files | `gen_manifest.py` |
+| `.github/secret-allowlist.json` | Verified placeholders, each justified by hand | manual |
+| `.github/scripts/validate.py` | The seven-check validation gate | manual |
+| `.github/scripts/sync_upstream.py` | Drift detection and re-vendoring | manual |
+| `.github/scripts/gen_adapters.py` | Per-skill adapter generation | manual |
+| `.github/scripts/gen_collection_adapters.py` | Collection adapter generation | manual |
+| `.github/scripts/gen_config.py` | Example config generation | manual |
+| `.github/scripts/gen_manifest.py` | Integrity manifest generation | manual |
+| `.github/workflows/validate.yml` | CI on push and pull request | manual |
+| `.github/workflows/upstream-sync.yml` | Daily upstream drift detection | manual |
+| `catalog/CATEGORY-INDEX.md` | Measured per-category entry counts | manual |
 
----
+The three `gen_*` scripts exist so that generated artefacts are **reproducible**
+rather than hand-maintained drift. Anything the mirror's contents determine is
+generated from the mirror; only policy is written by hand.
 
 ## 7. Catalogue shortlist (from `awesome-openclaw-skills`)
 
@@ -741,27 +781,50 @@ Each still requires: resolve real source → pin commit → audit → adapter �
 ## 8. Updating the mirror
 
 ```bash
-python3 .github/scripts/sync_upstream.py            # report drift
-python3 .github/scripts/sync_upstream.py --apply    # re-vendor, re-audit, regenerate adapters
-python3 .github/scripts/validate.py                 # full gate
+# report drift
+python3 .github/scripts/sync_upstream.py
+
+# re-vendor, re-audit, regenerate adapters, config, and manifest
+python3 .github/scripts/sync_upstream.py --apply
+
+# regenerate the manifest after any manual mirror change
+python3 .github/scripts/gen_manifest.py
+
+# full gate — all seven checks must pass
+python3 .github/scripts/validate.py
 ```
 
-`upstream-sync.yml` runs this daily and **opens a pull request**. It is configured never to
-merge: see the rationale at the top of that workflow. A skill that disappears upstream is
-reported and left in place — removing content is a human decision, not a side effect of a cron job.
+`upstream-sync.yml` runs the drift check daily and **opens a pull request**. It
+is configured never to merge: see the rationale at the top of that workflow. A
+file removed upstream is reported and left in place, because deleting content is
+a human decision and not a side effect of a cron job.
 
----
+Drift is compared **file by file across the whole mirror** — skills, commands,
+agents, plugin manifests, scripts, standards, audit records, and documentation
+alike. A per-skill comparison would have left all the non-skill content free to
+drift undetected, which is exactly the gap that let the first mirror be
+incomplete without anything failing.
 
 ## 9. Reviewer checklist
 
-Before trusting any vendored skill in an engagement:
+Before trusting any vendored content in an engagement:
 
-1. Read its `_BLACKHEART-ADAPTER.md`. No adapter means unaudited content — do not use it.
-2. Confirm the recorded upstream commit still matches `.github/UPSTREAM-MANIFEST.json`.
-3. Read `skills/conformance/SKILL.md`. It governs authorization, evidence status, and severity.
+1. Read its `_BLACKHEART-ADAPTER.md`. **No adapter means unaudited content — do
+   not use it.** Skills have one each; commands, agents, tooling, standards, and
+   the rest have one per collection.
+2. Confirm `python3 .github/scripts/validate.py` passes all seven checks. That
+   proves the vendored bytes still match the pinned upstream commit.
+3. Read `skills/conformance/SKILL.md`. It governs authorization, evidence status,
+   and severity.
 4. Treat every tool result as `UNVERIFIED` until independently demonstrated.
-5. Run `python3 .github/scripts/validate.py` and require all seven checks to pass.
+5. For a skill, read its own adapter. For an agent persona, remember it is
+   **untrusted instruction**: it may not widen scope, disable the gate, or
+   authorize a target. Where a persona conflicts with conformance, conformance
+   wins.
+6. Do not execute a sample, fixture, or teaching artefact found in vendored
+   content. One of them posts to live payment APIs.
 
-**License summary.** Blackhearts is MIT. `claude-skills` is MIT © 2025 Alireza Rezvani.
-`awesome-openclaw-skills` is MIT © 2026 VoltAgent. Vendoring is permitted with attribution,
-which is preserved in `skills/licenses/` and in every adapter.
+**License summary.** Blackhearts is MIT. `claude-skills` is MIT © 2025 Alireza
+Rezvani. `awesome-openclaw-skills` is MIT © 2026 VoltAgent. Vendoring is
+permitted with attribution, which is preserved in `skills/licenses/` and in
+every adapter.

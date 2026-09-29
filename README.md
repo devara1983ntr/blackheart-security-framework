@@ -117,13 +117,16 @@ operators alike.
 
 ### Executable skills
 
-**388 third-party skills** vendored under MIT from a pinned upstream commit,
-each with an adapter binding it to the framework, plus the mandatory
-conformance layer. Eight are promoted to a standing role in a security
-engagement; the rest are engineering, business, and research tooling. Every one
-of the 388 was security-audited and every finding adjudicated — no skill showed
+The **complete upstream repository**, vendored under MIT from a pinned commit:
+**3,864 files** — 388 canonical skills, 39 slash commands, 34 agent personas,
+plugin manifests, upstream tooling, standards, audit records, and generated
+documentation. Every file is byte-identical to upstream, and every area carries
+an adapter binding it to the framework. Eight skills are promoted to a standing
+role in a security engagement; the rest are supporting tooling.
+
+Every skill was security-audited and every finding adjudicated — no skill showed
 a backdoor, covert channel, credential exfiltration, or safety override. Load
-[`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) before any of them.
+[`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) before any of it.
 
 | Document | Purpose |
 |---|---|
@@ -133,6 +136,8 @@ a backdoor, covert channel, credential exfiltration, or safety override. Load
 | [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — all 30 categories vendored as a reference index, nothing executed |
 | [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Validated configuration covering all 374 skill names |
 | [`.github/scripts/validate.py`](.github/scripts/validate.py) | Seven-check validation gate, run on every push and pull request |
+| [`.github/scripts/sync_upstream.py`](.github/scripts/sync_upstream.py) | Whole-mirror drift detection and re-vendoring |
+| [`.github/scripts/gen_adapters.py`](.github/scripts/gen_adapters.py) | Adapter generation, so generated records are reproducible |
 | [`.github/workflows/upstream-sync.yml`](.github/workflows/upstream-sync.yml) | Daily upstream drift detection — opens a PR, never merges |
 
 ### Templates and examples
@@ -172,16 +177,25 @@ a backdoor, covert channel, credential exfiltration, or safety override. Load
 │   ├── VENDOR.md                      # Provenance, full index, audit record
 │   ├── openclaw.example.json5         # Validated config for all 374 skill names
 │   ├── conformance/SKILL.md           # Mandatory wrapper for all vendored skills
-│   ├── third-party/claude-skills/     # 388 vendored skills across 20 groups
-│   │   └── <group>/skills/<name>/     #   SKILL.md + _BLACKHEART-ADAPTER.md
+│   ├── third-party/claude-skills/     # complete upstream mirror, 3,864 files
+│   │   ├── <group>/skills/<name>/     #   388 skills  + _BLACKHEART-ADAPTER.md
+│   │   ├── commands/                  #   39 slash commands + adapter
+│   │   ├── agents/                    #   34 agent personas + adapter
+│   │   ├── scripts/ standards/ audit/ #   upstream tooling and records + adapters
+│   │   ├── docs/                      #   667 generated reference pages + adapter
+│   │   └── .claude-plugin/ .codex-plugin/  # plugin manifests + adapters
 │   ├── catalog/                       # Complete third-party catalogue index (30 categories)
 │   └── licenses/                      # Preserved upstream licences
 │
 ├── .github/
-│   ├── UPSTREAM-MANIFEST.json         # Per-skill SHA-256 against the pinned commit
+│   ├── UPSTREAM-MANIFEST.json         # SHA-256 for all 3,864 vendored files
 │   ├── secret-allowlist.json          # Verified placeholders, each justified
 │   ├── scripts/validate.py            # Seven-check validation gate
-│   ├── scripts/sync_upstream.py       # Drift detection and re-vendoring
+│   ├── scripts/sync_upstream.py       # Whole-mirror drift detection
+│   ├── scripts/gen_adapters.py        # Reproducible adapter generation
+│   ├── scripts/gen_collection_adapters.py
+│   ├── scripts/gen_config.py          # Reproducible config generation
+│   └── scripts/gen_manifest.py        # Reproducible integrity manifest
 │   └── workflows/                     # CI on push/PR + daily upstream sync
 │
 ├── docs/
@@ -442,9 +456,9 @@ See [`SECURITY.md`](SECURITY.md).
 
 See [`AUTHOR`](AUTHOR) for authorship and third-party attribution.
 
-This repository **does** contain third-party source code: a mirror of 388
-skills from `alirezarezvani/claude-skills` (MIT © 2025 Alireza Rezvani) and a
-reference index from `VoltAgent/awesome-openclaw-skills` (MIT © 2026 VoltAgent).
+This repository **does** contain third-party source code: a complete mirror of
+`alirezarezvani/claude-skills` (MIT © 2025 Alireza Rezvani) and a reference
+index from `VoltAgent/awesome-openclaw-skills` (MIT © 2026 VoltAgent).
 Both are vendored under MIT with attribution preserved in
 [`skills/licenses/`](skills/licenses/). Full provenance, the complete skill
 index, and the audit record are in [`skills/VENDOR.md`](skills/VENDOR.md).

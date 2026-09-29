@@ -14,9 +14,11 @@ BLACKHEART's own skills are documented in
 — 48 named skills, each with a trigger, procedure, output, maximum claim, and
 stop condition. That catalogue is the methodology.
 
-This directory holds the **executable** side: a vendored mirror of **388
-third-party skills** that perform real analysis, plus the conformance layer that
-makes their output admissible inside a BLACKHEART engagement.
+This directory holds the **executable** side: a vendored mirror of the
+**complete upstream repository** — 3,864 files covering 388 skills, 39 slash
+commands, 34 agent personas, plugin manifests, upstream tooling, standards, audit
+records, and documentation — plus the conformance layer that makes their output
+admissible inside a BLACKHEART engagement.
 
 ```text
 skills/
@@ -46,9 +48,19 @@ skills/
 │       ├── finance/               5
 │       ├── markdown-html/         5
 │       └── research-ops/          5
-│           └── <skill>/
-│               ├── SKILL.md       Unmodified upstream content
-│               └── _BLACKHEART-ADAPTER.md
+│       ├── commands/              39 slash commands        + adapter
+│       ├── agents/                34 agent personas        + adapter
+│       ├── scripts/               upstream tooling         + adapter
+│       ├── standards/             authoring standards      + adapter
+│       ├── audit/                 upstream audit history   + adapter
+│       ├── docs/                  667 reference pages      + adapter
+│       ├── templates/             authoring templates      + adapter
+│       ├── .claude-plugin/        plugin manifest          + adapter
+│       ├── .codex-plugin/         plugin manifest          + adapter
+│       ├── .claude/               project configuration    + adapter
+│       └── <group>/skills/<name>/
+│           ├── SKILL.md           Unmodified upstream content
+│           └── _BLACKHEART-ADAPTER.md
 ├── catalog/                       Complete upstream index (30 categories), reference only
 └── licenses/                      Preserved upstream licence texts
 ```
@@ -57,7 +69,8 @@ The mirror preserves upstream's own `<group>/skills/<name>` layout rather than
 flattening it, so every skill's origin stays visible and upstream's cross-skill
 links keep resolving. Every one of the 388 skills carries an adapter recording
 its audit verdict and its conditions of use. The complete index, the audit
-results, and the adjudicated findings are in [`VENDOR.md`](VENDOR.md).
+results, the adjudicated findings, and the list of what is deliberately *not*
+vendored are in [`VENDOR.md`](VENDOR.md).
 
 ## The conformance layer is not optional
 
@@ -100,6 +113,32 @@ documentation, authorization gates, maximum claims, and coverage contributions.
 | `threat-detection` | Threat hunting, IOC analysis, anomaly prioritisation | `ADVERSARY-EMULATION.md` | A hunting lead is `UNVERIFIED` by definition |
 | `senior-security` | STRIDE, DREAD, secret scanning, skill routing | `ATTACK-PATHS.md`, `SUPPLY-CHAIN.md` | A risk model is not evidence |
 | `incident-response` | Triage, classification, false-positive filtering | `ADVERSARY-EMULATION.md` | Classification → `UNVERIFIED` until corroborated |
+
+## Commands, personas, and the rest of the mirror
+
+The catalogue is not only skills. Three kinds of non-skill content load into an
+agent, and each has a collection adapter:
+
+**`commands/` — 39 slash commands.** Invocable as `/name`. A command is a
+user-invoked entry point, not an analysis unit; it can launch a skill, so it
+inherits that skill's conditions. A command that reaches a target with no
+engagement record is the same violation as a skill doing it.
+
+**`agents/` — 34 agent personas.** Role definitions that change how an agent
+reasons and what it will do. This is the **highest-leverage** vendored content
+in the repository and the easiest to get wrong: a persona can redefine an
+agent's identity, widen its scope, or instruct it to act without asking, which is
+precisely what the authorization gate prevents. Every persona is therefore
+treated as **untrusted instruction**. No persona may widen scope, disable the
+gate, or authorize a target. Where a persona conflicts with
+`conformance/SKILL.md`, **conformance wins**. None is enabled in the example
+config; adopting one is an explicit decision.
+
+**`scripts/`, `standards/`, `audit/`, `docs/`, `templates/`, plugin manifests.**
+Upstream's own tooling, conventions, audit history, generated documentation,
+templates, and packaging declarations. All vendored verbatim and adapter-covered.
+A plugin manifest is a **declaration, not an enforcement**: vendoring one
+installs nothing and grants no permission.
 
 ## The rest of the catalogue
 
@@ -158,8 +197,8 @@ come from the `name` field in frontmatter**, so
 
 Because the mirror keeps upstream's nesting, some skills sit more than six
 levels below a configured root. The example config therefore lists all 20 group
-directories in `skills.load.extraDirs`, so **no vendored skill is silently
-skipped by a depth limit**. It then declares an explicit `enabled` policy for
+directories **plus** `commands/` and `agents/` in `skills.load.extraDirs`, so
+**nothing vendored is silently skipped by a depth limit**. It then declares an explicit `enabled` policy for
 every one of the 374 distinct skill names.
 
 Note that 374 names cover 387 loadable directories: 13 names are defined at two
@@ -238,6 +277,8 @@ should ever be requested.
 ```text
 Check for upstream drift : python3 .github/scripts/sync_upstream.py
 Re-vendor and re-audit   : python3 .github/scripts/sync_upstream.py --apply
+Regenerate the manifest  : python3 .github/scripts/gen_manifest.py
+Regenerate the config    : python3 .github/scripts/gen_config.py
 Validate everything      : python3 .github/scripts/validate.py
 Add a skill              : audit → adapter → conformance check → register
 Change the methodology   : update docs/ first, then adapters, then this file

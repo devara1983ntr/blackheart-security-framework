@@ -14,9 +14,12 @@ What is checked, and why:
   adapters     Every vendored skill carries a Blackhearts adapter. A vendored
                skill without one is unaudited third-party content inside the
                framework, which is exactly what the framework exists to prevent.
-  integrity    Vendored files are byte-identical to the pinned upstream commit,
-               per .github/UPSTREAM-MANIFEST.json. Catches local edits to
-               vendored files and incomplete syncs.
+  integrity    EVERY vendored file is byte-identical to the pinned upstream
+               commit, per .github/UPSTREAM-MANIFEST.json. Covers the whole
+               mirror: skills, commands, agents, scripts, plugin manifests,
+               standards, audit records, and documentation. Catches local edits
+               and incomplete syncs.
+  catalog      The vendored discovery index is byte-identical to its source.
   links        Markdown links resolve. Documentation that lies about where
                things are is a real defect in a security framework.
   index        FILE-INDEX.txt lists every file and every entry exists.
@@ -116,42 +119,90 @@ def skill_digest(root):
     return h.hexdigest(), count
 
 
+# Vendored areas that are not skills but are still third-party content inside
+# the framework. Each needs an adapter, or it is unaudited content.
+COLLECTION_DIRS = (
+    "commands", "agents", "scripts", "standards", "audit", "templates",
+    "orchestration", "custom-gpt", "docs",
+    ".claude-plugin", ".codex-plugin", ".claude",
+)
+
+
 def check_adapters(r):
     skills = skill_dirs()
     nested = skill_dirs(include_nested=True)
     fixtures = len(nested) - len(skills)
     missing = [s for s in skills if not os.path.isfile(os.path.join(MIRROR, s, ADAPTER))]
+
+    collections = sorted(
+        d for d in COLLECTION_DIRS
+        if os.path.isdir(os.path.join(MIRROR, d))
+        and not os.path.isfile(os.path.join(MIRROR, d, ADAPTER)))
+
     detail = (f"{len(skills)} skills have an adapter"
-              + (f" (+{fixtures} nested test fixture(s) covered by their parent)" if fixtures else ""))
+              + (f" (+{fixtures} nested test fixture(s) covered by their parent)"
+                 if fixtures else "")
+              + f"; {len(COLLECTION_DIRS)} vendored collections")
     if missing:
-        detail += f"; missing: {missing[:5]}"
-    r.add("adapters", not missing, detail)
+        detail += f"; MISSING skill adapters: {missing[:5]}"
+    if collections:
+        detail += f"; MISSING collection adapters: {collections}"
+    r.add("adapters", not (missing or collections), detail)
+
+
+def file_sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def check_integrity(r):
+    """Every vendored file must match the pinned upstream commit, byte for byte.
+
+    This is file-level rather than per-skill on purpose. Per-skill digests only
+    covered the 388 skill directories, which meant the commands, agents,
+    scripts, plugin manifests, standards, audit records, and documentation that
+    make up the rest of the mirror were vendored with nothing verifying them.
+    """
     with open(MANIFEST) as fh:
         man = json.load(fh)
-    expected = man["skills"]
-    drift, missing = [], []
-    for rel, meta in expected.items():
-        root = os.path.join(MIRROR, rel)
-        if not os.path.isdir(root):
-            missing.append(rel)
-            continue
-        digest, count = skill_digest(root)
-        if digest != meta["sha256"] or count != meta["files"]:
-            drift.append(rel)
-    on_disk = set(skill_dirs(include_nested=True))
-    extra = sorted(on_disk - set(expected))
-    ok = not (drift or missing or extra)
-    detail = (f"{len(expected)} skills verified byte-identical to "
-              f"{man['upstream_commit'][:7]}")
-    if drift:
-        detail += f"; DRIFT: {drift[:5]}"
-    if missing:
-        detail += f"; MISSING: {missing[:5]}"
-    if extra:
-        detail += f"; UNEXPECTED: {extra[:5]}"
+    expected = man["vendored"]
+    expected_adapters = man.get("adapters", {})
+
+    actual, actual_adapters = {}, {}
+    for dp, dn, fn in os.walk(MIRROR):
+        dn[:] = sorted(d for d in dn if d != "__pycache__")
+        for name in sorted(fn):
+            if name.endswith((".pyc", ".pyo")):
+                continue
+            full = os.path.join(dp, name)
+            rel = os.path.relpath(full, MIRROR).replace(os.sep, "/")
+            if name == ADAPTER:
+                actual_adapters[rel] = full
+            else:
+                actual[rel] = full
+
+    changed = [rel for rel, meta in expected.items()
+               if rel in actual and file_sha256(actual[rel]) != meta["sha256"]]
+    missing = sorted(set(expected) - set(actual))
+    extra = sorted(set(actual) - set(expected))
+    ad_missing = sorted(set(expected_adapters) - set(actual_adapters))
+    ad_extra = sorted(set(actual_adapters) - set(expected_adapters))
+    ad_changed = [rel for rel, meta in expected_adapters.items()
+                  if rel in actual_adapters
+                  and file_sha256(actual_adapters[rel]) != meta["sha256"]]
+
+    ok = not (changed or missing or extra or ad_missing or ad_extra or ad_changed)
+    up = man["upstream"]["skills_commit"]
+    detail = (f"{len(expected)} vendored files byte-identical to {up[:7]}"
+              f"; {len(expected_adapters)} adapters")
+    for label, items in (("DRIFT", changed), ("MISSING", missing),
+                         ("UNEXPECTED", extra), ("ADAPTER-MISSING", ad_missing),
+                         ("ADAPTER-EXTRA", ad_extra), ("ADAPTER-DRIFT", ad_changed)):
+        if items:
+            detail += f"; {label}: {len(items)} e.g. {items[:3]}"
     r.add("integrity", ok, detail)
 
 
@@ -174,7 +225,7 @@ def is_vendored(rel):
 
 
 def check_catalog(r):
-    """The vendored catalogue index must stay byte-identical to its source.
+    """The vendored discovery index must stay byte-identical to its source.
 
     It is a reference index, not executable content, but it is still third-party
     material: if it is edited locally, the record of what upstream published is
@@ -182,33 +233,27 @@ def check_catalog(r):
     """
     with open(MANIFEST) as fh:
         man = json.load(fh)
-    cat = man.get("catalog")
+    cat = man.get("catalogue") or man.get("catalog")
     if not cat:
         r.add("catalog", False, "manifest has no catalogue section")
         return
     drift, missing = [], []
-    for rel, meta in cat["files"].items():
+    for rel, meta in cat.items():
         full = os.path.join(REPO, rel)
         if not os.path.isfile(full):
             missing.append(rel)
-            continue
-        with open(full, "rb") as fh:
-            if hashlib.sha256(fh.read()).hexdigest() != meta["sha256"]:
-                drift.append(rel)
+        elif file_sha256(full) != meta["sha256"]:
+            drift.append(rel)
     on_disk = {p for p in walk_files(REPO)
                if p.startswith("skills/catalog/categories/")
                or p in ("skills/catalog/upstream-README.md",
                         "skills/catalog/upstream-CONTRIBUTING.md")}
-    extra = sorted(on_disk - set(cat["files"]))
+    extra = sorted(on_disk - set(cat))
     ok = not (drift or missing or extra)
-    detail = (f"{len(cat['files'])} catalogue files verified byte-identical to "
-              f"{cat['upstream_commit'][:7]}")
-    if drift:
-        detail += f"; DRIFT: {drift[:5]}"
-    if missing:
-        detail += f"; MISSING: {missing[:5]}"
-    if extra:
-        detail += f"; UNEXPECTED: {extra[:5]}"
+    detail = f"{len(cat)} catalogue files verified byte-identical"
+    for label, items in (("DRIFT", drift), ("MISSING", missing), ("UNEXPECTED", extra)):
+        if items:
+            detail += f"; {label}: {len(items)} e.g. {items[:3]}"
     r.add("catalog", ok, detail)
 
 

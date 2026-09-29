@@ -105,15 +105,25 @@ These are not optional and apply to any assessment run under this methodology:
 ## Third-party skills
 
 Executable skills under [`skills/third-party/claude-skills/`](skills/third-party/claude-skills/)
-are third-party code — 388 skills, 693 scripts. They are vendored
-**unmodified** from a pinned upstream commit under MIT, audited before
-inclusion, and attributed in [`skills/VENDOR.md`](skills/VENDOR.md). Integrity
-is enforced continuously: `.github/UPSTREAM-MANIFEST.json` records a SHA-256 per
-skill, and CI fails if any vendored byte changes.
+are third-party code — 3,864 files: 388 skills, 39 slash commands, 34 agent
+personas, plugin manifests, upstream tooling, standards, audit records, and
+documentation. They are vendored **unmodified** from a pinned upstream commit
+under MIT, audited before inclusion, and attributed in
+[`skills/VENDOR.md`](skills/VENDOR.md). Integrity is enforced continuously:
+`.github/UPSTREAM-MANIFEST.json` records a SHA-256 for **every** vendored file,
+and CI fails if any vendored byte changes.
 
-Every skill carries a `_BLACKHEART-ADAPTER.md` recording its audit verdict and
-its conditions of use. **A skill without an adapter is unaudited and must not
-be used in an engagement**; the validator fails the build if one appears.
+**Agent personas are the sharpest edge here.** A persona can redefine an agent's
+identity, widen its scope, or instruct it to act without asking. All 34 are
+vendored as untrusted instruction, and none is enabled by default in the example
+config. No persona may widen scope, disable the authorization gate, or authorize
+a target. Where a persona conflicts with `skills/conformance/SKILL.md`,
+conformance wins.
+
+Every vendored area carries a `_BLACKHEART-ADAPTER.md` recording its audit
+verdict and its conditions of use: one per skill, plus one per non-skill
+collection. **Content without an adapter is unaudited and must not be used in an
+engagement**; the validator fails the build if one appears.
 
 They are not a security boundary, and neither is the skill allowlist. An agent
 able to execute a shell can reach anything on the host regardless of which
@@ -137,6 +147,12 @@ stays comparable to upstream and any local change shows up as a divergence.
 The current list — unresolved upstream links, duplicated skill names, and one
 sample codebase that must never be executed — is in
 [`skills/VENDOR.md`](skills/VENDOR.md) §4.
+
+Three upstream paths are deliberately **not** vendored, each for a stated
+reason: four symlink-only mirror directories, upstream's `.gitignore` (which
+would change this repository's own git behaviour), and upstream's own CI. The
+list is in [`skills/VENDOR.md`](skills/VENDOR.md) §2.0.1 and is recorded in the
+manifest so the sync workflow will not reintroduce them.
 
 ## Secrets
 

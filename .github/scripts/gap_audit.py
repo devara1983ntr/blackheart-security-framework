@@ -297,7 +297,7 @@ def run():
     expected_header = [
         (f"`{len(man_head['vendored']):,}`", "vendored file count"),
         (f"`{ad_count}`", "adapter count"),
-        ("`7/7`", "validator result"),
+        ("`8/8`", "validator result"),
     ]
     for token, what in expected_header:
         if token not in header:

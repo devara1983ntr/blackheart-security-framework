@@ -11,7 +11,7 @@ Run everything:
 
 ```bash
 python3 -m pip install json5 playwright && python3 -m playwright install chromium
-python3 .github/scripts/validate.py       # 7 checks
+python3 .github/scripts/validate.py       # 8 checks
 python3 .github/scripts/gap_audit.py      # 20 groups
 python3 site/check_site.py                # static site gates
 python3 site/audit_seo.py                 # links, metadata, budget
@@ -140,7 +140,7 @@ library alone and are what CI enforces on every push.
 
 | # | Check | Status |
 |---|---|---|
-| 9.1 | 5,262 local links; 0 broken in Blackhearts-authored docs | ✅ |
+| 9.1 | 5,271 local links; 0 broken in Blackhearts-authored docs | ✅ |
 | 9.2 | 111 vendored defects registered individually with reasons | ✅ |
 | 9.3 | 48 authored defects fixed | ✅ |
 | 9.4 | Every internal link resolves; every anchor matches a real `id` | ✅ |

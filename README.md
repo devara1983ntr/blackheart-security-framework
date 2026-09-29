@@ -64,6 +64,14 @@ and sitemap, the repository description, and these 20 topics.
 > [Search Console](https://search.google.com/search-console) using the DNS or
 > HTML-file method, then submit `sitemap.xml`. Until that is done the site is
 > **crawlable but not claimed**, and it should not be described as indexed.
+>
+> There is no shortcut around this. The old
+> `https://www.google.com/ping?sitemap=…` endpoint that used to let anyone
+> submit a sitemap anonymously was retired by Google and now returns **HTTP
+> 404** with a deprecation notice — checked, not assumed. The real discovery
+> path that exists today is this repository itself: it is already indexed, and
+> this README links to the published site, so a crawler that knows the
+> repository can follow the link without any submission at all.
 
 ---
 

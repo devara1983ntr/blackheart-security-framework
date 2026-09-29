@@ -119,13 +119,103 @@ else:
                       {"names": TOPICS})
     record("topics", "OK" if code in (200, 204) else f"FAIL {code}", str(body)[:120])
 
+def check_required_status_checks(contexts):
+    """Refuse to require a status check that no workflow job can ever report.
+
+    A required status check is matched by job name. A name that no job
+    produces is reported as "Expected" forever, and with enforce_admins on
+    that makes the branch un-pushable and un-mergeable for everyone. There is
+    no error, no alert, and nothing in the UI that distinguishes "waiting on
+    a check" from "waiting on a check that will never exist".
+
+    This derives the set of job names from the workflow files themselves, so
+    the check cannot drift out of date, and it rejects two failure modes:
+
+      * a context no job reports at all          -> frozen branch
+      * a context only reported on push to main -> frozen pull requests
+
+    Skipped with a warning if PyYAML is unavailable, because the guard is
+    defence in depth: the names above are the control, this is what stops a
+    future edit from breaking them.
+    """
+    try:
+        import yaml
+    except ImportError:
+        print("  WARN   PyYAML is not installed; skipping verification of the "
+              "required status check names.")
+        return
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    wf_dir = os.path.normpath(os.path.join(here, "..", "workflows"))
+    reported = {}  # job name -> (workflow file, triggers on pull_request)
+    for fn in sorted(os.listdir(wf_dir)):
+        if not fn.endswith((".yml", ".yaml")):
+            continue
+        with open(os.path.join(wf_dir, fn), encoding="utf-8") as fh:
+            doc = yaml.safe_load(fh) or {}
+        on = doc.get("on", doc.get(True, {}))
+        if isinstance(on, list):
+            events = set(on)
+        elif isinstance(on, dict):
+            events = set(on.keys())
+        else:
+            events = {str(on)}
+        on_pr = "pull_request" in events
+        for jid, job in (doc.get("jobs") or {}).items():
+            reported[(job or {}).get("name") or jid] = (fn, on_pr)
+
+    unknown = [c for c in contexts if c not in reported]
+    if unknown:
+        sys.exit(
+            "refusing to apply branch protection: these required status checks "
+            f"match no job in .github/workflows: {unknown}\n"
+            f"  job names that do exist: {sorted(reported)}"
+        )
+    unreachable = [c for c in contexts if c in reported and not reported[c][1]]
+    if unreachable:
+        detail = ", ".join(f"{c} (only {reported[c][0]}, which has no "
+                           "pull_request trigger)" for c in unreachable)
+        sys.exit(
+            "refusing to apply branch protection: these required status checks "
+            "can never be reported against a pull request head: " + detail
+        )
+    print(f"  OK     {len(contexts)} required check(s) verified against "
+          f"{len(reported)} job(s) in .github/workflows")
+
+
 # ---- branch protection on main -------------------------------------------
 # No force-push, and CI must be green, so history cannot be rewritten onto the
 # published branch without the workflows being re-run against the new tree.
+#
+# Required status checks are matched by JOB NAME, not by workflow name.
+#
+# This list previously read ["validate", "Build and deploy"]. Neither string
+# was ever produced: "validate" is the name of the *workflow*, whose jobs are
+# "Validate repository", "Re-audit vendored skills" and "Markdown link
+# check"; and no job called "Build and deploy" exists anywhere. GitHub
+# reported both as "Expected" forever, and because enforce_admins is true,
+# nobody -- the owner included -- could push to or merge into main. The
+# branch was silently frozen from the moment this script first ran, and the
+# freeze went unnoticed only because no push or merge was attempted
+# afterwards.
+#
+# check_required_status_checks() re-derives these names from the workflow
+# files and refuses to apply a context that no job can ever report, so a
+# future edit cannot freeze the branch again.
+REQUIRED_CHECKS = [
+    "Validate repository",
+    "Re-audit vendored skills",
+    "Markdown link check",
+]
+
+# Only these three. The pages workflow has no pull_request trigger, so its
+# jobs -- "Validate and stage the site" and "Deploy to GitHub Pages" -- can
+# never run against a pull request head. Requiring them would recreate the
+# deadlock from the opposite direction.
 RULES = {
     "required_status_checks": {
         "strict": True,
-        "contexts": ["validate", "Build and deploy"],
+        "contexts": list(REQUIRED_CHECKS),
     },
     "enforce_admins": True,
     "required_pull_request_reviews": None,
@@ -139,6 +229,8 @@ RULES = {
 # Both keys must be present in the request body -- omitting them is a 422,
 # not a "use the default". null is the documented value for "not required".
 assert "required_pull_request_reviews" in RULES and "restrictions" in RULES
+
+check_required_status_checks(REQUIRED_CHECKS)
 
 if DRY:
     record("branch protection: main", "DRY",

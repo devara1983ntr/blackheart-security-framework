@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: '3.12'
 
@@ -53,9 +53,17 @@ jobs:
         run: python -m pip install --quiet --disable-pip-version-check json5
 
       - name: Configure git identity
+        # The canonical GitHub Actions bot identity, not an invented one.
+        #
+        # The previous value, blackhearts-sync[bot], was never a real account.
+        # Commits carrying it resolved to nothing, and the login was free for
+        # anyone to register -- which would have silently re-attributed this
+        # project's automation history to a stranger. 41898282 is
+        # github-actions[bot]'s real account id, so GitHub links these commits
+        # to a real, verified bot that no one can claim.
         run: |
-          git config user.name 'blackhearts-sync[bot]'
-          git config user.email 'blackhearts-sync[bot]@users.noreply.github.com'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Check for upstream drift
         id: check
@@ -87,8 +95,12 @@ jobs:
 
       - name: Open pull request
         if: steps.check.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
+          # Asserted explicitly so authorship does not depend on ambient
+          # repository git configuration. Matches the git identity above.
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           branch: automation/upstream-sync
           commit-message: 'Sync vendored skills from upstream'
           title: 'Sync vendored skills from upstream claude-skills'

@@ -8,8 +8,8 @@
 | Upstream licence | MIT (c) 2025 Alireza Rezvani |
 | Integrity | byte-identical to upstream, verified 2026-09-29 |
 | Modified by Blackhearts | No — this `_BLACKHEART-ADAPTER.md` is the only added file |
-| Contents | 2 files |
-| Governing policy | [SKILL.md](../../../../conformance/SKILL.md) |
+| Contents | 3 files |
+| Governing policy | [SKILL.md](../../../conformance/SKILL.md) |
 
 ## What this adapter is for
 
@@ -37,7 +37,7 @@ Any result this content produces is `UNVERIFIED` until independently demonstrate
 
 ## Conditions of use
 
-1. Read [`skills/conformance/SKILL.md`](../../../../conformance/SKILL.md)
+1. Read [`skills/conformance/SKILL.md`](../../../conformance/SKILL.md)
    before any use.
 2. No target may be scanned, tested, or profiled until the operator supplies the
    target and explicit, written authorization recorded in the engagement file.
@@ -51,12 +51,13 @@ Any result this content produces is `UNVERIFIED` until independently demonstrate
 
 ## Provenance
 
-- Licence text: [claude-skills-LICENSE](../../../../licenses/claude-skills-LICENSE)
-- Integration record: [VENDOR.md](../../../../VENDOR.md)
+- Licence text: [claude-skills-LICENSE](../../../licenses/claude-skills-LICENSE)
+- Integration record: [VENDOR.md](../../../VENDOR.md)
 
 ## Inventory
 
 | File | |
 |---|---|
+| `.gitkeep` | — |
 | `CLAUDE.md` | — |
 | `agent-template.md` | — |

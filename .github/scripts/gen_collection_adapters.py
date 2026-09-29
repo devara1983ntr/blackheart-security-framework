@@ -11,10 +11,16 @@ import os
 import re
 
 MIR = "skills/third-party/claude-skills"
+
+# Collections whose adapter carries hand-written security analysis that a
+# generator cannot reproduce. `agents/` is the critical one: it is where the
+# 33 personas are argued to be hostile input, and regenerating it silently
+# deleted that argument. Same protection as gen_adapters.py's PROMOTED.
+PROMOTED = {"agents"}
 UP = "19392f7a08264ed00486a251f5b2098321771f94"
 DATE = "2026-09-29"
 
-CONDITIONS = """1. Read [`skills/conformance/SKILL.md`](../../../../conformance/SKILL.md)
+CONDITIONS_TMPL = """1. Read [`skills/conformance/SKILL.md`]({up}/conformance/SKILL.md)
    before any use.
 2. No target may be scanned, tested, or profiled until the operator supplies the
    target and explicit, written authorization recorded in the engagement file.
@@ -26,11 +32,38 @@ CONDITIONS = """1. Read [`skills/conformance/SKILL.md`](../../../../conformance/
 5. Record the upstream commit and this adapter path in the evidence log, so any
    finding traces to the exact tool version that produced it."""
 
+
+def conditions(up):
+    """Render the conditions block with a depth-correct link."""
+    return CONDITIONS_TMPL.format(up=up)
+
 WHY_COLLECTION = """Skills get one adapter each because each is an independently
 loadable, separately audited unit. The content covered here is not: it loads as
 a set, shares a single upstream review, and is governed by the same conditions.
 One adapter per directory is proportionate and states the same guarantees
 without generating boilerplate that would carry no information."""
+
+
+def repo_rel(target, from_dir):
+    """Relative path from an adapter's directory to a repo-relative target.
+
+    The depth of a collection adapter is not a constant. `commands/` and
+    `docs/` sit at the same level, but a collection nested one level deeper
+    needs a different number of `../` segments. This was hard-coded as
+    `../../../../`, which produced 48 dead links across 12 adapters before it
+    was measured. Depth is now computed from the actual path, so a collection
+    can be added at any level and still link correctly.
+    """
+    here = os.path.abspath(from_dir)
+    dest = os.path.abspath(target)
+    return os.path.relpath(dest, here).replace(os.sep, "/")
+
+
+def up_to_skills(from_dir):
+    """`../../..`-style prefix that lands on the repository's skills/ dir."""
+    rel = os.path.relpath(os.path.join("skills"), os.path.abspath(from_dir))
+    return rel.replace(os.sep, "/")
+
 
 
 def frontmatter_name(path):
@@ -56,15 +89,27 @@ def listing(rel, with_names):
     for dp, dn, fn in os.walk(root):
         dn.sort()
         for f in sorted(fn):
-            if f in (".gitkeep", "_BLACKHEART-ADAPTER.md"):
+            if f == "_BLACKHEART-ADAPTER.md":
                 continue
+            # .gitkeep files ARE listed. Dropping them silently made the
+            # agents/ collection report 35 files when it held 38, and made
+            # docs/ report 666 when it held 667. A generated count that
+            # disagrees with the filesystem is the exact defect this project
+            # exists to prevent.
             full = os.path.join(dp, f)
             name = frontmatter_name(full) if with_names else None
             rows.append((os.path.relpath(full, root).replace(os.sep, "/"), name))
     return sorted(rows)
 
 
-def write(rel, title, what, why_matters, rows, with_names=False):
+def write(rel, title, what, why_matters, rows, with_names=False, force=False):
+    target = os.path.join(MIR, rel, "_BLACKHEART-ADAPTER.md")
+    if rel in PROMOTED and os.path.isfile(target) and not force:
+        print(f"  {rel}/_BLACKHEART-ADAPTER.md  left as-is (promoted, hand-written)")
+        return
+    # Computed per collection rather than hard-coded: a collection nested at a
+    # different depth would otherwise emit dead links again.
+    up = up_to_skills(os.path.join(MIR, rel))
     L = [f"# Blackhearts Adapter — `{rel}/` ({title})", ""]
     L += [
         "| Field | Value |", "|---|---|",
@@ -75,7 +120,7 @@ def write(rel, title, what, why_matters, rows, with_names=False):
         f"| Integrity | byte-identical to upstream, verified {DATE} |",
         "| Modified by Blackhearts | No — this `_BLACKHEART-ADAPTER.md` is the only added file |",
         f"| Contents | {len(rows)} files |",
-        "| Governing policy | [SKILL.md](../../../../conformance/SKILL.md) |",
+        f"| Governing policy | [SKILL.md]({up}/conformance/SKILL.md) |",
         "",
         "## What this adapter is for", "",
         "Blackhearts-local metadata. The directory is **unmodified upstream "
@@ -88,10 +133,10 @@ def write(rel, title, what, why_matters, rows, with_names=False):
         "Any result this content produces is `UNVERIFIED` until independently "
         "demonstrated. Loading it does not authorize it to act on any target. A "
         "tool's own severity rating is **not** a BLACKHEART severity.", "",
-        "## Conditions of use", "", CONDITIONS, "",
+        "## Conditions of use", "", conditions(up), "",
         "## Provenance", "",
-        "- Licence text: [claude-skills-LICENSE](../../../../licenses/claude-skills-LICENSE)",
-        "- Integration record: [VENDOR.md](../../../../VENDOR.md)", "",
+        f"- Licence text: [claude-skills-LICENSE]({up}/licenses/claude-skills-LICENSE)",
+        f"- Integration record: [VENDOR.md]({up}/VENDOR.md)", "",
         "## Inventory", "",
     ]
     if with_names:

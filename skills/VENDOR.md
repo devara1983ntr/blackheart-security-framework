@@ -768,6 +768,8 @@ the mirror, and the only content in the repository that is not upstream's.
 | `.github/scripts/validate.py` | The seven-check validation gate | manual |
 | `.github/scripts/gap_audit.py` | Sixteen-group end-to-end gap audit: presence, wiring, accounting, and whether the documentation's own numbers are true | CI |
 | `.github/scripts/gen_index.py` | Regenerates `FILE-INDEX.txt`; `--check` fails CI on a stale index | CI |
+| `.github/scripts/gen_link_registry.py` | Registers every dead link in vendored content; `--check` fails CI on an unregistered one | CI |
+| `.github/upstream-link-defects.json` | The 111 registered dead upstream links, each with a reason | data |
 | `.github/scripts/sync_upstream.py` | Drift detection and re-vendoring | manual |
 | `.github/scripts/gen_adapters.py` | Per-skill adapter generation | manual |
 | `.github/scripts/gen_collection_adapters.py` | Collection adapter generation | manual |

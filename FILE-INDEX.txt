@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4367
+# Total entries: 4369
 
 .github/UPSTREAM-MANIFEST.json
 .github/scripts/gap_audit.py
@@ -17,10 +17,12 @@
 .github/scripts/gen_collection_adapters.py
 .github/scripts/gen_config.py
 .github/scripts/gen_index.py
+.github/scripts/gen_link_registry.py
 .github/scripts/gen_manifest.py
 .github/scripts/sync_upstream.py
 .github/scripts/validate.py
 .github/secret-allowlist.json
+.github/upstream-link-defects.json
 .github/workflows/upstream-sync.yml
 .github/workflows/validate.yml
 .gitignore

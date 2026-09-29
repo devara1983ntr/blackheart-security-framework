@@ -42,6 +42,7 @@ MANIFEST = os.path.join(REPO, ".github", "UPSTREAM-MANIFEST.json")
 ADAPTER = "_BLACKHEART-ADAPTER.md"
 CONFIG = os.path.join(REPO, "skills", "openclaw.example.json5")
 FILE_INDEX = os.path.join(REPO, "FILE-INDEX.txt")
+LINK_DEFECTS = os.path.join(REPO, ".github", "upstream-link-defects.json")
 
 MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
 
@@ -257,9 +258,37 @@ def check_catalog(r):
     r.add("catalog", ok, detail)
 
 
+def load_link_registry():
+    """The registered, individually explained upstream link defects."""
+    if not os.path.isfile(LINK_DEFECTS):
+        return None, "link defect registry missing; run gen_link_registry.py --write"
+    try:
+        with open(LINK_DEFECTS) as fh:
+            data = json.load(fh)
+        return {(e["file"], e["line"], e["target"]) for e in data["entries"]}, ""
+    except Exception as exc:
+        return None, f"link defect registry unreadable: {exc}"
+
+
 def check_links(r):
-    broken = []
+    """Every local link resolves, and every dead vendored link is accounted for.
+
+    Two different failures, handled differently on purpose:
+
+      * A broken link in Blackhearts-authored content is a defect. It is
+        fixed. It fails the build.
+
+      * A broken link inside byte-identical vendored content is an upstream
+        defect. It is NOT fixed, because vendored files must remain
+        byte-identical or the integrity guarantee means nothing. But it must
+        be registered in .github/upstream-link-defects.json with a reason.
+
+    A count in a sentence is not accounting. Before the registry existed, a
+    new dead upstream link would have been invisible, and a dead
+    Blackhearts-authored link was being reported as if it were upstream's.
+    """
     total = 0
+    broken = []          # (rel, line, target, vendored)
     for rel in walk_files(REPO):
         if not rel.endswith(".md"):
             continue
@@ -267,7 +296,8 @@ def check_links(r):
         vendored = is_vendored(rel)
         with open(full, encoding="utf-8", errors="replace") as fh:
             body = fh.read()
-        for _, target in MD_LINK.findall(body):
+        for m in MD_LINK.finditer(body):
+            target = m.group(2)
             if target.startswith(("http://", "https://", "#", "mailto:", "data:")):
                 continue
             clean = target.split("#")[0]
@@ -277,14 +307,35 @@ def check_links(r):
             if clean.lower() == "path":
                 continue
             total += 1
-            if not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(full), clean))):
-                broken.append((rel, target, vendored))
-    ours = [b for b in broken if not b[2]]
-    theirs = [b for b in broken if b[2]]
-    detail = f"{total} local links checked; {len(ours)} broken in Blackhearts-authored docs"
-    if theirs:
-        detail += f"; {len(theirs)} in vendored upstream content (documented, unmodified)"
-    r.add("links", not ours, detail + (f"; e.g. {ours[:3]}" if ours else ""))
+            if not os.path.exists(os.path.normpath(
+                    os.path.join(os.path.dirname(full), clean))):
+                broken.append((rel, body[:m.start()].count("\n") + 1, target, vendored))
+
+    ours = [b for b in broken if not b[3]]
+    theirs = [b for b in broken if b[3]]
+
+    registered, reg_err = load_link_registry()
+    if registered is None:
+        r.add("links", False, f"{total} local links checked; {reg_err}")
+        return
+
+    # Adapters are Blackhearts-authored even though they live inside the
+    # vendored tree. They must be correct, so they are held to the same
+    # standard as the rest of our documentation and can never be registered.
+    unregistered = [(rel, line, t) for rel, line, t, _v in theirs
+                    if (rel, line, t) not in registered
+                    and not os.path.basename(rel) == ADAPTER]
+    adapter_broken = [(rel, line, t) for rel, line, t, _v in theirs
+                      if os.path.basename(rel) == ADAPTER]
+    ours += [(rel, line, t, False) for rel, line, t in adapter_broken]
+
+    detail = (f"{total} local links checked; {len(ours)} broken in "
+              f"Blackhearts-authored docs; {len(theirs)} in vendored upstream "
+              f"content ({len(theirs) - len(unregistered)} registered)")
+    if unregistered:
+        detail += f"; {len(unregistered)} UNREGISTERED"
+    r.add("links", not ours and not unregistered, detail
+          + (f"; e.g. {(ours + unregistered)[:3]}" if (ours or unregistered) else ""))
 
 
 def check_index(r):

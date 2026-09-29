@@ -2,16 +2,16 @@
  "_comment": "Integrity record for all third-party content vendored into this repository. Regenerate with: python3 .github/scripts/gen_manifest.py  Verify with:      python3 .github/scripts/validate.py",
  "adapters": {
   ".claude-plugin/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2719,
-   "sha256": "5c492c30c2de5c74b74e2c028098bcc8b3577c60d31b79b8054e0293e261958d"
+   "bytes": 2707,
+   "sha256": "3471aa57984903769b3edbeff5786aeb67b494f8659bc7ed099f04856075c192"
   },
   ".claude/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2962,
-   "sha256": "887f254eb4d7778f8c9075c54e6d26d7b299e8e340b450dd156975aeef97c015"
+   "bytes": 2950,
+   "sha256": "21f897769fe9400cf5f77966bda45289728795af531d775fe5d1d5fe4a747406"
   },
   ".codex-plugin/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2489,
-   "sha256": "91ef1ea88bc23dd1ab30b4b915e22fea4207bae3242b9650f5b2e6401ba0e886"
+   "bytes": 2477,
+   "sha256": "d4a3c1fed8d9dbc2b6b3ecef2b0ac25235abd50c50d79c87004c28d5f88799b7"
   },
   "agent-launcher/skills/agent-launcher-orchestrator/_BLACKHEART-ADAPTER.md": {
    "bytes": 3317,
@@ -38,12 +38,12 @@
    "sha256": "f98addb385de5e2788695988cd6e1f743bfbbb52a627f83fec4a69a41dba3b75"
   },
   "agents/_BLACKHEART-ADAPTER.md": {
-   "bytes": 5846,
-   "sha256": "7d090321cea36c47c8f2a0d6b9d0c1e65290d92c211e9e17e2a372e6d3715bc6"
+   "bytes": 5834,
+   "sha256": "a1c2227cd0feb306bc9b83d6e1393336c226d5c04ef39e116a0d98434f25565f"
   },
   "audit/_BLACKHEART-ADAPTER.md": {
-   "bytes": 4315,
-   "sha256": "7135afb10be76690310196f2fdd60a0e7a5dc633779d0d4fc7f33de00bd4268e"
+   "bytes": 4303,
+   "sha256": "ad1c82ef150b7e84d93ceede5844ee6375453011e646b47d2868424ef54e3e4b"
   },
   "business-growth/skills/business-growth-skills/_BLACKHEART-ADAPTER.md": {
    "bytes": 2683,
@@ -366,8 +366,8 @@
    "sha256": "aaac20ea73add266137bf99112273dacbdc3a9dc1622c9cfe769cb77106afca7"
   },
   "commands/_BLACKHEART-ADAPTER.md": {
-   "bytes": 4109,
-   "sha256": "336131852e81260d0bd6aac5438777ee7c1e4e28b9710f674cb94b78a795189a"
+   "bytes": 4118,
+   "sha256": "59ae0b1c04ccb56993380ca0d7a4785c4818632b608da7685b80d27a99aa6a63"
   },
   "commercial/skills/channel-economics/_BLACKHEART-ADAPTER.md": {
    "bytes": 3144,
@@ -438,12 +438,12 @@
    "sha256": "8519cbdafff92d290fec3114549c2b12bc5292a7bbdac312736269d8f2fea4f9"
   },
   "custom-gpt/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2448,
-   "sha256": "c4f9e4162e6d58f6321dbb2e45b1c470a524d7e03259618deb56d6a6ec65d1a7"
+   "bytes": 2436,
+   "sha256": "9b61a3a08d3359cf1a89c4808e9ab7314c9236fc5542180f8dec319a479e5ee1"
   },
   "docs/_BLACKHEART-ADAPTER.md": {
-   "bytes": 34433,
-   "sha256": "a461215d31334588a9c66d0163aaf6b9d78c926298162d5a6da048a1826460df"
+   "bytes": 34452,
+   "sha256": "bc051377ee724d996722a7ccb8ecaa9b4264e88c7a62b60e5a731b3c7b48e60d"
   },
   "engineering-team/a11y-audit/skills/a11y-audit/_BLACKHEART-ADAPTER.md": {
    "bytes": 2676,
@@ -1294,8 +1294,8 @@
    "sha256": "49b3ae92d215b8cd08e3a017ea4964564f2533300f045f2e85e28d3e7c8ff949"
   },
   "orchestration/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2567,
-   "sha256": "34f1c9d2ba9e980ce8221da35b6f05139ce7183b4ab27f4b7a28c2578d08adf1"
+   "bytes": 2555,
+   "sha256": "b9d074480b2e6d27fd496b86c41f4091b91ebfa2060b5754c02041e0e12d779d"
   },
   "product-team/agile-product-owner/skills/agile-product-owner/_BLACKHEART-ADAPTER.md": {
    "bytes": 2712,
@@ -1586,16 +1586,16 @@
    "sha256": "2b05d5a17087710632d99bae81ef1c5ed679a992c596b49bc4a182d4f58a02b0"
   },
   "scripts/_BLACKHEART-ADAPTER.md": {
-   "bytes": 3760,
-   "sha256": "b45e923b9e08613fa6e2ef2fb4384d17f0f5681348fb975306cb782fb0955378"
+   "bytes": 3748,
+   "sha256": "56cbccb12cde626efc62f9c75e857470c5c60ee2f3b71269d27f0027e7f00534"
   },
   "standards/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2915,
-   "sha256": "4c98132653f9ffbbe0b057ee5cfae59bedad7deec73dfeda2d9f8fb20d83590c"
+   "bytes": 3058,
+   "sha256": "254ff37226088d2aac4ca6302489e1b2771c77251182aaf3fbbeac71fc44e3c3"
   },
   "templates/_BLACKHEART-ADAPTER.md": {
-   "bytes": 2536,
-   "sha256": "ce320344ef03edce18afec8a9810c8d8a7cd89d9ef04992e5a034c4f2006af87"
+   "bytes": 2545,
+   "sha256": "709143f7bfd135d13f6692e7742013b039c05d3a6ff9b3ae4efe8d32dee35af0"
   }
  },
  "catalogue": {

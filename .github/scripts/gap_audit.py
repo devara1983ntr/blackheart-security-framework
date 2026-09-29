@@ -278,6 +278,31 @@ def run():
     for token, what in expected_header:
         if token not in header:
             problems.append(f"AGENT.md header does not state the current {what} ({token})")
+    # 17 --------------------------------------------------------------
+    # The link registry must cover exactly the dead links the validator finds.
+    # validate.py already enforces coverage; this asserts the registry itself is
+    # present, well-formed, and carries a reason for every entry -- so a
+    # registry that is empty, malformed, or unreasoned cannot pass as "fine".
+    reg = os.path.join(REPO, ".github", "upstream-link-defects.json")
+    reg_ok = False
+    reg_detail = "registry missing"
+    if os.path.isfile(reg):
+        try:
+            data = json.loads(read(reg))
+            entries = data.get("entries", [])
+            unreasoned = [e for e in entries if not e.get("reason")]
+            missing_field = [e for e in entries
+                             if not all(k in e for k in ("id", "file", "line", "target", "category"))]
+            dupes = len(entries) - len({e["id"] for e in entries})
+            declared = data.get("totals", {}).get("broken_links")
+            consistent = declared == len(entries)
+            reg_ok = bool(entries) and not unreasoned and not missing_field and not dupes and consistent
+            reg_detail = (f"{len(entries)} registered, {len(unreasoned)} without a reason, "
+                          f"{dupes} duplicate ids, totals {'match' if consistent else 'MISMATCH'}")
+        except Exception as exc:
+            reg_detail = f"unparseable: {exc}"
+    check("17. upstream link defects registered", reg_ok, reg_detail)
+
     check("16. documentation self-check", not problems,
           f"claims {authored} files / {secs} contiguous sections verified against the tree"
           if not problems else "; ".join(problems[:3]))

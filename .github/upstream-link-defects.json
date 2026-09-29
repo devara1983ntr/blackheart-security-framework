@@ -1,0 +1,927 @@
+{
+  "_comment": [
+    "Broken relative links inside byte-identical vendored upstream content.",
+    "These are NOT fixed, because vendored files must remain byte-identical to",
+    "upstream or the integrity guarantee is meaningless. They are registered here",
+    "so that:",
+    "  1. a NEW broken link fails CI until a human registers and explains it;",
+    "  2. a Blackhearts-authored broken link always fails CI (adapters are",
+    "     excluded from this registry by construction);",
+    "  3. the count is verifiable rather than a claim in a sentence.",
+    "",
+    "Regenerate:  python3 .github/scripts/gen_link_registry.py --write",
+    "Verified by: python3 .github/scripts/validate.py   (check: links)",
+    "",
+    "Fixing these in place is possible but is refused by policy. It would put",
+    "Blackhearts text inside documents that claim to be another author's, and",
+    "would make the integrity check unable to prove what the mirror contains."
+  ],
+  "upstream": {
+    "repository": "https://github.com/alirezarezvani/claude-skills",
+    "commit": "19392f7a08264ed00486a251f5b2098321771f94",
+    "license": "MIT (c) 2025 Alireza Rezvani"
+  },
+  "policy": {
+    "modified_in_vendored_content": false,
+    "rationale": "a mirror that edits its source stops being a mirror and stops being evidence",
+    "blackhearts_authored_broken_links_allowed": 0
+  },
+  "totals": {
+    "broken_links": 111,
+    "by_category": {
+      "upstream-missing-path": 96,
+      "upstream-directory": 5,
+      "upstream-placeholder": 10
+    }
+  },
+  "entries": [
+    {
+      "id": "UL-0001",
+      "file": "skills/catalog/categories/productivity-and-tasks.md",
+      "line": 149,
+      "target": "[https://clawskills.sh/skills/jason2be-ppt-ooxml-tool",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0002",
+      "file": "skills/catalog/upstream-README.md",
+      "line": 86,
+      "target": "CONTRIBUTING.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0003",
+      "file": "skills/catalog/upstream-README.md",
+      "line": 1245,
+      "target": "CONTRIBUTING.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0004",
+      "file": "skills/catalog/upstream-README.md",
+      "line": 1258,
+      "target": "LICENSE",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0005",
+      "file": "skills/third-party/claude-skills/.claude/commands/seo-auditor.md",
+      "line": 71,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0006",
+      "file": "skills/third-party/claude-skills/CHANGELOG.md",
+      "line": 367,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0007",
+      "file": "skills/third-party/claude-skills/CLAUDE.md",
+      "line": 144,
+      "target": "documentation/WORKFLOW.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0008",
+      "file": "skills/third-party/claude-skills/CLAUDE.md",
+      "line": 746,
+      "target": "documentation/delivery/",
+      "category": "upstream-directory",
+      "reason": "upstream links a directory, not a file"
+    },
+    {
+      "id": "UL-0009",
+      "file": "skills/third-party/claude-skills/CLAUDE.md",
+      "line": 822,
+      "target": "documentation/implementation/",
+      "category": "upstream-directory",
+      "reason": "upstream links a directory, not a file"
+    },
+    {
+      "id": "UL-0010",
+      "file": "skills/third-party/claude-skills/CLAUDE.md",
+      "line": 823,
+      "target": "documentation/delivery/",
+      "category": "upstream-directory",
+      "reason": "upstream links a directory, not a file"
+    },
+    {
+      "id": "UL-0011",
+      "file": "skills/third-party/claude-skills/CONTRIBUTING.md",
+      "line": 138,
+      "target": "references/patterns.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0012",
+      "file": "skills/third-party/claude-skills/CONVENTIONS.md",
+      "line": 81,
+      "target": "references/detailed-guide.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0013",
+      "file": "skills/third-party/claude-skills/SKILL-AUTHORING-STANDARD.md",
+      "line": 233,
+      "target": "references/frameworks.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0014",
+      "file": "skills/third-party/claude-skills/agents/CLAUDE.md",
+      "line": 281,
+      "target": "../<domain>/cs-related-agent.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0015",
+      "file": "skills/third-party/claude-skills/agents/CLAUDE.md",
+      "line": 285,
+      "target": "../../domain-skill/skill-name/SKILL.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0016",
+      "file": "skills/third-party/claude-skills/agents/CLAUDE.md",
+      "line": 286,
+      "target": "../../<domain-skill>/roadmap.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0017",
+      "file": "skills/third-party/claude-skills/agents/personas/README.md",
+      "line": 60,
+      "target": "template.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0018",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/SKILL.md",
+      "line": 30,
+      "target": "../00-fundacao/identidade.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0019",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/assets/frontmatter_template.md",
+      "line": 15,
+      "target": "../01-estrategia/proposta-de-valor.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0020",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/assets/index_template.md",
+      "line": 9,
+      "target": "identidade.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0021",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/assets/index_template.md",
+      "line": 10,
+      "target": "problema-solucao.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0022",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/references/okf_conformance.md",
+      "line": 43,
+      "target": "../01-estrategia/proposta-de-valor.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0023",
+      "file": "skills/third-party/claude-skills/c-level-advisor/arquiteto-de-empresa/skills/arquiteto-de-empresa/references/okf_conformance.md",
+      "line": 44,
+      "target": "projecoes.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0024",
+      "file": "skills/third-party/claude-skills/c-level-advisor/c_level_leadership_skills_overview.md",
+      "line": 385,
+      "target": "computer:///mnt/user-data/outputs/cto-advisor.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0025",
+      "file": "skills/third-party/claude-skills/c-level-advisor/c_level_leadership_skills_overview.md",
+      "line": 386,
+      "target": "computer:///mnt/user-data/outputs/ceo-advisor.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0026",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/SKILL.md",
+      "line": 30,
+      "target": "../00-fundacao/identidade.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0027",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/assets/frontmatter_template.md",
+      "line": 15,
+      "target": "../01-estrategia/proposta-de-valor.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0028",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/assets/index_template.md",
+      "line": 9,
+      "target": "identidade.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0029",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/assets/index_template.md",
+      "line": 10,
+      "target": "problema-solucao.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0030",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/references/okf_conformance.md",
+      "line": 43,
+      "target": "../01-estrategia/proposta-de-valor.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0031",
+      "file": "skills/third-party/claude-skills/c-level-advisor/skills/arquiteto-de-empresa/references/okf_conformance.md",
+      "line": 44,
+      "target": "projecoes.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0032",
+      "file": "skills/third-party/claude-skills/commands/cs-aeo.md",
+      "line": 157,
+      "target": "agents/marketing/cs-aeo.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0033",
+      "file": "skills/third-party/claude-skills/commands/cs-aeo.md",
+      "line": 158,
+      "target": "marketing-skill/skills/aeo/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0034",
+      "file": "skills/third-party/claude-skills/commands/seo-auditor.md",
+      "line": 195,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0035",
+      "file": "skills/third-party/claude-skills/docs/commands/seo-auditor.md",
+      "line": 197,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0036",
+      "file": "skills/third-party/claude-skills/docs/skills/engineering/skill-doctor.md",
+      "line": 92,
+      "target": "scorers/code-quality.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0037",
+      "file": "skills/third-party/claude-skills/docs/skills/engineering/skill-doctor.md",
+      "line": 92,
+      "target": "scorers/efficiency.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0038",
+      "file": "skills/third-party/claude-skills/docs/skills/markdown-html/md-document.md",
+      "line": 69,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0039",
+      "file": "skills/third-party/claude-skills/docs/skills/markdown-html/md-document.md",
+      "line": 69,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0040",
+      "file": "skills/third-party/claude-skills/engineering-team/self-improving-agent/skills/self-improving-agent/SKILL.md",
+      "line": 162,
+      "target": "engineering-team/playwright-pro/",
+      "category": "upstream-directory",
+      "reason": "upstream links a directory, not a file"
+    },
+    {
+      "id": "UL-0041",
+      "file": "skills/third-party/claude-skills/engineering-team/skills/security-pen-testing/SKILL.md",
+      "line": 305,
+      "target": "engineering/skills/dependency-auditor/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0042",
+      "file": "skills/third-party/claude-skills/engineering-team/skills/senior-prompt-engineer/references/agentic_system_design.md",
+      "line": 71,
+      "target": "action.argument",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0043",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/assets/master_skill_template.md",
+      "line": 56,
+      "target": "chapters/ch01-<slug>.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0044",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/assets/master_skill_template.md",
+      "line": 57,
+      "target": "chapters/ch02-<slug>.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0045",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/assets/master_skill_template.md",
+      "line": 70,
+      "target": "glossary.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0046",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/assets/master_skill_template.md",
+      "line": 71,
+      "target": "patterns.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0047",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/assets/master_skill_template.md",
+      "line": 72,
+      "target": "cheatsheet.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0048",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/references/conversion_workflow.md",
+      "line": 305,
+      "target": "chapters/ch01-<slug>.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0049",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/references/conversion_workflow.md",
+      "line": 312,
+      "target": "cheatsheet.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0050",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/references/conversion_workflow.md",
+      "line": 312,
+      "target": "glossary.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0051",
+      "file": "skills/third-party/claude-skills/engineering/book-to-skill/skills/book-to-skill/references/conversion_workflow.md",
+      "line": 312,
+      "target": "patterns.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0052",
+      "file": "skills/third-party/claude-skills/engineering/grill-with-docs/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "line": 66,
+      "target": "./src/ordering/CONTEXT.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0053",
+      "file": "skills/third-party/claude-skills/engineering/grill-with-docs/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "line": 67,
+      "target": "./src/billing/CONTEXT.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0054",
+      "file": "skills/third-party/claude-skills/engineering/grill-with-docs/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "line": 68,
+      "target": "./src/fulfillment/CONTEXT.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0055",
+      "file": "skills/third-party/claude-skills/engineering/handoff/skills/handoff/references/deduplication_discipline.md",
+      "line": 57,
+      "target": "docs/prd/auth-refactor.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0056",
+      "file": "skills/third-party/claude-skills/engineering/handoff/skills/handoff/references/deduplication_discipline.md",
+      "line": 76,
+      "target": "docs/adr/0042-auth-provider.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0057",
+      "file": "skills/third-party/claude-skills/engineering/handoff/skills/handoff/references/handoff_structure.md",
+      "line": 120,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0058",
+      "file": "skills/third-party/claude-skills/engineering/write-a-skill/skills/write-a-skill/SKILL.md",
+      "line": 66,
+      "target": "REFERENCE.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0059",
+      "file": "skills/third-party/claude-skills/engineering/write-a-skill/skills/write-a-skill/references/progressive_disclosure_principles.md",
+      "line": 59,
+      "target": "references/topic.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0060",
+      "file": "skills/third-party/claude-skills/markdown-html/skills/md-document/SKILL.md",
+      "line": 63,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0061",
+      "file": "skills/third-party/claude-skills/markdown-html/skills/md-document/SKILL.md",
+      "line": 63,
+      "target": "url",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0062",
+      "file": "skills/third-party/claude-skills/marketing-skill/README.md",
+      "line": 130,
+      "target": "content-creator/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0063",
+      "file": "skills/third-party/claude-skills/marketing-skill/README.md",
+      "line": 183,
+      "target": "marketing-demand-acquisition/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0064",
+      "file": "skills/third-party/claude-skills/marketing-skill/README.md",
+      "line": 230,
+      "target": "marketing-strategy-pmm/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0065",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/competitor-alternatives/references/content-architecture.md",
+      "line": 163,
+      "target": "/alternatives/notion",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0066",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/competitor-alternatives/references/content-architecture.md",
+      "line": 164,
+      "target": "/alternatives/airtable",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0067",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/competitor-alternatives/references/content-architecture.md",
+      "line": 165,
+      "target": "/alternatives/monday",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0068",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/email-sequence/references/email-sequence-playbook.md",
+      "line": 127,
+      "target": "references/sequence-templates.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0069",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/email-sequence/references/email-sequence-playbook.md",
+      "line": 170,
+      "target": "references/email-types.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0070",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/email-sequence/references/email-sequence-playbook.md",
+      "line": 207,
+      "target": "references/copy-guidelines.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0071",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/site-architecture/references/internal-linking-playbook.md",
+      "line": 115,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0072",
+      "file": "skills/third-party/claude-skills/marketing-skill/skills/site-architecture/references/internal-linking-playbook.md",
+      "line": 121,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0073",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/SKILL.md",
+      "line": 308,
+      "target": "./pages/01-user-mgmt-list.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0074",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/expected_outputs/sample-prd-readme.md",
+      "line": 19,
+      "target": "./pages/01-home.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0075",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/expected_outputs/sample-prd-readme.md",
+      "line": 20,
+      "target": "./pages/02-dashboard.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0076",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/expected_outputs/sample-prd-readme.md",
+      "line": 21,
+      "target": "./pages/03-user-list.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0077",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/expected_outputs/sample-prd-readme.md",
+      "line": 22,
+      "target": "./pages/04-user-detail.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0078",
+      "file": "skills/third-party/claude-skills/product-team/code-to-prd/skills/code-to-prd/expected_outputs/sample-prd-readme.md",
+      "line": 23,
+      "target": "./pages/05-settings.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0079",
+      "file": "skills/third-party/claude-skills/productivity/capture/agents/cs-capture.md",
+      "line": 196,
+      "target": "engineering/grill-me/agents/cs-grill-master.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0080",
+      "file": "skills/third-party/claude-skills/productivity/capture/agents/cs-capture.md",
+      "line": 197,
+      "target": "engineering/grill-with-docs/agents/cs-grill-with-docs.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0081",
+      "file": "skills/third-party/claude-skills/productivity/email/skills/inbox-setup/references/grill_me_section_walk.md",
+      "line": 147,
+      "target": "../../../../engineering/grill-me/",
+      "category": "upstream-directory",
+      "reason": "upstream links a directory, not a file"
+    },
+    {
+      "id": "UL-0082",
+      "file": "skills/third-party/claude-skills/project-management/README.md",
+      "line": 134,
+      "target": "scrum-master/SKILL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0083",
+      "file": "skills/third-party/claude-skills/project-management/skills/confluence-expert/references/templates.md",
+      "line": 159,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0084",
+      "file": "skills/third-party/claude-skills/project-management/skills/confluence-expert/references/templates.md",
+      "line": 423,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0085",
+      "file": "skills/third-party/claude-skills/project-management/skills/confluence-expert/references/templates.md",
+      "line": 719,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0086",
+      "file": "skills/third-party/claude-skills/project-management/skills/confluence-expert/references/templates.md",
+      "line": 720,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0087",
+      "file": "skills/third-party/claude-skills/project-management/skills/confluence-expert/references/templates.md",
+      "line": 721,
+      "target": "link",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0088",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 15,
+      "target": "computer:///mnt/user-data/outputs/regulatory-affairs-head.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0089",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 20,
+      "target": "computer:///mnt/user-data/outputs/quality-manager-qmr.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0090",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 26,
+      "target": "computer:///mnt/user-data/outputs/quality-manager-qms-iso13485.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0091",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 31,
+      "target": "computer:///mnt/user-data/outputs/capa-officer.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0092",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 36,
+      "target": "computer:///mnt/user-data/outputs/quality-documentation-manager.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0093",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 42,
+      "target": "computer:///mnt/user-data/outputs/risk-management-specialist.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0094",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 47,
+      "target": "computer:///mnt/user-data/outputs/information-security-manager-iso27001.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0095",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 53,
+      "target": "computer:///mnt/user-data/outputs/mdr-745-specialist.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0096",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 58,
+      "target": "computer:///mnt/user-data/outputs/fda-consultant-specialist.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0097",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 64,
+      "target": "computer:///mnt/user-data/outputs/qms-audit-expert.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0098",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 69,
+      "target": "computer:///mnt/user-data/outputs/isms-audit-expert.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0099",
+      "file": "skills/third-party/claude-skills/ra-qm-team/final-complete-skills-collection.md",
+      "line": 74,
+      "target": "computer:///mnt/user-data/outputs/gdpr-dsgvo-expert.zip",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0100",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 130,
+      "target": "agents/README.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0101",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 131,
+      "target": "INSTALL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0102",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 148,
+      "target": "path/to/image.png",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0103",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 154,
+      "target": "image.png",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0104",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 285,
+      "target": "INSTALL.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0105",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 286,
+      "target": "USAGE.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0106",
+      "file": "skills/third-party/claude-skills/standards/documentation/documentation-standards.md",
+      "line": 287,
+      "target": "agents/README.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0107",
+      "file": "skills/third-party/claude-skills/templates/agent-template.md",
+      "line": 295,
+      "target": "../<domain>/cs-related-agent.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0108",
+      "file": "skills/third-party/claude-skills/templates/agent-template.md",
+      "line": 296,
+      "target": "cs-another-agent.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0109",
+      "file": "skills/third-party/claude-skills/templates/agent-template.md",
+      "line": 297,
+      "target": "cs-future-agent.md",
+      "category": "upstream-missing-path",
+      "reason": "target does not exist at this path upstream"
+    },
+    {
+      "id": "UL-0110",
+      "file": "skills/third-party/claude-skills/templates/agent-template.md",
+      "line": 306,
+      "target": "../../domain-skill/skill-name/SKILL.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    },
+    {
+      "id": "UL-0111",
+      "file": "skills/third-party/claude-skills/templates/agent-template.md",
+      "line": 307,
+      "target": "../../<domain-skill>/CLAUDE.md",
+      "category": "upstream-placeholder",
+      "reason": "upstream template placeholder, never a real path"
+    }
+  ]
+}

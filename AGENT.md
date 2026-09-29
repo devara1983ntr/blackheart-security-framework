@@ -55,9 +55,13 @@ exists to contain.
 - Five upstream paths are deliberately excluded (`.gemini/`, `.codex/`,
   `.vibe/`, `.hermes/`, `.gitignore`), each with a recorded reason in
   [`skills/VENDOR.md`](skills/VENDOR.md) §2.0.1.
-- `159` broken links exist inside vendored upstream content. They are genuine
+- `111` broken links exist inside vendored upstream content. They are genuine
   upstream defects, left unmodified on purpose. **Zero** are in
-  Blackhearts-authored documentation.
+  Blackhearts-authored documentation. Every one is individually registered with
+  a reason in
+  [`.github/upstream-link-defects.json`](.github/upstream-link-defects.json),
+  and a new unregistered one fails the build — so the count cannot grow
+  silently. The rule is *fix ours, account for theirs*.
 
 > **Rule 0 — the supply chain is part of your threat model.** If a target's
 > agent loads skills, you are assessing *that agent*. A malicious or

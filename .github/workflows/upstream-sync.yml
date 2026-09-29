@@ -87,7 +87,7 @@ jobs:
 
       - name: Open pull request
         if: steps.check.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: automation/upstream-sync
           commit-message: 'Sync vendored skills from upstream'

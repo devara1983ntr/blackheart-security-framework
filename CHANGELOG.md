@@ -40,6 +40,23 @@ and the state of the executable layer.
   the property rendered nothing. The accent colour is now the declared value
   and the gradient is applied inside `@supports`.
 
+### Fixed
+- **`repo_settings.py` applied cleanly only on the fourth attempt, and the
+  first three failures were all in the script rather than the API.** Worth
+  recording, because each looked like a GitHub restriction and none was:
+  - the description `PATCH` built a bare `https://api.github.com` URL,
+    because an empty path is not a path; both `""` and `"/"` now resolve to
+    the repository URL, since the trailing-slash form also 404s on `PATCH`;
+  - 25 topics were sent and GitHub accepts at most 20, so the whole call
+    failed with 422 — now 20, chosen to be the 20 a reader would search for;
+  - the branch-protection body was built by dropping `nil` values, and
+    GitHub requires `required_pull_request_reviews` and `restrictions` to be
+    *present* rather than defaulted. The assertion that would have caught
+    this is now in the script.
+
+  The stale-branch deletion succeeded first time and only after re-verifying
+  `ahead_by == 0` at the moment of deletion.
+
 ### Added
 - **HTML is now parsed, not pattern-matched.** `check_site.py` grew three
   checks that no regex can do: whether every document nests correctly, whether

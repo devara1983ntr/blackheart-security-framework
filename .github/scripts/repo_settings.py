@@ -41,13 +41,15 @@ DESCRIPTION = (
     "CI-enforced authorization gate."
 )
 
+# GitHub accepts at most 20 topics. These are the 20 a reader would
+# actually search for; a 21st would make the whole call fail with 422.
 TOPICS = [
     "ai-security", "agent-security", "supply-chain-security", "llm-security",
     "prompt-injection", "security-framework", "agent-governance",
     "guardrails", "devsecops", "mitre-atlas", "owasp", "red-team",
-    "threat-modeling", "sarif", "static-analysis", "pentesting",
+    "threat-modeling", "static-analysis", "pentesting",
     "skill-governance", "supply-chain", "security-tools", "claude-skills",
-    "awesome-list", "security", "devops", "automation", "github-actions",
+    "github-actions",
 ]
 
 STALE_BRANCH = "jules-14349490603005815930-7a465791"
@@ -61,8 +63,16 @@ if not token:
 
 
 def call(method, path, body=None):
+    # "" and "/" both mean "the repository itself" -- the repo URL with a
+    # trailing slash 404s on PATCH, so normalise it away.
+    if path in ("", "/"):
+        url = API
+    elif path.startswith("/"):
+        url = API + path
+    else:
+        url = f"https://api.github.com{path}"
     req = urllib.request.Request(
-        API + path if path.startswith("/") else f"https://api.github.com{path}",
+        url,
         method=method,
         headers={
             "Authorization": f"Bearer {token}",
@@ -126,7 +136,9 @@ RULES = {
     "required_conversation_resolution": True,
     "block_creations": False,
 }
-RULES = {k: v for k, v in RULES.items() if v is not None}
+# Both keys must be present in the request body -- omitting them is a 422,
+# not a "use the default". null is the documented value for "not required".
+assert "required_pull_request_reviews" in RULES and "restrictions" in RULES
 
 if DRY:
     record("branch protection: main", "DRY",

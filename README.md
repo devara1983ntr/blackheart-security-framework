@@ -355,6 +355,14 @@ every `site/**` change; the last two need a browser and run locally.
 | [`check_contrast.py`](site/check_contrast.py) | WCAG AA measured in a real browser across both themes — including gradient-clipped text, measured through its gradient stops | clean, local |
 | [`test_interactions.py`](site/test_interactions.py) | 81 behavioural checks in Chromium: overflow at four viewports, keyboard tab order, the tabs pattern, the error banner, and that a throwing script degrades to a readable page | 81/81, local |
 
+**Generated files cannot lie by accident.** `gen_manifest.py` and
+`gen_index.py` turn the working tree into published numbers, and neither warns
+if the tree is incomplete — running one over a damaged tree records the damage
+as truth. Both now refuse while the mirror or catalogue differs from `HEAD`
+and name the paths to restore. `gen_manifest.py` additionally ended with a
+bare `main()` call that discarded its exit status, so a refusal would have
+reported success to CI.
+
 Every gate in this repository was tamper-tested. Each was made to fail
 deliberately — a vendored script altered, the security gate switched off, a
 documented number falsified, a section renumbered — and each was confirmed to

@@ -41,6 +41,28 @@ and the state of the executable layer.
   and the gradient is applied inside `@supports`.
 
 ### Added
+- **`.github/scripts/guard_clean.py` — generators can no longer record a damaged
+  tree as fact.** `gen_manifest.py` and `gen_index.py` turn the working tree into
+  published claims. Neither warned: run either over an incomplete tree and it
+  faithfully describes the damage, and the damage becomes the committed truth.
+
+  That is not hypothetical. A working tree was missing two vendored files, a
+  manifest was regenerated over it, and the counts dropped from 3,864 to 3,863
+  with a single diff line as the only evidence. Both generators now refuse
+  while the mirror or catalogue differs from `HEAD`, and name the offending
+  paths and the command to restore them. `--allow-dirty` exists for generating
+  an index that must include a file being added right now.
+
+  `gen_manifest.py` also ended with a bare `main()` call, so its return value
+  was discarded: the guard could refuse correctly and the script would still
+  exit 0, reporting success to CI having written nothing. It now ends with
+  `sys.exit(main())`.
+
+  Tested in both directions on a deliberately deleted vendored file: blocked
+  with exit 1 and the manifest left byte-identical, then allowed with exit 0
+  once restored. Regenerating on a clean tree is a byte-identical no-op,
+  which is also the proof that the committed manifest is not stale.
+
 - **`validate.py` `history` check (now 8 checks).** Four Dependabot squash
   subjects had shipped as the literal `ci: bump $(title)`; they were corrected
   in an earlier history-only rewrite, and this check keeps them corrected. It

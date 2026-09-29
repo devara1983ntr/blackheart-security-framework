@@ -105,6 +105,13 @@ def main(argv):
         sys.stderr.write(__doc__)
         return 2
 
+    if args[0] == "--write" and "--allow-dirty" not in args:
+        # The index is a claim about the tree; do not record a damaged one.
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from guard_clean import check
+        if check(REPO):
+            return 1
+
     paths = collect()
     want = render(paths)
 

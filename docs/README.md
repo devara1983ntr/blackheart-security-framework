@@ -16,6 +16,12 @@ authorized adversarial security research framework.
 | [`modes/ZERO-CREDENTIAL-ESCALATION-MODE.md`](modes/ZERO-CREDENTIAL-ESCALATION-MODE.md) | Zero-credential discovery, method escalation, coverage control |
 | [`modes/RED-HEART-ADVERSARY-EMULATION.md`](modes/RED-HEART-ADVERSARY-EMULATION.md) | Adversary emulation, attack-path reasoning, post-exploitation, RoE |
 
+## Framework references
+
+| Document | Purpose |
+|---|---|
+| [`CAPABILITY-AUDIT.md`](CAPABILITY-AUDIT.md) | What this framework can and cannot do, checked against the tree, with the decisions taken on every gap |
+
 ## Domain guides
 
 | Guide | Purpose |

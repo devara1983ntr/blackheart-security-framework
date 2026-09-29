@@ -195,7 +195,7 @@ checklist with the command for every gate.
 
 Hand the agent the prompt in
 [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md). It enumerates
-the 54-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
+the 55-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
 a stated precedence order, and returns a **countable** readiness confirmation
 instead of an unfalsifiable one.
 
@@ -242,7 +242,7 @@ not a control, it is a vulnerability.
 
 ## Verification
 
-Three workflows, six verification scripts.
+Six workflows, nine verification scripts.
 
 `validate.py` — 8 checks, on every push and pull request:
 
@@ -251,7 +251,7 @@ Three workflows, six verification scripts.
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,271 local links; **0 broken in authored docs** |
+| `links` | 5,279 local links; **0 broken in authored docs** |
 | `index` | 4,403 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |
@@ -263,8 +263,23 @@ It reads no upstream and no network. Group 16 checks the figures published here
 against the repository, which is what makes a documentation claim falsifiable
 rather than decorative.
 
-Three further gates cover the published site; the first two run in CI on every
-`site/**` change, the last two need a browser and run locally.
+Three further workflows keep the repository honest over time, and none of them
+can merge anything:
+
+| Workflow | What it does |
+|---|---|
+| [`upstream-watch.yml`](.github/workflows/upstream-watch.yml) | Weekly, read-only. Resolves the head of **both** pinned sources, compares it with the recorded pin, classifies what moved, and opens one tracking issue. `contents: read` — it has no path to a commit. |
+| [`site-verify.yml`](.github/workflows/site-verify.yml) | Runs the two browser gates in CI: WCAG AA across both themes, and 81 behavioural checks in Chromium. |
+| [`authored-scan.yml`](.github/workflows/authored-scan.yml) | Parses every authored configuration file and every workflow, checks the capability audit's claims still hold, and runs static analysis over the authored Python. |
+
+**Detection is automatic. Preparation is automatic. Admission is not.** No
+workflow in this repository merges third-party content, and `upstream-sync.yml`
+is configured never to merge its own pull request.
+
+Four further gates cover the published site. `check_site.py` and `audit_seo.py`
+run in `pages.yml` on every change; `check_contrast.py` and
+`test_interactions.py` measure the site in a real browser and run in
+`site-verify.yml`. **All six workflows are in CI. Nothing is local-only.**
 
 | Gate | What it proves | Result |
 |---|---|---|

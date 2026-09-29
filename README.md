@@ -1,480 +1,257 @@
 <div align="center">
 
-# BLACKHEART
+# ⬢ BLACKHEART
 
-### Adversarial Security Research Framework
+### A governed security-supply-chain framework for AI agents
 
-**An evidence-first methodology and agent instruction set for authorized
-application, API, mobile, payment, and digital-product security assessments.**
+**388 security skills · 39 commands · 33 agent personas · 3,864 verified files · 399 audited adapters**
 
-[Documentation](#documentation) · [Repository Structure](#repository-structure) ·
-[Quick Start](#quick-start) · [Responsible Use](#responsible-use) · [License](#license)
+*Skills are not the problem. Unvetted skills are.*
+
+[![validate](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/validate.yml/badge.svg)](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/validate.yml)
+[![upstream-sync](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/upstream-sync.yml/badge.svg)](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/upstream-sync.yml)
+[![license](https://img.shields.io/badge/license-MIT-00d4a5.svg)](LICENSE)
+[![upstream](https://img.shields.io/badge/mirror-alirezarezvani%2Fclaude--skills-6f42c1.svg)](https://github.com/alirezarezvani/claude-skills)
 
 </div>
 
 ---
 
-## Overview
+## The problem
 
-**BLACKHEART** is a structured framework for conducting **authorized** adversarial
-security assessments. It provides operating modes, domain guides, report templates,
-and a decision taxonomy that together define *how* to test, *what evidence* is
-required, and *what may honestly be concluded*.
+A security agent is only as trustworthy as the skills it loads. Install an
+unvetted skill and you have handed an autonomous system a third-party
+instruction — one that can read files, run shell commands, and exfiltrate. There
+is no lockfile, no signature, no audit trail, and no way to tell a helpful
+prompt from a hostile one.
 
-It is a methodology and instruction set — **not a scanner, not a toolkit, and not
-a collection of exploits.** It is written for security engineers, penetration
-testers, security researchers, and practitioners who need an assessment to be
-reproducible, evidence-linked, and defensible.
+The industry currently answers this with a README. That is not a control.
 
-### The problem this solves
+## The answer
 
-Most security assessments fail in one of two directions:
+Blackhearts treats every third-party skill as **untrusted code**, and makes the
+governance mechanical rather than aspirational.
 
-- **False confidence** — a 200 response is treated as "the endpoint is exposed,"
-  or a client-side filter is mistaken for an authorization control, so a
-  non-vulnerability is reported as a breach.
-- **Unfalsifiable reporting** — a finding is asserted without evidence, without
-  a stated attacker privilege, and without separating an intermediate
-  behaviour from actual security impact.
-
-BLACKHEART is built to prevent both. Its governing rule:
-
-> **Report only what the evidence proves.**
-
-## Core Principles
-
-| Principle | What it means in practice |
+| Problem | Blackhearts answer |
 |---|---|
-| **Evidence before conclusions** | A suspicious pattern is a hypothesis, not a finding. Status is earned by proof, not suspicion. |
-| **No artificial stopping** | A failed technique closes *that technique*, never the security objective. Method escalation is mandatory. |
-| **Zero fabrication** | No invented hashes, transactions, responses, screenshots, artifacts, or exploitation results. Ever. |
-| **Confirmed by impact, not possibility** | "A price parameter is editable" is not "payment bypass." Each escalation needs its own proof. |
-| **Tool honesty** | If a tool was unavailable, the report says so and names the alternative actually used. |
-| **Third-party boundaries** | A vendor endpoint in client code is documented, not attacked. Authorization never inherits. |
-| **Minimum necessary data** | Prove the authorization failure with the smallest sufficient proof. Do not harvest real user data. |
-| **Negative results are evidence** | A correctly-rejected attack is documented, because it proves a control exists. |
+| Unvetted instructions reach the agent | Every skill ships a reviewed `_BLACKHEART-ADAPTER.md` declaring exactly what it does and what it must never do |
+| Upstream changes silently | 3,864 files pinned to a commit SHA, compared byte-for-byte by CI on every push |
+| Agent personas quietly widen scope | 33 personas treated as **hostile input** — none enabled by default, none may authorize a target or disable the gate |
+| A scanner's clean bill of health is trusted | Findings are hypotheses; clean results are recorded as **coverage gaps** |
+| Nobody can prove coverage | A 7-check CI gate and a 15-group audit that fail loudly |
+
+> **The premise:** you cannot make untrusted instructions safe. You can only
+> make them *legible, bounded, and accountable* before they run.
+
+---
+
+## Coverage
+
+Everything upstream ships, verified and accounted for — not just the skills.
+
+<div align="center">
+
+| Collection | Files | | Collection | Files |
+|---|---:|---|---|---:|
+| 🔐 Skills | **388** skills | | 📋 Standards | **11** |
+| ⌘ Slash commands | **39** | | 🗂️ Audit records | **32** |
+| 🤖 Agent personas | **33** (+1 template) | | 📚 Doc pages | **667** |
+| 🧩 Plugin manifests | **2** | | 🧪 Test fixtures | **1** |
+| 🛠️ Upstream scripts | **29** | | 🔗 Catalogue files | **32** |
+| 🧱 `.claude/` config | **13** | | 📦 Templates | **3** |
+| 🔀 Orchestration | **1** | | 🤖 Custom GPT | **1** |
+| | | | **Total vendored** | **3,864** |
+| | | | **Blackhearts adapters** | **399** |
+
+</div>
+
+**53 of 58 upstream top-level areas vendored. 5 excluded — every one with a
+recorded reason.** See [`skills/VENDOR.md`](skills/VENDOR.md) §2.0.1.
+
+---
+
+## Architecture
+
+```
+                    untrusted upstream
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │   PIN + VERIFY       │   3,864 files vs commit SHA
+                 │   no drift allowed   │   byte-for-byte, in CI
+                 └──────────┬───────────┘
+                            ▼
+                 ┌──────────────────────┐
+                 │   ADAPTER LAYER      │   399 reviewed contracts
+                 │   one per skill      │   declared capability
+                 │   and collection     │   declared prohibitions
+                 └──────────┬───────────┘
+                            ▼
+        ┌────────────────────────────────────────────┐
+        │              CONFORMANCE                   │  wins every conflict
+        │   evidence vocabulary · status ladder      │
+        │   no-scope no-test · no claim without proof │
+        └──────────┬─────────────────────────────────┘
+                   ▼
+        ┌────────────────────────────────────────────┐
+        │             SECURITY GATE                  │  declarative
+        │  requireAuthorizedTarget · requireRecord   │  not advisory
+        │  requireAdapter · denyTargetsWithoutScope  │
+        └──────────┬─────────────────────────────────┘
+                   ▼
+                   agent
+```
+
+### The conformance layer wins
+
+Where a vendored persona, command, or skill conflicts with
+[`skills/conformance/SKILL.md`](skills/conformance/SKILL.md), **conformance
+wins.** No vendored content can widen scope, disable the gate, or authorize a
+target. This is the single most important design decision in the framework.
+
+---
+
+## The evidence rules
+
+Most security tooling overstates what it knows. Blackhearts does not.
+
+- **A finding is a hypothesis, never a conclusion.** It becomes a finding only
+  after independent demonstration.
+- **A clean result is a coverage gap, not a clearance.** An untested category is
+  reported as untested.
+- **Negative results and rejected hypotheses are preserved.** They are evidence.
+- **Every claim traces to a log ID, or it is not a claim.**
+
+The payoff: the most security-relevant vendored tool — a jailbreak detector —
+still has three real defects after passing a full static audit. A framework that
+only runs scanners would have shipped those silently. See
+[`VENDOR.md`](skills/VENDOR.md) §3.1.1.
+
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/devara1983ntr/blackheart-security-framework.git
+cd blackheart-security-framework
+
+# prove the mirror is intact — 7/7 checks
+python3 -m pip install json5
+python3 .github/scripts/validate.py
+
+# check for upstream drift — report-only, never mutates
+python3 .github/scripts/sync_upstream.py
+```
+
+<details>
+<summary><b>Start an authorised engagement</b></summary>
+
+```yaml
+engagement:
+  id: ENG-2026-001
+  target: https://example.com
+  authorizedBy: <named owner>
+  window: 2026-09-29T00:00Z/2026-10-06T00:00Z
+```
+
+Without a target, a window, and a named authoriser, **the gate refuses to run.**
+That refusal is the feature.
+
+</details>
+
+---
+
+## The gate
+
+`skills/openclaw.example.json5` — 374 entries, generated and CI-verified.
+
+```json5
+security: {
+  requireAuthorizedTarget: true,
+  requireEngagementRecord: true,
+  requireAdapter: true,
+  denyTargetsWithoutScope: true,
+  defaultEvidenceStatus: 'UNVERIFIED',
+}
+```
+
+Declarative flags, not executable policy — a config that can run code is not a
+control, it is a vulnerability.
+
+---
+
+## CI: 7 checks, 2 workflows
+
+| Check | What it proves |
+|---|---|
+| `adapters` | every skill and collection has a reviewed adapter |
+| `integrity` | 3,864 files byte-identical to the pinned SHA + 399 adapters |
+| `catalog` | 32 catalogue files unmodified |
+| `links` | 5,287 local links; **0 broken in authored docs** |
+| `index` | 4,364 entries; 0 unindexed, 0 dangling |
+| `secrets` | no credential material outside a 15-entry allowlist |
+| `config` | JSON5 parses; 374/374 skills declared |
+
+`validate.yml` runs on push and PR. `upstream-sync.yml` runs daily at 03:17 UTC
+and **opens a PR — it never auto-merges.** Invariant 14: *detection is
+automated; judgement is not.*
 
 ---
 
 ## Documentation
 
-### Core operational modes
+| | |
+|---|---|
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | layers, data flow, invariants, trade-offs |
+| [`AGENT.md`](AGENT.md) | how an agent is expected to behave |
+| [`SECURITY.md`](SECURITY.md) | threat model, disclosure, secret handling |
+| [`CHANGELOG.md`](CHANGELOG.md) | full version history |
+| [`ROADMAP.md`](ROADMAP.md) | what is next |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to contribute safely |
+| [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | conduct |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,364 files, one per line |
+| [`skills/VENDOR.md`](skills/VENDOR.md) | provenance, exclusions, defects |
+| [`skills/README.md`](skills/README.md) | the catalogue and its rules |
+| [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | the rules that win |
+| [`docs/`](docs) · [`examples/`](examples) · [`templates/`](templates) | reference material |
 
-The four modes define how an assessment is conducted. Each is a complete,
-self-contained operating document.
+---
 
-| Mode | Focus | Read it when |
+## Responsible use
+
+Blackhearts is for **authorised** security work. It is not for attacking
+systems you do not own or have written permission to test.
+
+- No target is engaged without an explicit, recorded authorisation.
+- No credential is ever requested, stored, or handled by this framework.
+- No production data is modified. Write capability is answered by static
+  analysis, not by writing.
+- Findings default to `UNVERIFIED`. Claims require evidence.
+
+Violating these constraints is both a security failure and a legal one.
+
+---
+
+## Provenance
+
+Vendored content is **never modified.** Not one byte. If an upstream tool has a
+defect, we record the defect and leave the code alone — a mirror that patches its
+source stops being a mirror, and stops being evidence.
+
+| Source | Pin | Licence |
 |---|---|---|
-| [`AGENT.md`](AGENT.md) | Master agent instruction, scope intake, evidence taxonomy, quality gate | Always — this is the entry point |
-| [`docs/modes/SECURITY-AUDIT.md`](docs/modes/SECURITY-AUDIT.md) | Full-spectrum adversarial vulnerability assessment | Running a broad technical assessment |
-| [`docs/modes/SECURITY-RESEARCH-MODE.md`](docs/modes/SECURITY-RESEARCH-MODE.md) | Structured research loop, trust boundaries, safe exploit validation | Investigating an unfamiliar target |
-| [`docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md`](docs/modes/DIGITAL-ASSET-DELIVERY-MODE.md) | Payment integrity, entitlement, download authorization, real-artifact validation | The target sells digital goods or premium access |
-| [`docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md`](docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md) | Zero-credential discovery, method escalation, coverage control | Exhausting the anonymous surface and preventing premature closure |
-| [`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md) | **RED HEART** — adversary modelling, attack paths, chaining, post-exploitation, detection review | Thinking like a defined adversary rather than testing controls one at a time |
+| [`alirezarezvani/claude-skills`](https://github.com/alirezarezvani/claude-skills) | `19392f7a` | MIT — [`claude-skills-LICENSE`](skills/licenses/claude-skills-LICENSE) |
+| [`VoltAgent/awesome-openclaw-skills`](https://github.com/VoltAgent/awesome-openclaw-skills) | `f274daa` | MIT — [`awesome-openclaw-skills-LICENSE`](skills/licenses/awesome-openclaw-skills-LICENSE) |
 
-### Domain guides
-
-Focused references for specific assessment concerns.
-
-| Guide | Covers |
-|---|---|
-| [`OPERATING-RULES.md`](docs/guides/OPERATING-RULES.md) | Behavioural rules, non-fabrication, safety constraints |
-| [`SCOPE.md`](docs/guides/SCOPE.md) | Target intake schema, authorization verification, scope hierarchy |
-| [`WORKFLOW.md`](docs/guides/WORKFLOW.md) | The 13-phase assessment lifecycle |
-| [`EVIDENCE.md`](docs/guides/EVIDENCE.md) | Evidence hierarchy, chain of custody, redaction |
-| [`DECISION-MATRIX.md`](docs/guides/DECISION-MATRIX.md) | **Finding classification rules** — read this before writing a report |
-| [`AUTH-AUTHZ.md`](docs/guides/AUTH-AUTHZ.md) | Authentication lifecycle, BOLA/IDOR, RBAC testing |
-| [`BUSINESS-LOGIC.md`](docs/guides/BUSINESS-LOGIC.md) | Workflow skipping, races, state-machine violations |
-| [`WEB-API-TESTING.md`](docs/guides/WEB-API-TESTING.md) | Endpoint discovery, parameter tampering, API testing |
-| [`ANDROID-TESTING.md`](docs/guides/ANDROID-TESTING.md) | APK/AAB, WebView, intent and IPC security |
-| [`PAYMENT-PREMIUM-TESTING.md`](docs/guides/PAYMENT-PREMIUM-TESTING.md) | Payment gateways, coupons, entitlement validation |
-| [`DIGITAL-FILE-VALIDATION.md`](docs/guides/DIGITAL-FILE-VALIDATION.md) | Real artifact verification, SHA-256, evidence handling |
-| [`TOOL-AND-ENVIRONMENT.md`](docs/guides/TOOL-AND-ENVIRONMENT.md) | Capability discovery and tool-honesty policy |
-| [`SEVERITY-RATING.md`](docs/guides/SEVERITY-RATING.md) | **Impact × reach severity rubric**, bounded by evidence status |
-| [`REFERENCE-MAPPINGS.md`](docs/guides/REFERENCE-MAPPINGS.md) | CWE, OWASP Web/API/Mobile, MASVS, ASVS, PCI DSS, GDPR |
-| [`REMEDIATION-AND-RETEST.md`](docs/guides/REMEDIATION-AND-RETEST.md) | Root cause, fix patterns, regression tests, retest protocol |
-| [`REPORTING.md`](docs/guides/REPORTING.md) | Report structure and writing standards |
-
-### Reference
-
-| Document | Purpose |
-|---|---|
-| [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Every framework term defined once |
-| [`docs/SKILLS.md`](docs/SKILLS.md) | Competency-to-document map for learning and self-direction |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Layering, precedence order, and framework invariants |
-| [`ROADMAP.md`](ROADMAP.md) | Recognised gaps and explicitly out-of-scope items |
-
-### AI agent layer
-
-How an autonomous agent operates this framework, and the skills it selects.
-Layer 0 of the architecture — it governs execution for agents and human
-operators alike.
-
-| Document | Purpose |
-|---|---|
-| [`docs/agent/AGENT-OPERATING-PROTOCOL.md`](docs/agent/AGENT-OPERATING-PROTOCOL.md) | Non-negotiables, tool protocol, evidence discipline, stop conditions |
-| [`docs/agent/AGENT-SKILL-CATALOGUE.md`](docs/agent/AGENT-SKILL-CATALOGUE.md) | Named skills with trigger, procedure, output, max claim, and stop |
-
-### Executable skills
-
-The **complete upstream repository**, vendored under MIT from a pinned commit:
-**3,864 files** — 388 canonical skills, 39 slash commands, 34 agent personas,
-plugin manifests, upstream tooling, standards, audit records, and generated
-documentation. Every file is byte-identical to upstream, and every area carries
-an adapter binding it to the framework. Eight skills are promoted to a standing
-role in a security engagement; the rest are supporting tooling.
-
-Every skill was security-audited and every finding adjudicated — no skill showed
-a backdoor, covert channel, credential exfiltration, or safety override. Load
-[`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) before any of it.
-
-| Document | Purpose |
-|---|---|
-| [`skills/README.md`](skills/README.md) | Integration guide, loading, agent allowlists |
-| [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | Mandatory wrapper: authorization gate, status conversion, severity ceiling |
-| [`skills/VENDOR.md`](skills/VENDOR.md) | Full provenance, complete skill index, audit record, adjudicated findings |
-| [`skills/catalog/README.md`](skills/catalog/README.md) | Third-party catalogue — all 30 categories vendored as a reference index, nothing executed |
-| [`skills/openclaw.example.json5`](skills/openclaw.example.json5) | Validated configuration covering all 374 skill names |
-| [`.github/scripts/validate.py`](.github/scripts/validate.py) | Seven-check validation gate, run on every push and pull request |
-| [`.github/scripts/sync_upstream.py`](.github/scripts/sync_upstream.py) | Whole-mirror drift detection and re-vendoring |
-| [`.github/scripts/gen_adapters.py`](.github/scripts/gen_adapters.py) | Adapter generation, so generated records are reproducible |
-| [`.github/workflows/upstream-sync.yml`](.github/workflows/upstream-sync.yml) | Daily upstream drift detection — opens a PR, never merges |
-
-### Templates and examples
-
-| File | Purpose |
-|---|---|
-| [`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md) | Scope, authorization, capability inventory, tool substitutions |
-| [`templates/AGENT-THREAT-MODEL.md`](templates/AGENT-THREAT-MODEL.md) | AI/agentic action surface, tools, input channels |
-| [`templates/ATTACK-PATH.md`](templates/ATTACK-PATH.md) | Path edges with evidence states, detection review |
-| [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md) | Per-boundary coverage with explicit blockers |
-| [`templates/FINDING.md`](templates/FINDING.md) | Individual finding record |
-| [`templates/TEST-LOG.md`](templates/TEST-LOG.md) | Hypothesis/execution journal |
-| [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md) | Full assessment report skeleton |
-| [`examples/NEW-PROJECT-BOOTSTRAP.md`](examples/NEW-PROJECT-BOOTSTRAP.md) | Engagement bootstrap prompt |
-| [`FILE-INDEX.txt`](FILE-INDEX.txt) | Authoritative flat index of every document |
+Blackhearts-authored content is MIT, © 2026 Devara.
 
 ---
 
-## Repository Structure
+<div align="center">
 
-```text
-.
-├── README.md                          # This file — project overview and navigation
-├── AGENT.md                           # Master agent instruction and execution standard
-├── ARCHITECTURE.md                    # Layering, precedence order, framework invariants
-├── ROADMAP.md                         # Recognised gaps and out-of-scope items
-├── FILE-INDEX.txt                     # Authoritative flat index of all documents
-├── LICENSE                            # MIT License
-├── AUTHOR                             # Authorship and third-party attribution
-├── CHANGELOG.md                       # Version history
-├── CONTRIBUTING.md                    # Contribution guidelines
-├── CODE_OF_CONDUCT.md                 # Contributor Covenant 2.1
-├── SECURITY.md                        # Security policy and responsible-use policy
-│
-├── skills/                            # Executable skills (vendored, MIT)
-│   ├── README.md                      # Integration guide and loading
-│   ├── VENDOR.md                      # Provenance, full index, audit record
-│   ├── openclaw.example.json5         # Validated config for all 374 skill names
-│   ├── conformance/SKILL.md           # Mandatory wrapper for all vendored skills
-│   ├── third-party/claude-skills/     # complete upstream mirror, 3,864 files
-│   │   ├── <group>/skills/<name>/     #   388 skills  + _BLACKHEART-ADAPTER.md
-│   │   ├── commands/                  #   39 slash commands + adapter
-│   │   ├── agents/                    #   34 agent personas + adapter
-│   │   ├── scripts/ standards/ audit/ #   upstream tooling and records + adapters
-│   │   ├── docs/                      #   667 generated reference pages + adapter
-│   │   └── .claude-plugin/ .codex-plugin/  # plugin manifests + adapters
-│   ├── catalog/                       # Complete third-party catalogue index (30 categories)
-│   └── licenses/                      # Preserved upstream licences
-│
-├── .github/
-│   ├── UPSTREAM-MANIFEST.json         # SHA-256 for all 3,864 vendored files
-│   ├── secret-allowlist.json          # Verified placeholders, each justified
-│   ├── scripts/validate.py            # Seven-check validation gate
-│   ├── scripts/sync_upstream.py       # Whole-mirror drift detection
-│   ├── scripts/gen_adapters.py        # Reproducible adapter generation
-│   ├── scripts/gen_collection_adapters.py
-│   ├── scripts/gen_config.py          # Reproducible config generation
-│   └── scripts/gen_manifest.py        # Reproducible integrity manifest
-│   └── workflows/                     # CI on push/PR + daily upstream sync
-│
-├── docs/
-│   ├── README.md                      # Documentation package guide
-│   ├── GLOSSARY.md                    # Framework terminology
-│   ├── SKILLS.md                      # Competency-to-document map
-│   ├── agent/                         # Layer 0 — agent operating protocol
-│   │   ├── AGENT-OPERATING-PROTOCOL.md
-│   │   └── AGENT-SKILL-CATALOGUE.md
-│   ├── modes/                         # Core operational modes
-│   │   ├── SECURITY-AUDIT.md
-│   │   ├── SECURITY-RESEARCH-MODE.md
-│   │   ├── DIGITAL-ASSET-DELIVERY-MODE.md
-│   │   ├── ZERO-CREDENTIAL-ESCALATION-MODE.md
-│   │   └── RED-HEART-ADVERSARY-EMULATION.md
-│   └── guides/                        # Domain guides
-│       ├── ADVERSARY-EMULATION.md
-│       ├── AGENTIC-AI-SECURITY.md
-│       ├── ANDROID-TESTING.md
-│       ├── ATTACK-PATHS.md
-│       ├── AUTH-AUTHZ.md
-│       ├── BUSINESS-LOGIC.md
-│       ├── CLOUD-IDENTITY.md
-│       ├── DECISION-MATRIX.md
-│       ├── DIGITAL-FILE-VALIDATION.md
-│       ├── EVIDENCE.md
-│       ├── METHODOLOGY-STANDARDS.md
-│       ├── OPERATING-RULES.md
-│       ├── PAYMENT-PREMIUM-TESTING.md
-│       ├── REFERENCE-MAPPINGS.md
-│       ├── REMEDIATION-AND-RETEST.md
-│       ├── REPORTING.md
-│       ├── SCOPE.md
-│       ├── SEVERITY-RATING.md
-│       ├── SUPPLY-CHAIN.md
-│       ├── TOOL-AND-ENVIRONMENT.md
-│       ├── WEB-API-TESTING.md
-│       └── WORKFLOW.md
-│
-├── examples/
-│   └── NEW-PROJECT-BOOTSTRAP.md       # Engagement bootstrap prompt
-│
-└── templates/
-    ├── ENGAGEMENT-RECORD.md           # Scope, authorization, capabilities
-    ├── AGENT-THREAT-MODEL.md          # AI/agentic action surface
-    ├── ATTACK-PATH.md                 # Path edges and detection review
-    ├── COVERAGE-MATRIX.md             # Per-boundary coverage and blockers
-    ├── FINAL-REPORT.md                # Assessment report skeleton
-    ├── FINDING.md                     # Finding record template
-    └── TEST-LOG.md                    # Test journal template
-```
+**Blackhearts** — *verify before you enable.*
 
----
+[![MIT](https://img.shields.io/badge/license-MIT-00d4a5.svg)](LICENSE)
+[![maintained](https://img.shields.io/badge/maintained-yes-00d4a5.svg)](CHANGELOG.md)
 
-## Quick Start
-
-### For a new engagement
-
-1. **Establish authorization first.** A public URL, a shared link, a hosting
-   tenancy, or a similar name is *not* authorization. Record the scope, the
-   authorized party, the environment, and the prohibited actions in
-   [`templates/ENGAGEMENT-RECORD.md`](templates/ENGAGEMENT-RECORD.md). If
-   authorization is unclear, testing does not begin.
-
-2. **Read [`AGENT.md`](AGENT.md)** end to end. It is the master instruction.
-
-3. **Choose your mode.** Technical breadth → `SECURITY-AUDIT.md`. Unfamiliar
-   target → `SECURITY-RESEARCH-MODE.md`. Paid/digital products →
-   `DIGITAL-ASSET-DELIVERY-MODE.md`. Always pair with
-   `ZERO-CREDENTIAL-ESCALATION-MODE.md` for the anonymous surface and for
-   coverage control.
-
-4. **Inventory what you can actually do.** The capability and substitution
-   section of the engagement record is what makes an honest `NOT TESTED` possible
-   later. Fill it in before testing, not after.
-
-5. **Open the coverage matrix.** [`templates/COVERAGE-MATRIX.md`](templates/COVERAGE-MATRIX.md)
-   is filled in as you go. Reconstructed at the end, it reconstructs the
-   conclusions too.
-
-6. **Record as you go.** Use [`templates/TEST-LOG.md`](templates/TEST-LOG.md)
-   per hypothesis. A test with no record cannot later be distinguished from a
-   test that was never run.
-
-7. **Classify, rate, map, remediate.** Work the
-   [reporting decision chain](#the-reporting-decision-chain) in order.
-
-8. **Report** against [`templates/FINAL-REPORT.md`](templates/FINAL-REPORT.md)
-   and [`docs/guides/REPORTING.md`](docs/guides/REPORTING.md), then pass the
-   [`AGENT.md`](AGENT.md) §26 quality gate.
-
-### Writing a finding
-
-Every finding uses the same 17-field structure:
-
-```text
-Finding ID · Title · Status · Severity · Affected Asset
-Security Property · Preconditions · Normal Workflow · Attack Hypothesis
-Reproduction · Observed Evidence · State Before/After
-Security Boundary Failure · Root Cause · Actual Impact
-Attack Chain · Artifact Evidence · Remediation · Regression Test · Limitations
-```
-
-### The status taxonomy
-
-These are the **only six** statuses, as defined in
-[`AGENT.md`](AGENT.md) §5. Use them precisely. They are not interchangeable.
-
-| Status | Meaning |
-|---|---|
-| `CONFIRMED` | Direct evidence demonstrates the weakness **and** its stated impact |
-| `PARTIALLY CONFIRMED` | The weakness is demonstrated; a material link in the impact chain is not |
-| `UNVERIFIED` | Credible hypothesis; evidence is insufficient |
-| `NOT TESTED` | Testing could not or did not occur — **state the blocking capability** |
-| `NOT VULNERABLE` | Tested with sufficient coverage; the control held **under the tested conditions** |
-| `OUT OF SCOPE` | Excluded by authorization or assessment boundary |
-
-Two variants circulate in the industry and are often used loosely. They are not
-part of this taxonomy, and each has a correct equivalent here:
-
-| Common variant | Use instead | Why |
-|---|---|---|
-| `BLOCKED BY ENVIRONMENT` | `NOT TESTED`, with the blocking capability stated in the notes | The blocker is a *reason*, not a status. The status is `NOT TESTED`. |
-| `INCONCLUSIVE` | `UNVERIFIED` or `PARTIALLY CONFIRMED` | An ambiguous result is either a hypothesis (unverified) or a demonstrated weakness with an unproven remainder (partially confirmed). |
-
-> Never write `SAFE`, `SECURE`, or `NO VULNERABILITIES` without scoping the
-> statement to the exact condition tested. "Not demonstrated under tested
-> conditions" is a defensible claim. "Secure" is not.
-
-### Severity is a separate axis
-
-Status answers *what the evidence proves*. Severity answers *how much that
-matters* — and it is bounded by status.
-
-| Demonstrated impact | Reach | Rating |
-|---|---|---|
-| Systemic: unauthenticated administrative capability, arbitrary cross-user data at scale | Unauthenticated | Critical |
-| Another user's record, entitlement, order, or file reached | Unauthenticated | Critical |
-| A protected paid artifact actually obtained | Unauthenticated | High |
-| A protected paid artifact actually obtained | Authenticated | High |
-| A security-relevant value manipulated and accepted, nothing protected reached | Any | Medium |
-| Information exposure, no boundary crossed | Authenticated | Low |
-| No demonstrated security consequence | Any | Informational |
-
-Two rules make this reliable:
-
-- **Severity never exceeds the evidence.** An `UNVERIFIED` item is not
-  "potentially critical" — it is excluded from the scale and listed with the
-  exact missing proof.
-- **Rate the demonstrated effect, not the theoretical ceiling.** A manipulated
-  price on your own order is an integrity failure, not free access to
-  everything.
-
-Full rubric, worked examples, and the payment-chain rules are in
-[`docs/guides/SEVERITY-RATING.md`](docs/guides/SEVERITY-RATING.md).
-
-### The reporting decision chain
-
-Four steps, in this order, at the end of an engagement:
-
-```text
-1. DECISION-MATRIX          observed situation → correct status
-2. SEVERITY-RATING          demonstrated impact → severity, within status ceiling
-3. REFERENCE-MAPPINGS       weakness → OWASP / CWE / MASVS / ASVS
-4. REMEDIATION-AND-RETEST   root cause → fix → regression test
-```
-
----
-
-## Technologies & Methodologies
-
-This repository documents methodology, not an implementation stack. The
-following are the domains and techniques the framework actually addresses.
-
-**Assessment domains**
-
-- Web application security · REST/JSON API security · GraphQL · WebSocket & SSE
-- Authentication lifecycle (registration, login, OAuth, OTP/MFA, recovery,
-  session invalidation, token lifecycle)
-- Authorization: BOLA/IDOR, BFLA, horizontal and vertical privilege escalation,
-  field-level authorization, role/privilege escalation matrices
-- Business logic and state-machine analysis
-- Payment, entitlement, and premium-feature integrity
-- Digital-product delivery, signed URLs, and real-artifact validation
-- Android/APK/AAB: manifest, exported components, deep links, WebView, JavaScript
-  bridges, IPC, network security configuration
-- OSINT and attack-surface reconnaissance
-- Client-side trust, storage, cache, and stale-state analysis
-- Secret discovery and classification
-- Rate limiting, replay, race conditions, and time/expiration logic
-
-**Techniques**
-
-- Differential testing across identities and roles
-- Identity-confusion and object-substitution testing
-- Mass assignment / property pollution
-- Parser, content-type, and method-override differentials
-- Proof-strength classification and attack-chaining
-- Evidence chain-of-custody and forensic artifact validation
-
-**Practitioner tooling referenced as methodology** (availability is always
-verified and reported, never assumed): `curl`, `git`, `openssl`, `jq`,
-`python3`, proxy/interceptor tooling, `adb`, `apktool`, `JADX`, `Frida`.
-
----
-
-## Responsible Use
-
-> **This repository grants no authorization to test any system.**
-
-The framework is intended exclusively for systems you **own**, systems you have
-**written permission** to test, and explicitly authorized lab, staging, or
-sandbox environments.
-
-**Prohibited in all engagements:**
-
-- Testing systems you do not own or have written permission to test
-- Attacking third-party SaaS, CDN, payment-provider, or cloud infrastructure
-  discovered in client code
-- Credential theft, brute force, phishing, or session hijacking
-- Denial-of-service, stress testing, or deliberate service degradation
-- Real payments, deliberate financial loss, or bulk extraction of personal data
-- Destructive modification of production data
-- Fabricated evidence of any kind
-
-Unauthorized access to computer systems is unlawful in most jurisdictions.
-The techniques in this repository are published for **defensive** and
-**authorized** use.
-
-Full policy: **[`SECURITY.md`](SECURITY.md)**
-
----
-
-## Contributing
-
-Contributions are welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for scope,
-rules, and the required `FILE-INDEX.txt` update when adding or moving a document.
-
-Please read the hard rules before submitting: no fabrication, no secrets, no
-removal of original content without justification, and precise use of the
-status taxonomy.
-
-Participation is governed by the
-[Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Security Reports
-
-Defects in the methodology — anything that could lead a practitioner to an
-incorrect or unsafe conclusion — are prioritised. Report privately; do **not**
-open a public issue containing live secrets or real target data.
-See [`SECURITY.md`](SECURITY.md).
-
----
-
-## Author
-
-**Roshan** — <https://github.com/devara1983ntr>
-
-See [`AUTHOR`](AUTHOR) for authorship and third-party attribution.
-
-This repository **does** contain third-party source code: a complete mirror of
-`alirezarezvani/claude-skills` (MIT © 2025 Alireza Rezvani) and a reference
-index from `VoltAgent/awesome-openclaw-skills` (MIT © 2026 VoltAgent).
-Both are vendored under MIT with attribution preserved in
-[`skills/licenses/`](skills/licenses/). Full provenance, the complete skill
-index, and the audit record are in [`skills/VENDOR.md`](skills/VENDOR.md).
-
----
-
-## License
-
-Released under the [MIT License](LICENSE).
-
-The license covers the documentation in this repository only and **confers no
-authorization to test any system**. See [`SECURITY.md`](SECURITY.md).
-
-## Disclaimer
-
-Provided "as is", without warranty of any kind. The author is not liable for
-any use of, or damage arising from, the use of this material. Users are
-responsible for ensuring they operate within the law and within a valid
-authorization scope.
+</div>

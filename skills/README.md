@@ -16,7 +16,7 @@ stop condition. That catalogue is the methodology.
 
 This directory holds the **executable** side: a vendored mirror of the
 **complete upstream repository** — 3,864 files covering 388 skills, 39 slash
-commands, 34 agent personas, plugin manifests, upstream tooling, standards, audit
+commands, 33 agent personas, plugin manifests, upstream tooling, standards, audit
 records, and documentation — plus the conformance layer that makes their output
 admissible inside a BLACKHEART engagement.
 
@@ -49,7 +49,7 @@ skills/
 │       ├── markdown-html/         5
 │       └── research-ops/          5
 │       ├── commands/              39 slash commands        + adapter
-│       ├── agents/                34 agent personas        + adapter
+│       ├── agents/                33 agent personas        + adapter
 │       ├── scripts/               upstream tooling         + adapter
 │       ├── standards/             authoring standards      + adapter
 │       ├── audit/                 upstream audit history   + adapter
@@ -124,7 +124,7 @@ user-invoked entry point, not an analysis unit; it can launch a skill, so it
 inherits that skill's conditions. A command that reaches a target with no
 engagement record is the same violation as a skill doing it.
 
-**`agents/` — 34 agent personas.** Role definitions that change how an agent
+**`agents/` — 33 agent personas.** Role definitions that change how an agent
 reasons and what it will do. This is the **highest-leverage** vendored content
 in the repository and the easiest to get wrong: a persona can redefine an
 agent's identity, widen its scope, or instruct it to act without asking, which is
@@ -139,6 +139,25 @@ Upstream's own tooling, conventions, audit history, generated documentation,
 templates, and packaging declarations. All vendored verbatim and adapter-covered.
 A plugin manifest is a **declaration, not an enforcement**: vendoring one
 installs nothing and grants no permission.
+
+## Three defects found by testing, not scanning
+
+Every vendored tool passed the static audit. The most security-relevant one did
+not survive being *run*. Testing `ai-security` against controlled input found:
+
+1. **Its jailbreak signature fires on ordinary words.** `(DAN|STAN|DUDE|KEVIN|AIM|...)`
+   has no word boundaries, so it matches *claim*, *standard*, *dangerous*. It
+   scored 12 findings on `ARCHITECTURE.md` and 11 on `AGENT.md` — documents with
+   no attack content at all.
+2. **Its stdin path returns a constant.** Six different documents returned an
+   identical score and an identical excerpt that was not in the input. Only
+   `--test-file` actually scans.
+3. **It does not detect `"Ignore all previous instructions"`.** Score `0.0`.
+
+None of this is patched — vendored content stays byte-identical to upstream, or
+the integrity guarantee is meaningless. It is recorded in the skill's adapter and
+in [`VENDOR.md`](VENDOR.md) §3.1.1. The rule: **a finding from this tool is a
+hypothesis, and a clean result is a coverage gap, not a clearance.**
 
 ## The rest of the catalogue
 

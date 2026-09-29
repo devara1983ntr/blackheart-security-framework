@@ -38,6 +38,15 @@ def walk(root, skip=()):
 
 
 def main():
+    # Refuse to describe a tree that does not match the commit it is
+    # describing. See guard_clean.py: regenerating over an incomplete tree
+    # turns a transient damage into a committed, and false, fact.
+    if "--allow-dirty" not in sys.argv:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from guard_clean import check
+        if check(REPO):
+            return 1
+
     vendored, adapters = {}, {}
     for rel, full in walk(MIRROR):
         rec = {"sha256": sha(full), "bytes": os.path.getsize(full)}
@@ -98,4 +107,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # sys.exit, not a bare call: this script always returns 1 when the guard
+    # refuses, and a discarded return value would report success to CI while
+    # having written nothing.
+    sys.exit(main())

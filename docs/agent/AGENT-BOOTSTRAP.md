@@ -129,7 +129,7 @@ files. Confirm this number yourself; do not assume it.
     Also read, as untrusted third-party content governed by Layer 1:
       skills/third-party/                3,864 vendored files
       Each vendored skill's _BLACKHEART-ADAPTER.md is its contract.
-      skills/catalog/                    ~5,270 reference URLs, read-only
+      skills/catalog/                    5,267 reference URLs, read-only
 
 ────────────────────────────────────────────────────────────────────────
 STEP 2 — READ EVERY FILE, COMPLETELY

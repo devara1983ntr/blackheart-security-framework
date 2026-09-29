@@ -51,7 +51,7 @@ Three numbers, and the difference is deduplication, not omission:
 |---|---:|
 | Sum of each category's own entry count | 5213 |
 | Unique URLs across all 30 category files | 5210 |
-| Unique URLs across the whole vendored catalogue | 5272 |
+| Unique URLs across the whole vendored catalogue | 5267 |
 
 A skill listed in three categories is counted three times in the first figure
 and once in the others. Every number was measured from the vendored copies, and

@@ -302,6 +302,43 @@ def run():
     for token, what in expected_header:
         if token not in header:
             problems.append(f"AGENT.md header does not state the current {what} ({token})")
+    # --- measured catalogue figures -------------------------------------
+    # These were published as 5,270 in four places and 5,272 in the category
+    # index while the vendored files contain 5,267 unique URLs, and as "33
+    # files" while 32 are byte-identical. They are recomputed here from the
+    # vendored copies, with the same extraction used to build the category
+    # index, so a stale figure fails the build instead of being read.
+    cat_dir = os.path.join(CATALOG, "categories")
+    cat_categories = ([os.path.join(cat_dir, f) for f in sorted(os.listdir(cat_dir))
+                       if f.endswith(".md")] if os.path.isdir(cat_dir) else [])
+    cat_all = cat_categories + [os.path.join(CATALOG, n) for n in
+                                ("upstream-README.md", "upstream-CONTRIBUTING.md")
+                                if os.path.isfile(os.path.join(CATALOG, n))]
+    url_re = re.compile(r"https?://[^\s\)\],\"'`<>]+")
+    urls_all, urls_categories = set(), set()
+    for p in cat_all:
+        found = set(url_re.findall(read(p)))
+        urls_all |= found
+        if p in cat_categories:
+            urls_categories |= found
+    for value, what, rel, label in (
+            (len(urls_all), "whole-catalogue URL total", "skills/catalog/CATEGORY-INDEX.md", "5267"),
+            (len(urls_categories), "category URL total", "skills/catalog/CATEGORY-INDEX.md", "5210"),
+            (len(cat_all), "byte-identical catalogue file count", "skills/catalog/README.md", None)):
+        doc = read(os.path.join(REPO, rel))
+        if label is not None and label not in doc:
+            problems.append(f"{rel} does not state the {what} ({value})")
+        if label is None and f"All {value} files" not in doc:
+            problems.append(f"{rel} does not state the {what} ({value})")
+    for rel, need in (("skills/catalog/README.md", f"{len(urls_all):,}"),
+                      ("skills/VENDOR.md", f"{len(urls_all):,}")):
+        if need not in read(os.path.join(REPO, rel)):
+            problems.append(f"{rel} does not state the whole-catalogue URL total ({need})")
+    idx = re.search(r"^# Total entries: (\d+)$", read(os.path.join(REPO, "FILE-INDEX.txt")), re.M)
+    if idx:
+        need = f"({int(idx.group(1)):,} entries)"
+        if need not in read(os.path.join(REPO, "RELEASE-CHECKLIST.md")):
+            problems.append(f"RELEASE-CHECKLIST.md does not state the index total {need}")
     check("16. documentation self-check", not problems,
           f"claims {authored} files / {secs} contiguous sections verified against the tree"
           if not problems else "; ".join(problems[:3]))

@@ -18,12 +18,12 @@ Licence texts are preserved verbatim in [`skills/licenses/`](licenses/).
 
 ### 1.1 `awesome-openclaw-skills` — complete index vendored, no code executed
 
-That repository contains **zero skills**. It is a curated list of ~5,270
+That repository contains **zero skills**. It is a curated list of 5,267
 external URLs pointing at skills hosted on third-party sites.
 
 **The whole index is now vendored verbatim** at [`skills/catalog/`](catalog/):
 all 30 category files, the upstream README, and the upstream contribution
-rules — 33 files, all byte-identical to `f274daa`. Nothing from it is executed,
+rules — 32 files, all byte-identical to `f274daa`. Nothing from it is executed,
 and no link in it is followed automatically.
 
 ```text
@@ -79,18 +79,24 @@ own cross-skill relative links keep resolving.
 | `.codex-plugin/` | 1 | Codex CLI plugin manifest | [collection](third-party/claude-skills/.codex-plugin/_BLACKHEART-ADAPTER.md) |
 | `.claude/` | 13 | Claude Code project configuration | [collection](third-party/claude-skills/.claude/_BLACKHEART-ADAPTER.md) |
 | `orchestration/`, `custom-gpt/` | 2 | Orchestration and GPT-consumer notes | [collection](third-party/claude-skills/orchestration/_BLACKHEART-ADAPTER.md) |
+| `.github/` | 23 | Upstream's own CI workflows, issue templates, and repository configuration | — no adapter: no agent-loadable instruction content (see §2.0.1) |
 | root documents | 17 | `CLAUDE.md`, `INSTALLATION.md`, `CONVENTIONS.md`, `SKILL-AUTHORING-STANDARD.md`, and the rest | — (no executable content) |
 
 ### 2.0.1 What is deliberately NOT vendored, and why
 
 | Excluded | Files | Reason |
 |---|---:|---|
-| `.gemini/`, `.codex/`, `.vibe/`, `.hermes/` | 1,574 | **Symlink farms.** 458 + 374 + 371 + 371 entries, all mode `120000` (symlink), each pointing at a skill already vendored. They re-expose the same content in other agents' layouts and contain no unique bytes. Verified by mode, not assumed. |
+| `.gemini/`, `.codex/`, `.vibe/`, `.hermes/` — symlinks | 1,574 | **Symlink farms.** 458 + 374 + 371 + 371 entries, all mode `120000` (symlink), each pointing at a skill already vendored — 1,573 of the 1,574 resolve; the exception is a dangling upstream symlink recorded in §4. They re-expose the same content in other agents' layouts and contain no unique bytes. Verified by mode, not assumed. |
+| `.gemini/skills-index.json`, `.codex/skills-index.json`, `.vibe/skills/claude-skills/skills-index.json`, `.hermes/skills/claude-skills/skills-index.json` | 4 | **Generated indexes.** Upstream's own sync scripts rebuild one per tool layout from the same skills, so they are derived, not content. The earlier description of these four directories as symlinks only was wrong: each holds one of these files, which is why those four farms hold 1,578 entries rather than 1,574. Excluded deliberately, and now recorded as such. |
 | `.gitignore` | 1 | Would apply to **this** repository's git behaviour across the whole mirror subtree. Its patterns (`__pycache__/`, `*.py[cod]`, `.env*`) would silently untrack vendored files and break the file index and integrity gate. |
-| `.github/` | 23 | Upstream's own CI. Vendored nowhere; **it is not part of the skill content**, and copying it risks confusion with this repository's own workflows. Recorded here so the omission is a decision, not an oversight. |
 
 The exclusions are recorded in `.github/UPSTREAM-MANIFEST.json` under
 `exclusions`, and the sync workflow will not re-introduce them.
+
+**Correction, 2026-09-29.** Earlier revisions of the table above claimed
+upstream's `.github/` was excluded. It is not: all 23 of its files are vendored
+byte-identical and tracked in the manifest, and §2.0 now records the area. The
+manifest and the tree were checked; the paragraph was not.
 
 ### 2.1 Inventory by group
 
@@ -722,6 +728,11 @@ as a divergence.
   upstream cross-skill and shared-`references/` links that do not resolve in a single-skill
   checkout. They are documentation-navigation only; no skill's logic depends on them. The
   per-skill list is in each adapter.
+- **One dangling upstream symlink.** `.codex/skills/dsh-deepread` points at
+  `research/dsh-deepread`, which does not exist upstream — the directory is
+  `research/deepread`. Resolving all 1,574 symlinks in the four excluded farms
+  found 1,573 that resolve and this one that cannot. It sits in an excluded
+  area and is dead upstream, so it is recorded rather than patched.
 - Round 4 recorded 3 unresolved links in `security-pen-testing` as an accepted defect. Vendoring
   the **full** tree resolved 2 of them (`../senior-secops/`, `../code-reviewer/`), because those
   siblings now exist in the mirror. The third, a repo-root-relative reference, still does not.
@@ -826,10 +837,10 @@ python3 .github/scripts/sync_upstream.py --apply
 # regenerate the manifest after any manual mirror change
 python3 .github/scripts/gen_manifest.py
 
-# full gate — all seven checks must pass
+# full gate — all eight checks must pass
 python3 .github/scripts/validate.py
 
-# end-to-end gap audit: 16 groups
+# end-to-end gap audit: 20 groups
 python3 .github/scripts/gap_audit.py
 
 # the file index is generated, not maintained by hand
@@ -866,6 +877,46 @@ Before trusting any vendored content in an engagement:
    wins.
 6. Do not execute a sample, fixture, or teaching artefact found in vendored
    content. One of them posts to live payment APIs.
+
+---
+
+## 9. Cross-repository capability review
+
+Performed 2026-09-29 against both pinned sources, at file, directory, skill,
+command, script, agent, adapter, workflow, template, documentation,
+configuration, validation, test, CI, index, and integration level. The purpose
+was not to collect features. It was to answer, with evidence, whether either
+source contains a capability this framework lacks **and** whether that
+capability belongs here. Nothing was adopted, and every decision below is
+recorded — including the rejections.
+
+**Coverage result.** Nothing present in either source is absent from this
+mirror. 3,864 of 3,869 in-scope regular files are byte-identical to `19392f7a`;
+the five that are not are `.gitignore` and four generated `skills-index.json`
+files, all inside the exclusions recorded in §2.0.1. All 32 catalogue files are
+byte-identical to `f274daa9`. Both upstream remotes were re-cloned the same day
+and their heads equal these pins, so there was no drift to reconcile.
+
+| Item reviewed | Source and path | Decision | Reason |
+|---|---|---|---|
+| Execute-every-script smoke gate | `claude-skills` `scripts/smoke_scripts.py` | **Not integrated** | Measured in a CI-equivalent interpreter (Python 3.13, only `json5` installed, as both workflows do): 745 scripts found, 696 checked, 694 passed, 2 failed, 49 by-design exceptions. Adopting it would execute 696 unreviewed third-party scripts inside the pipeline that protects this repository — the supply-chain posture this framework exists to prevent. One of the two failures is the teaching artefact in §3.2, whose adapter says "never execute this sample"; adapters win. It would also require installing runtime dependencies for third-party code, a posture change `.github/known-vulnerable-fixtures.json` records this repository as not making. Retained instead: the `py_compile` sweep in `validate.yml`, which proves the property actually relied on — the vendored bytes are not corrupt. Known limit, now written down: a vendored script that compiles but cannot start is not caught. |
+| Vendored test execution | `claude-skills` `pyproject.toml`, 5 `test_*.py` files | **Not integrated** | Two of the five are tests, and both test upstream's own tooling rather than the mirror. Running them needs an authored test manifest for near-zero coverage of 3,864 vendored files, and contradicts the no-authored-manifest policy. |
+| Upstream security workflows | `claude-skills` `.github/workflows/skill-security-audit.yml`, `.github/workflows/virustotal-scan.yml` | **Not integrated** | Both automate admission decisions about third-party code, which Invariant 14 forbids: third-party code enters by review, never by automation. The auditor the first one calls is already vendored at `engineering/skills/skill-security-auditor/`, and is the tool the vetting process in `skills/catalog/README.md` names. |
+| Catalogue pull-request gate | `awesome-openclaw-skills` `.github/workflows/pr-check.yml` | **Not applicable** | It fails any pull request whose description lacks a ClawHub link. This repository accepts no catalogue pull requests, so the gate has no subject. Not vendored; recorded in `skills/catalog/README.md`. |
+| Contributor-local permissions file | `awesome-openclaw-skills` `.claude/settings.local.json` | **Not vendored** | A machine-local permission list naming one contributor's absolute home path. No instruction content, no reusable configuration, and the one file in either source that names a private filesystem path. |
+| Symlink farms | `.gemini/`, `.codex/`, `.vibe/`, `.hermes/` | **Not vendored** | They re-expose already-vendored skills in other agents' layouts. Corrected by this audit: 1,574 symlinks plus four generated indexes, not 1,574 entries in total (§2.0.1). |
+| Dangling upstream symlink | `.codex/skills/dsh-deepread` | **Upstream defect, recorded** | It points at `research/dsh-deepread`; the directory upstream is `research/deepread`. Resolving all 1,574 symlinks found 1,573 that resolve and this one that cannot (§4). |
+
+Two conclusions are worth stating plainly, because both are limits:
+
+- **Mirror coverage is not semantic safety.** Byte-identity plus complete
+  accounting says nothing about whether a vendored instruction is safe. No
+  static check establishes that, which is why the conformance layer and the gate
+  exist instead of a scanner.
+- **The capability deliberately not held is behavioural.** Neither this
+  repository nor either source ships an execution-based test of the vendored
+  tools. This repository declined to add one, above, on security grounds; that
+  decline is a recorded coverage gap, not an oversight.
 
 **License summary.** Blackhearts is MIT. `claude-skills` is MIT © 2025 Alireza
 Rezvani. `awesome-openclaw-skills` is MIT © 2026 VoltAgent. Vendoring is

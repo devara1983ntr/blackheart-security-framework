@@ -15,6 +15,41 @@ and the state of the executable layer.
 ## [Unreleased]
 
 ### Fixed
+- **Five published figures were wrong, and the audit that found them was the
+  one commissioned to check whether anything was missing.** The cross-repository
+  audit measured the catalogue at 5,267 unique URLs while five documents
+  published 5,270 and 5,272; 32 catalogue files are byte-identical to upstream
+  while two documents said 33; `README.md` published 5,272 local links while
+  `validate.py` counted 5,271; `RELEASE-CHECKLIST.md` published 4,396 index
+  entries while `FILE-INDEX.txt` declares 4,403; and `skills/VENDOR.md` §8
+  advertised "seven checks" and "16 groups" long after there were eight and
+  twenty. Every corrected number was re-derived from the tree rather than
+  adjusted to match the document.
+- **`skills/VENDOR.md` §2.0.1 claimed upstream's `.github/` was "vendored
+  nowhere". It is vendored — all 23 files, byte-identical and manifest-tracked
+  — and §2.0 now records the area.** The same table described the four symlink
+  farms as 1,574 entries all in mode `120000`; each farm also holds one
+  generated `skills-index.json`, so those farms hold 1,578 entries and the
+  four derived indexes now have their own row. `.github/` keeps no collection
+  adapter, and the reason is written down rather than implied. Recorded, not
+  patched.
+- **One dangling symlink, found by resolving all 1,574 by hand.**
+  `.codex/skills/dsh-deepread` points at `research/dsh-deepread`, which does not
+  exist upstream — the directory is `research/deepread`. 1,573 resolve; this one
+  cannot, and it is now in §4 instead of being implied away.
+- **Two new assertions make the figures falsifiable instead of decorative.**
+  `validate.py` now fails when the link or allowlist figures published in
+  `README.md`, the site, or `RELEASE-CHECKLIST.md` disagree with the values it
+  counts, and audit group 16 now recomputes the catalogue URL totals, the
+  byte-identical file count, and the index total from the tree. Both were
+  negative-tested by falsifying a published number and confirming the gate
+  failed.
+- **`skills/VENDOR.md` §9 records the cross-repository capability review.**
+  Seven items reviewed against both pinned sources; none integrated, each with
+  the measured evidence and the reason. The largest is upstream's
+  execute-every-script smoke gate, declined because it would run 696 unreviewed
+  third-party scripts inside CI, including the teaching artefact whose adapter
+  says never execute it.
 - **Two copy buttons shipped with no class and rendered as raw default browser
   buttons.** `case-study.html` and `disclosure.html` each had
   `<button type="button" data-copy>` where the design system expects

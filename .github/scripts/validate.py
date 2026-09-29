@@ -329,12 +329,30 @@ def check_links(r):
                       if os.path.basename(rel) == ADAPTER]
     ours += [(rel, line, t, False) for rel, line, t in adapter_broken]
 
+    # A published number is a claim. README, the published site, and the
+    # release checklist each state this check's total, and one of them was
+    # wrong: README published 5,272 while this check counted 5,271. Asserting
+    # the figure here, where it is counted, is what keeps it falsifiable.
+    stale = []
+    for rel, pattern in (
+            ("README.md", "| `links` | {n:,} local links"),
+            (os.path.join("site", "index.html"), "<b>links</b> — {n:,} links"),
+            ("RELEASE-CHECKLIST.md", "| 9.1 | {n:,} local links")):
+        path = os.path.join(REPO, rel)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            if pattern.format(n=total) not in fh.read():
+                stale.append(rel)
+
     detail = (f"{total} local links checked; {len(ours)} broken in "
               f"Blackhearts-authored docs; {len(theirs)} in vendored upstream "
               f"content ({len(theirs) - len(unregistered)} registered)")
     if unregistered:
         detail += f"; {len(unregistered)} UNREGISTERED"
-    r.add("links", not ours and not unregistered, detail
+    if stale:
+        detail += f"; published link figure stale in {stale}"
+    r.add("links", not ours and not unregistered and not stale, detail
           + (f"; e.g. {(ours + unregistered)[:3]}" if (ours or unregistered) else ""))
 
 
@@ -406,6 +424,24 @@ def check_secrets(r):
                     allowed.append(f"{rel}:{line}")
                 else:
                     hits.append(f"{rel}:{line} {label}")
+    # Both published allowlist figures — the number of entries and the number
+    # of placeholders they suppress — are counted here, so they are asserted
+    # here. README described a 15-entry allowlist when the file holds 7.
+    stale = []
+    for rel in ("README.md", os.path.join("site", "index.html")):
+        path = os.path.join(REPO, rel)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            body = fh.read()
+        if (f"{len(allow)}-entry allowlist" not in body
+                or f"{len(allowed)} allowlisted placeholders" not in body):
+            stale.append(rel)
+    if stale:
+        r.add("secrets", False,
+              f"allowlist figures disagree with {stale} "
+              f"({len(allow)} entries, {len(allowed)} placeholders suppressed)")
+        return
     r.add("secrets", not hits,
           f"no unrecognised credential material ({len(allowed)} allowlisted placeholders suppressed)"
           if not hits else f"{len(hits)} potential secret(s): {hits[:3]}")

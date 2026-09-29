@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -42,6 +43,12 @@ SKIP_DIRS = {".git", "node_modules", "__pycache__", "third-party", "catalog",
 SKIP_PREFIXES = ("skills/third-party/", "skills/catalog/")
 
 WORKFLOW_DIR = os.path.join(REPO, ".github", "workflows")
+
+# A repository path named in a `run:` or `uses:` value: a token containing a
+# slash that ends in .py. Shape checks alone cannot see a workflow that calls a
+# script which has since been renamed: that workflow parses perfectly and fails
+# at three in the morning.
+SCRIPT_RE = re.compile(r"(?<![\w./-])((?:\.[\w-]+/|[\w-]+/)+[\w.-]+\.py)\b")
 
 
 def authored_config_files():
@@ -113,6 +120,25 @@ def check_workflow(rel, doc):
             elif "uses" not in step and "run" not in step:
                 problems.append(f"{rel}: job `{job_name}` step {i} has neither "
                                 f"`uses` nor `run`")
+    problems.extend(check_referenced_scripts(rel, doc))
+    return problems
+
+
+def check_referenced_scripts(rel, doc):
+    """Every repository script a workflow names must exist, and be executable.
+
+    Read-only: this resolves paths, it does not run anything.
+    """
+    problems, seen = [], set()
+    blob = json.dumps(doc)
+    for match in SCRIPT_RE.finditer(blob):
+        token = match.group(1)
+        if token in seen or token.startswith(("http", "/")):
+            continue
+        seen.add(token)
+        path = os.path.join(REPO, token)
+        if not os.path.isfile(path):
+            problems.append(f"{rel}: references `{token}`, which does not exist")
     return problems
 
 

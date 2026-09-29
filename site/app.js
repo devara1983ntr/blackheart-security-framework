@@ -8,6 +8,45 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ── error state ──────────────────────────────────────────
+     The site is static and has nothing to fetch, so the only way it
+     fails at runtime is a script error or a lost stylesheet. If that
+     happens the reader gets a plain page with no explanation, which
+     reads as "this site is broken and unhelpful" rather than "one
+     enhancement failed". Say it instead. */
+  var banner = null;
+  function showError(msg) {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.className = 'banner';
+      banner.setAttribute('role', 'status');
+      banner.setAttribute('aria-live', 'polite');
+      banner.innerHTML =
+        '<span><b>Partial failure.</b> <span class="js-err"></span> ' +
+        'The page content below is complete and readable — an interactive ' +
+        'enhancement did not run.</span>' +
+        '<button type="button" class="btn btn-sm">Dismiss</button>';
+      document.body.appendChild(banner);
+      banner.querySelector('.js-err').textContent = msg;
+      banner.querySelector('button').addEventListener('click', function () {
+        banner.classList.remove('on');
+      });
+    }
+    banner.classList.add('on');
+  }
+  window.addEventListener('error', function (e) {
+    if (e && e.target && e.target !== window && e.target.tagName === 'LINK') {
+      showError('A stylesheet failed to load, so the page is unstyled.');
+    }
+  });
+  window.addEventListener('unhandledrejection', function () {
+    showError('A deferred operation failed.');
+  });
+
+  // Everything below is an enhancement. If any part of it throws, the page is
+  // still complete and readable, so say what failed rather than going quiet.
+  try {
+
   /* ── theme ────────────────────────────────────────────────── */
   var KEY = 'bh-theme';
   var root = document.documentElement;
@@ -164,6 +203,42 @@
     });
   });
 
+  /* ── scroll progress + back to top ───────────────────────── */
+  var bar = document.createElement('div');
+  bar.className = 'progress';
+  bar.setAttribute('aria-hidden', 'true');
+  bar.hidden = true;
+  document.body.appendChild(bar);
+
+  var toTop = document.createElement('button');
+  toTop.className = 'to-top';
+  toTop.type = 'button';
+  toTop.setAttribute('aria-label', 'Back to top');
+  toTop.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" ' +
+    'aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(toTop);
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+
+  var ticking = false;
+  function onScrollProgress() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.hidden = pct < 1;
+    bar.style.width = pct + '%';
+    toTop.classList.toggle('on', h.scrollTop > h.clientHeight * 0.8);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(onScrollProgress);
+  }, { passive: true });
+  onScrollProgress();
+
   /* ── mobile section menu ──────────────────────────────────── */
   var navToggle = document.getElementById('nav-toggle');
   if (head && navToggle) {
@@ -231,5 +306,9 @@
       });
     }, { rootMargin: '-20% 0px -55% 0px', threshold: [0, 0.25, 0.6, 1] });
     targets.forEach(function (t) { nio.observe(t); });
+  }
+  } catch (err) {
+    if (window.console && console.error) console.error(err);
+    showError('Some interactive behaviour is unavailable on this page.');
   }
 })();

@@ -262,6 +262,70 @@ with sync_playwright() as p:
             return open && b.getAttribute('aria-expanded') === 'false';
         }"""))
         mctx.close()
+    # ---------- micro-interactions: progress, back-to-top, error state -------
+    ictx = br.new_context(viewport={"width": 1280, "height": 800})
+    ipg = ictx.new_page()
+    ipg.on("pageerror", lambda e: errors.append(f"micro: {e}"))
+    ipg.goto(f"{ROOT}/index.html", wait_until="networkidle")
+    t("scroll progress bar exists", ipg.locator(".progress").count() == 1)
+    t("back-to-top exists and is labelled",
+      ipg.locator("button.to-top[aria-label='Back to top']").count() == 1)
+    t("back-to-top hidden at the top of the page",
+      "on" not in (ipg.locator("button.to-top").get_attribute("class") or ""))
+    ipg.evaluate("window.scrollTo(0, document.body.scrollHeight * 0.9)")
+    ipg.wait_for_timeout(500)
+    t("back-to-top appears after scrolling",
+      "on" in (ipg.locator("button.to-top").get_attribute("class") or ""))
+    t("progress bar advances with scroll",
+      ipg.evaluate("""() => {
+        const b = document.querySelector('.progress');
+        return b && parseFloat(b.style.width) > 50;
+      }"""), ipg.evaluate("document.querySelector('.progress').style.width"))
+    ipg.click("button.to-top")
+    # Smooth scrolling is animated and its duration scales with distance, so
+    # wait for it to settle rather than guessing a timeout.
+    try:
+        ipg.wait_for_function("window.scrollY < 5", timeout=6000)
+        settled = True
+    except Exception:
+        settled = False
+    t("back-to-top returns to the top", settled,
+      f"scrollY={ipg.evaluate('window.scrollY')}")
+
+    # The error banner is the page admitting a failure instead of going quiet.
+    t("error banner is absent on a healthy page",
+      ipg.locator(".banner").count() == 0)
+    ipg.evaluate("""() => window.dispatchEvent(
+        new Event('unhandledrejection'))""")
+    ipg.wait_for_timeout(400)
+    t("error banner appears on an unhandled rejection",
+      ipg.locator(".banner.on").count() == 1)
+    t("error banner explains that content is still readable",
+      "complete and readable" in (ipg.locator(".banner").inner_text() or ""))
+    t("error banner is announced to a screen reader",
+      ipg.get_attribute(".banner", "role") == "status"
+      and ipg.get_attribute(".banner", "aria-live") == "polite")
+    ipg.click(".banner button")
+    ipg.wait_for_timeout(400)
+    t("error banner can be dismissed", ipg.locator(".banner.on").count() == 0)
+    ictx.close()
+
+    # ---------- a real script error must not blank the page ----------------
+    ectx = br.new_context(viewport={"width": 1280, "height": 800})
+    epg = ectx.new_page()
+    epg.add_init_script("window.addEventListener('error', () => {"
+                        "document.documentElement.setAttribute('data-boom','1'); });")
+    epg.route("**/app.js", lambda route: route.fulfill(
+        status=200, content_type="application/javascript",
+        body="throw new Error('deliberate failure');"))
+    epg.goto(f"{ROOT}/index.html", wait_until="domcontentloaded")
+    epg.wait_for_timeout(800)
+    t("page still renders its content when app.js throws",
+      len(epg.locator("h1").inner_text() or "") > 0)
+    t("page still renders when app.js throws",
+      epg.locator("main").is_visible())
+    ectx.close()
+
     ctx.close()
     br.close()
 

@@ -75,6 +75,30 @@ def radial_glow(size, colour, centre, radius, strength=70):
     return layer.filter(ImageFilter.GaussianBlur(radius * 0.18))
 
 
+def apple_icon():
+    """180x180 home-screen icon.
+
+    iOS does not render SVG for the home-screen icon -- it ignores the link and
+    falls back to a screenshot of the page. The PNG below is what actually
+    gets used, so it is the one that has to be right.
+    """
+    out = os.path.join(HERE, "apple-touch-icon.png")
+    S = 180
+    im = Image.new("RGB", (S, S), BG)
+    d = ImageDraw.Draw(im, "RGBA")
+    d.rounded_rectangle([0, 0, S - 1, S - 1], radius=0, fill=BG)
+    cx, cy, R = S / 2, S / 2, S * 0.36
+    import math
+    pts = [(cx + R * math.cos(math.radians(a)), cy + R * math.sin(math.radians(a)))
+           for a in range(-90, 271, 60)]
+    d.line(pts + [pts[0]], fill=ACCENT, width=11, joint="curve")
+    d.line([(cx, cy - R * 0.44), (cx, cy + R * 0.44)], fill=ACCENT, width=11)
+    d.line([(cx - R * 0.44, cy), (cx + R * 0.44, cy)], fill=ACCENT, width=11)
+    im.save(out, "PNG", optimize=True)
+    print(f"  {out}  {S}x{S}  {os.path.getsize(out):,} bytes")
+    return out
+
+
 def main():
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img, "RGBA")
@@ -140,6 +164,7 @@ def main():
     print(f"  {OUT}  {img.width}x{img.height}  {size:,} bytes")
     if size > 300_000:
         print("  WARNING: over 300 KB; most platforms downscale anyway")
+    apple_icon()
 
 
 if __name__ == "__main__":

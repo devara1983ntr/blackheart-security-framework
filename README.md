@@ -242,12 +242,24 @@ cd blackheart-security-framework
 python3 -m pip install json5
 python3 .github/scripts/validate.py
 
-# prove nothing is missing and the docs tell the truth — 16/16 groups
+# prove nothing is missing and the docs tell the truth — 20/20 groups
 python3 .github/scripts/gap_audit.py
 
 # check for upstream drift — report-only, never mutates
 python3 .github/scripts/sync_upstream.py
+
+# site gates: static, then a real browser
+python3 site/check_site.py       # 115 checks
+python3 site/audit_seo.py        # links, metadata, payload budget
+python3 -m pip install playwright && python3 -m playwright install chromium
+python3 site/check_contrast.py   # WCAG AA, measured in both themes
+python3 site/test_interactions.py # 81 behavioural checks
 ```
+
+[`RELEASE-CHECKLIST.md`](RELEASE-CHECKLIST.md) is the full pre-release
+checklist — functionality, UI/UX, accessibility, SEO, performance, security,
+testing, links, documentation, configuration, hygiene and deployment — with
+the command for every gate and the limitations that are **not** fixed.
 
 The file index is **generated, not hand-maintained**:
 

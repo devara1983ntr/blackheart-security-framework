@@ -93,6 +93,13 @@ jobs:
         # the page drifting away from what the page actually renders.
         run: python3 site/check_site.py
 
+      - name: Run the SEO and link audit
+        # Catches a link to a file that does not exist, an anchor with no
+        # matching id, a canonical that disagrees with the page's own address,
+        # a duplicate title or description, and a page that has drifted out of
+        # the sitemap. Also holds the visitor payload to a stated budget.
+        run: python3 site/audit_seo.py
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

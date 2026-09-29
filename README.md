@@ -24,7 +24,7 @@
 | **Canonical URL** | [`https://github.com/devara1983ntr/blackheart-security-framework`](https://github.com/devara1983ntr/blackheart-security-framework) |
 | Former name | `My-Hack` — still resolves via a GitHub 301 redirect, but the canonical name is authoritative and the redirect is not depended on |
 | Upstream mirror | [`alirezarezvani/claude-skills`](https://github.com/alirezarezvani/claude-skills) @ `19392f7a` |
-| Documentation site | **Published** at [`https://devara1983ntr.github.io/blackheart-security-framework/`](https://devara1983ntr.github.io/blackheart-security-framework/) — source in [`site/`](site), deployed by [`pages.yml`](.github/workflows/pages.yml) |
+| Documentation site | **Published** at [`https://devara1983ntr.github.io/blackheart-security-framework/`](https://devara1983ntr.github.io/blackheart-security-framework/) — five pages: home, [architecture](https://devara1983ntr.github.io/blackheart-security-framework/architecture.html), [evidence rules](https://devara1983ntr.github.io/blackheart-security-framework/evidence.html), [case study](https://devara1983ntr.github.io/blackheart-security-framework/case-study.html), [disclosure](https://devara1983ntr.github.io/blackheart-security-framework/disclosure.html) |
 | Discovery index | [`VoltAgent/awesome-openclaw-skills`](https://github.com/VoltAgent/awesome-openclaw-skills) @ `f274daa` |
 | Licence | MIT |
 

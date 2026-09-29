@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Security disclosure — BLACKHEART</title>
+
+<link rel="canonical" href="https://devara1983ntr.github.io/blackheart-security-framework/disclosure.html">
+
+<meta name="description" content="An honest account of every known risk in this repository: 82 open Dependabot alerts, all in one vendored test fixture, why they are accepted rather than patched, and the automated gate that enforces the decision.">
+<meta name="author" content="Devara">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#070b11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="BLACKHEART">
+<meta property="og:title" content="Security disclosure — 82 open alerts, and why none is a defect">
+<meta property="og:description" content="Every known risk in this repository, written down. Including the one that looks worst and is not.">
+<meta property="og:url" content="https://devara1983ntr.github.io/blackheart-security-framework/disclosure.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BLACKHEART — verify before you enable">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security disclosure — BLACKHEART">
+<meta name="twitter:description" content="82 open Dependabot alerts, all in one vendored test fixture. Why none of them is a defect.">
+<meta name="twitter:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow glow-a" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="wrap head-in">
+    <a class="brand" href="./" aria-label="BLACKHEART home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <path d="M20 2.5 35 11v18L20 37.5 5 29V11Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M20 13v14M13 20h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">BLACKHEART</span>
+    </a>
+    <nav class="nav" id="site-nav" aria-label="Sections">
+      <a href="./">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="evidence.html">Evidence</a>
+      <a href="case-study.html">Case study</a>
+      <a href="disclosure.html">Disclosure</a>
+    </nav>
+    <div class="head-act">
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-expanded="false" aria-controls="site-nav" aria-label="Open section menu">
+        <svg class="i-burger" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="i-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="sec sec-hero" id="top">
+    <div class="wrap">
+      <p class="kicker">Security disclosure</p>
+      <h1 class="h1">Every known risk, written down.</h1>
+      <p class="lede">
+        Including the one that looks worst on a scanner and is not a defect.
+        If a risk in this repository is not on this page or in the CHANGELOG,
+        that is a bug in this page, not a secret.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="alerts">
+    <div class="wrap">
+      <p class="kicker">Accepted risk</p>
+      <h2 class="h2">82 open alerts. All 82 are in one file.</h2>
+      <p class="lede">
+        Dependabot reports 82 open vulnerability alerts on this repository.
+        Every single one resolves to the same path:
+      </p>
+
+      <div class="codeblock">
+        <div class="cb-head">
+          <span class="cb-path">dependency-auditor / test-project / package.json</span>
+          <button type="button" data-copy>Copy</button>
+        </div>
+<pre><code>skills/third-party/claude-skills/engineering/skills/
+  dependency-auditor/test-project/package.json</code></pre>
+      </div>
+
+      <div class="callout warn">
+        <h3>2 critical · 36 high · 37 moderate · 7 low</h3>
+        <p>
+          That is a <code>sample-web-app</code> fixture belonging to the vendored
+          <code>dependency-auditor</code> skill — a tool whose entire job is finding
+          vulnerable dependencies. Its stale <code>axios</code>, <code>nodemailer</code>,
+          <code>multer</code>, <code>mongoose</code>, <code>lodash</code> and
+          <code>jsonwebtoken</code> pins <strong>are the test data</strong>. The skill
+          needs something old and broken to demonstrate itself against.
+        </p>
+      </div>
+
+      <h3 class="h3">Why it is accepted instead of patched</h3>
+      <ol class="rungs">
+        <li>
+          <b>Patching it would break the mirror.</b>
+          <span>The 3,864 vendored files are byte-identical to upstream
+          <code>19392f7a</code> by design, and <code>validate.py</code> enforces that on
+          every push. Editing this file would make BLACKHEART's copy silently diverge
+          from the thing it is supposed to be an honest mirror of.</span>
+        </li>
+        <li>
+          <b>Patching it would destroy the corpus.</b>
+          <span>Remove the vulnerable pins and the
+          <code>dependency-auditor</code> skill has nothing to demonstrate on. The defect
+          and the fixture are the same thing.</span>
+        </li>
+        <li>
+          <b>Nothing executes it.</b>
+          <span>No lockfile is committed, there is no build step, and nothing installs
+          or runs this project. It is data on disk, not code in a path.</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="gate">
+    <div class="wrap">
+      <p class="kicker">Enforcement</p>
+      <h2 class="h2">Accepting a risk is only honest if it is enforced.</h2>
+      <p class="lede">
+        A silent "this isn't a real vulnerability" is indistinguishable from having
+        ignored it. So the decision is written to
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/.github/known-vulnerable-fixtures.json"><code>.github/known-vulnerable-fixtures.json</code></a>
+        and a CI group holds the line.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>The group fails if…</h3>
+          <ul class="ticks">
+            <li>the registry is deleted</li>
+            <li>a registered entry stops being vendored</li>
+            <li>an entry loses its written reason</li>
+            <li>a Blackhearts-authored dependency manifest ever appears</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>That last one is load-bearing</h3>
+          <p class="fine">
+            The entire argument above rests on this repository declaring
+            <strong>no dependencies of its own</strong> — it ships no build step, no
+            bundler and no third-party runtime. So audit group 20 asserts that premise
+            on every run rather than trusting it. The day someone adds a real
+            <code>package.json</code>, the acceptance argument stops applying and the
+            build says so.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <h3>Every failure mode was tested</h3>
+        <p>
+          A gate that has only ever been observed passing is decoration. Each of the
+          four conditions above was reproduced deliberately — an authored
+          <code>package.json</code> dropped in, the registry deleted, a reason stripped,
+          a path re-pointed out of the vendored tree — and each one fails the build
+          with a specific message.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="linkdefects">
+    <div class="wrap">
+      <p class="kicker">The same rule, applied twice</p>
+      <h2 class="h2">Fix ours. Account for theirs.</h2>
+      <p class="lede">
+        This is not a new idea here. It is the rule that produced the 111 registered
+        dead links, and it applies identically to vulnerabilities.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Blackhearts-authored</h3>
+          <p>
+            <strong>Fixed.</strong> 48 defective links in documentation this project
+            owns were corrected. The 159-link problem is now 48 fixed and 111
+            registered, with the registry refusing to accept a new unregistered
+            defect.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Vendored upstream</h3>
+          <p>
+            <strong>Not edited.</strong> 111 genuine defects inside byte-identical
+            upstream files are individually registered in
+            <code>.github/upstream-link-defects.json</code>, each with a reason.
+            Editing them would break the mirror guarantee.
+          </p>
+        </div>
+      </div>
+
+      <p class="fine" style="margin-top:2rem">
+        Same principle, same enforcement, one more surface: 82 alerts accepted with
+        reasons instead of 82 silent patches that break the mirror or 82 alerts
+        nobody looked at.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec" id="limits">
+    <div class="wrap">
+      <p class="kicker">What this page is not</p>
+      <h2 class="h2">The limits of this assurance.</h2>
+      <div class="cols">
+        <div class="callout warn">
+          <h3>A clean scan is a coverage gap</h3>
+          <p>
+            Nothing here claims the vendored content is safe. The 3,864 mirrored files
+            were verified byte-identical, not audited for correctness. A mirror
+            guarantee is a <em>provenance</em> claim. It is not a safety claim.
+          </p>
+        </div>
+        <div class="callout warn">
+          <h3>Nobody has tested these skills against a live target</h3>
+          <p>
+            The work here is static analysis, controlled input, and policy review. No
+            target was assessed, no credential was used, and no production system was
+            touched. A finding is a hypothesis until it is demonstrated.
+          </p>
+        </div>
+      </div>
+      <p class="fine" style="margin-top:2rem">
+        Report a defect responsibly through
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY.md"><code>SECURITY.md</code></a>.
+        This framework is for authorized work only — systems you own or have written
+        permission to test.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-brand">BLACKHEART</p>
+      <p class="foot-tag">Verify before you enable.</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <div>
+        <h4>On this site</h4>
+        <a href="./">Home</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="evidence.html">Evidence rules</a>
+        <a href="case-study.html">Case study</a>
+        <a href="disclosure.html">Disclosure</a>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">Repository</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY.md" rel="noopener">Security</a>
+      </div>
+      <div>
+        <h4>Upstream</h4>
+        <a href="https://github.com/alirezarezvani/claude-skills" rel="noopener">claude-skills</a>
+        <a href="https://github.com/VoltAgent/awesome-openclaw-skills" rel="noopener">awesome-openclaw-skills</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>
+      BLACKHEARTS-authored content is MIT, © 2026 Devara.
+      Vendored content is MIT, © 2025 Alireza Rezvani, mirrored byte-for-byte and never modified.
+    </p>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>

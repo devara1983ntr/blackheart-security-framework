@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Evidence rules — why a clean scan is a coverage gap — BLACKHEART</title>
+
+<link rel="canonical" href="https://devara1983ntr.github.io/blackheart-security-framework/evidence.html">
+
+<meta name="description" content="The evidence vocabulary and status ladder BLACKHEARTS enforces: a finding is a hypothesis, negative results are preserved, and a clean scan is a coverage gap rather than a clearance.">
+<meta name="author" content="Devara">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#070b11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="BLACKHEART">
+<meta property="og:title" content="Evidence rules — why a clean scan is a coverage gap">
+<meta property="og:description" content="A finding is a hypothesis. A clean result is a coverage gap. These are the words that keep an audit honest.">
+<meta property="og:url" content="https://devara1983ntr.github.io/blackheart-security-framework/evidence.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BLACKHEART — verify before you enable">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Evidence rules — BLACKHEART">
+<meta name="twitter:description" content="A finding is a hypothesis. A clean result is a coverage gap.">
+<meta name="twitter:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow glow-a" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="wrap head-in">
+    <a class="brand" href="./" aria-label="BLACKHEART home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <path d="M20 2.5 35 11v18L20 37.5 5 29V11Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M20 13v14M13 20h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">BLACKHEART</span>
+    </a>
+    <nav class="nav" id="site-nav" aria-label="Sections">
+      <a href="./">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="evidence.html">Evidence</a>
+      <a href="case-study.html">Case study</a>
+      <a href="disclosure.html">Disclosure</a>
+    </nav>
+    <div class="head-act">
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-expanded="false" aria-controls="site-nav" aria-label="Open section menu">
+        <svg class="i-burger" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="i-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="sec sec-hero">
+    <div class="wrap">
+      <p class="kicker">Evidence rules</p>
+      <h1 class="h1">A finding is a hypothesis.</h1>
+      <p class="lede">
+        These are the words that keep an audit honest. They are enforced in the
+        conformance layer, which is the one layer that outranks everything else.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="vocab">
+    <div class="wrap">
+      <p class="kicker">Vocabulary</p>
+      <h2 class="h2">The mandatory words.</h2>
+      <p class="lede">
+        Each of these exists because its absence has produced a real false claim at
+        some point in the history of this work.
+      </p>
+
+      <div class="rungs">
+        <div class="rung-item">
+          <b>Finding</b>
+          <span>Requires independently demonstrated evidence and a traceable log ID. A pattern match is a <em>hypothesis</em> until something reproduces it.</span>
+        </div>
+        <div class="rung-item">
+          <b>Negative result</b>
+          <span>Preserved and reported. "This was tested and did not hold" is data. Deleting it is how the next person re-runs the same dead end for a week.</span>
+        </div>
+        <div class="rung-item">
+          <b>Coverage gap</b>
+          <span>A clean scan means <em>this was not tested</em>, not "this is safe." The distinction is the whole game.</span>
+        </div>
+        <div class="rung-item">
+          <b>Unverified</b>
+          <span>The default status for every claim. Upgrading it requires evidence, and the ladder is one-directional.</span>
+        </div>
+        <div class="rung-item">
+          <b>Residual risk</b>
+          <span>Stated explicitly, every time, including when the answer is "and we are still not clear."</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="ladder">
+    <div class="wrap">
+      <p class="kicker">Status ladder</p>
+      <h2 class="h2">Claims only move one way.</h2>
+      <p class="lede">
+        Every statement in this repository sits on exactly one rung. Nothing climbs
+        without evidence attached, and nothing is promoted by repetition.
+      </p>
+
+      <ol class="rungs">
+        <li><b>Unverified</b><span>The default. No evidence gathered. Most claims in most codebases live here permanently.</span></li>
+        <li><b>Suspected</b><span>A reason to look exists. Not yet demonstrated. Worth a log ID, not worth a claim.</span></li>
+        <li><b>Demonstrated</b><span>Reproduced against controlled input. Evidence and log ID attached. This is a finding.</span></li>
+        <li><b>Independently confirmed</b><span>Reproduced by a second method or a second party. Only here does a finding become a conclusion.</span></li>
+      </ol>
+
+      <div class="callout">
+        <h3>Why there is no "confirmed safe" rung</h3>
+        <p>
+          Absence of evidence is not evidence of absence, and a ladder with a
+          top rung reading "safe" invites exactly the claim this framework exists to
+          reject. The ladder stops at what was demonstrated. Everything above that is
+          your own risk decision to make, and you should make it knowing exactly what
+          was and was not tested.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="testing">
+    <div class="wrap">
+      <p class="kicker">Method</p>
+      <h2 class="h2">Test the tool, not just the target.</h2>
+      <p class="lede">
+        The most productive finding in this repository was not in a target. It was in
+        Blackhearts' own promoted skill, and it was found by running the thing rather
+        than reading it.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>What was found</h3>
+          <p>
+            A jailbreak signature written as an unanchored alternation matched ordinary
+            English words inside <em>claim</em>, <em>standard</em> and
+            <em>dangerous</em> — producing a near-total false-positive rate on ordinary
+            security prose. Twelve hits in <code>ARCHITECTURE.md</code>, eleven in
+            <code>AGENT.md</code>, one in <code>SECURITY.md</code>.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Why it mattered</h3>
+          <p>
+            This was a promoted, author-controlled, security skill. If its detection
+            is saturated with noise, a real signal is indistinguishable from the
+            background — and a scanner that cries wolf is worse than no scanner,
+            because it trains people to dismiss alerts.
+          </p>
+        </div>
+      </div>
+
+      <p class="hero-cta" style="margin-top:2rem">
+        <a class="btn" href="case-study.html">Read the full case study →</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="sec" id="rules">
+    <div class="wrap">
+      <p class="kicker">Operating rules</p>
+      <h2 class="h2">What an authorized run looks like.</h2>
+
+      <div class="cols">
+        <div class="callout">
+          <h3>Never</h3>
+          <ul class="ticks">
+            <li>Begin without a named target and a recorded authoriser</li>
+            <li>Request, use, or handle any credential, for any reason</li>
+            <li>Write to production to determine whether access exists</li>
+            <li>Use nonexistent identifiers as write tests</li>
+            <li>Report a hypothesis as a finding</li>
+            <li>Call a clean result "no vulnerabilities"</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <h3>Instead</h3>
+          <ul class="ticks">
+            <li>Static analysis, grants and RLS reasoning, policy review</li>
+            <li>Explicitly authorized synthetic or staging tests</li>
+            <li>Non-mutating public metadata reads</li>
+            <li>Evidence IDs that trace back to a log</li>
+            <li>Coverage gaps stated in the same breath as results</li>
+            <li>Residual risk named before the summary</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="fine" style="margin-top:2rem">
+        Public signup, shared third-party infrastructure, payment paths, and load or
+        fuzzing testing are out of scope unless separately authorized in writing.
+        A named authoriser, a scope, and a window — or nothing runs.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-brand">BLACKHEART</p>
+      <p class="foot-tag">Verify before you enable.</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <div>
+        <h4>On this site</h4>
+        <a href="./">Home</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="evidence.html">Evidence rules</a>
+        <a href="case-study.html">Case study</a>
+        <a href="disclosure.html">Disclosure</a>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">Repository</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY.md" rel="noopener">Security</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AGENT.md" rel="noopener">AGENT.md</a>
+      </div>
+      <div>
+        <h4>Upstream</h4>
+        <a href="https://github.com/alirezarezvani/claude-skills" rel="noopener">claude-skills</a>
+        <a href="https://github.com/VoltAgent/awesome-openclaw-skills" rel="noopener">awesome-openclaw-skills</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>
+      BLACKHEARTS-authored content is MIT, © 2026 Devara.
+      Vendored content is MIT, © 2025 Alireza Rezvani, mirrored byte-for-byte and never modified.
+    </p>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>

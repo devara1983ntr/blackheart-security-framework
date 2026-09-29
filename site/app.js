@@ -201,9 +201,18 @@
   }
 
   /* ── nav active section ───────────────────────────────────── */
+  // On a subpage the nav links point at other documents ("./",
+  // "architecture.html"), not at fragments. Those are not valid CSS
+  // selectors, and feeding one to querySelector throws -- which used to take
+  // down the rest of this script on every deep page. Resolve fragments with
+  // getElementById and ignore anything that is not a fragment.
   var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
   var targets = links
-    .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+    .map(function (a) {
+      var href = a.getAttribute('href') || '';
+      if (href.charAt(0) !== '#' || href.length < 2) return null;
+      return document.getElementById(href.slice(1));
+    })
     .filter(Boolean);
 
   if (targets.length && 'IntersectionObserver' in window) {

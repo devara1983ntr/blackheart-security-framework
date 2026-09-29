@@ -70,7 +70,12 @@ body {
   letter-spacing: -.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: both stop a stray wide element from creating a
+     horizontal scrollbar, but `hidden` would make body a scroll container and
+     break the sticky header. Real overflow is fixed at the source -- a grid
+     item with a long unbreakable token needs min-width:0 -- and is asserted by
+     site/test_interactions.py rather than papered over here. */
+  overflow-x: clip;
 }
 
 h1, h2, h3, h4 { line-height: 1.15; letter-spacing: -.022em; margin: 0; font-weight: 680; }
@@ -114,7 +119,14 @@ em { font-style: italic; }
   -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 0%, transparent 78%);
   opacity: .8;
 }
-.glow { position: fixed; z-index: -1; pointer-events: none; border-radius: 50%; filter: blur(90px); opacity: .3; }
+.glow {
+  position: fixed; z-index: -1; pointer-events: none;
+  border-radius: 50%; filter: blur(90px); opacity: .3;
+  /* A fixed element wider than the viewport still widens the document, which
+     produces a stray horizontal scrollbar on a 320px screen. Never exceed the
+     viewport, however small it is. */
+  max-width: 100vw; max-height: 100vh;
+}
 .glow-a { width: 34rem; height: 34rem; top: -14rem; left: -8rem;  background: radial-gradient(circle, var(--accent) 0%, transparent 70%); }
 .glow-b { width: 30rem; height: 30rem; top: 6rem;   right: -10rem; background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%); opacity: .22; }
 
@@ -126,13 +138,12 @@ em { font-style: italic; }
   background: color-mix(in oklab, var(--bg) 78%, transparent);
   border-bottom: 1px solid transparent;
   transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
-}
-.site-head.stuck { border-bottom-color: var(--line); }
+}.site-head.stuck { border-bottom-color: var(--line); }
 .head-in { display: flex; align-items: center; gap: 1.25rem; height: 4.25rem; }
 
-.brand { display: flex; align-items: center; gap: .6rem; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: .01em; }
+.brand { display: flex; align-items: center; gap: .6rem; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: .01em; min-width: 0; }
 .brand .mark { width: 1.65rem; height: 1.65rem; color: var(--accent); flex: none; }
-.brand-txt { font-size: .95rem; letter-spacing: .06em; }
+.brand-txt { font-size: .95rem; letter-spacing: .06em; white-space: nowrap; }
 
 .nav { display: flex; gap: .25rem; margin-inline: auto; }
 .nav a {
@@ -221,8 +232,8 @@ em { font-style: italic; }
 
 /* ── cards ─────────────────────────────────────────────────── */
 .cols { display: grid; gap: 1.25rem; }
-.cols-3 { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
-.cols { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+.cols-3 { grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
+.cols { grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); }
 @media (min-width: 60rem) { .cols { grid-template-columns: 1fr 1fr; } .cols-3 { grid-template-columns: repeat(3, 1fr); } }
 
 .card {
@@ -243,6 +254,58 @@ em { font-style: italic; }
   border: 1.5px solid var(--muted);
 }
 .ticks-accent li::before { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 30%, transparent); }
+
+/* ── subpage building blocks ─────────────────────────────────
+   Shared by architecture / evidence / case-study / disclosure so the
+   deep pages read as the same product rather than four hand-made
+   documents that happen to share a stylesheet. */
+.sec-hero { padding-top: 7rem; padding-bottom: 1rem; }
+.sec-hero .lede { max-width: 46rem; }
+
+.h1 { font-size: clamp(2.1rem, 5.2vw, 3.5rem); line-height: 1.08; letter-spacing: -.025em; font-weight: 800; max-width: 22ch; margin: .4rem 0 1.1rem; }
+.h3 { font-size: 1.3rem; line-height: 1.25; letter-spacing: -.015em; font-weight: 700; margin: 0 0 .5rem; }
+
+.grid-2 { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr)); }
+.grid-3 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); margin: 1.5rem 0; }
+
+.grid-2 .card, .grid-3 .card, .cols .card { text-align: left; }
+
+.stat {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--r); padding: .9rem 1rem;
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.stat b { font: 800 1.5rem var(--mono); color: var(--warn); letter-spacing: -.02em; }
+.stat span { font-size: .8rem; color: var(--muted); }
+
+.finding { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: var(--r); padding: 1.75rem; }
+.f-head { display: flex; align-items: baseline; gap: .85rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.f-head .h3 { margin: 0; }
+.f-id {
+  font: 700 .72rem var(--mono); letter-spacing: .06em; flex: none;
+  color: var(--warn); background: color-mix(in oklab, var(--warn) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--warn) 32%, transparent);
+  padding: .2rem .5rem; border-radius: var(--r-sm);
+}
+
+/* NOTE: `.rung` is already a small uppercase pill badge used by the
+   precedence stack on the home page (see the "rules + rungs" block below).
+   This row component is `.rung-item`; reusing `.rung` made the two collide,
+   and the badge's `white-space: nowrap` silently forced these rows to 1,295px
+   wide inside a 390px viewport. */
+.rung-item { display: grid; grid-template-columns: 1fr; gap: .3rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.rung-item:last-child { border-bottom: none; }
+.rung-item b { font-weight: 680; }
+.rung-item span { color: var(--muted); font-size: .94rem; }
+
+.cb-path { font: .74rem var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.l-pin { border-color: color-mix(in oklab, var(--accent) 22%, var(--line)); }
+.l-adp { border-color: color-mix(in oklab, var(--ink-2) 22%, var(--line)); }
+
+@media (min-width: 52rem) {
+  .rung { grid-template-columns: 13rem 1fr; gap: 1.5rem; align-items: baseline; }
+}
 
 /* ── architecture stack ────────────────────────────────────── */
 .stack { display: flex; flex-direction: column; max-width: 46rem; margin: 0 auto 3rem; }
@@ -311,6 +374,9 @@ em { font-style: italic; }
 .tab:hover { color: var(--ink); }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 .tabpanel:focus-visible { outline-offset: 6px; }
+/* The coverage tables are the widest content on the site. On a 320px screen
+   they cannot fit, so the panel scrolls rather than the page. */
+.tabpanel { overflow-x: auto; }
 
 table.data { width: 100%; border-collapse: collapse; font-size: .9rem; }
 table.data caption { text-align: left; }
@@ -323,7 +389,7 @@ table.data tr.total th, table.data tr.total td { border-bottom: none; border-top
 table.data tbody tr:hover td, table.data tbody tr:hover th { background: color-mix(in oklab, var(--panel) 55%, transparent); }
 
 /* ── rules + rungs ─────────────────────────────────────────── */
-.rules { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); margin-bottom: 3rem; }
+.rules { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); margin-bottom: 3rem; }
 .rule { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.35rem; }
 .r-n { display: block; font: 700 .7rem var(--mono); color: var(--accent); letter-spacing: .1em; margin-bottom: .6rem; }
 .rule b { display: block; font-size: .95rem; margin-bottom: .45rem; }
@@ -342,7 +408,7 @@ table.data tbody tr:hover td, table.data tbody tr:hover th { background: color-m
 
 /* ── findings ──────────────────────────────────────────────── */
 .findings { display: grid; gap: 1.25rem; margin-bottom: 2.5rem; }
-.finding { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.5rem 1.6rem; }
+.finding { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.5rem 1.6rem; min-width: 0; }
 .sev-hi { border-left: 3px solid var(--warn); }
 .finding header { display: flex; align-items: flex-start; gap: .85rem; margin-bottom: .9rem; }
 .f-id { font: 700 .72rem var(--mono); color: var(--warn); background: color-mix(in oklab, var(--warn) 12%, transparent); border: 1px solid color-mix(in oklab, var(--warn) 32%, transparent); padding: .2rem .5rem; border-radius: .35rem; flex: none; }
@@ -358,7 +424,7 @@ pre.mini code { background: none; border: none; padding: 0; color: var(--accent)
 .impact b { color: var(--ink); display: block; margin-bottom: .2rem; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
 
 /* ── gates + canaries ──────────────────────────────────────── */
-.gates { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); margin-bottom: 2.5rem; }
+.gates { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr)); margin-bottom: 2.5rem; }
 .gate { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.5rem; }
 .gate h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--accent); }
 .gate ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
@@ -389,11 +455,15 @@ pre.mini code { background: none; border: none; padding: 0; color: var(--accent)
 }
 .cb-copy:hover { color: var(--accent); border-color: var(--accent); }
 .cb-copy.ok { color: var(--good); border-color: var(--good); }
-.codeblock pre { margin: 0; padding: 1.15rem 1.25rem; overflow-x: auto; }
+.codeblock pre { margin: 0; padding: 1.15rem 1.25rem; overflow-x: auto; min-width: 0; }
 .codeblock code { background: none; border: none; padding: 0; font-size: .82rem; color: var(--ink-2); line-height: 1.75; }
+/* A long literal -- a regex, a SHA, a path -- must scroll inside its block,
+   never widen the page. `pre` is the scroll container; it can only do that if
+   it is allowed to shrink below its content width. */
+.finding, .card, .callout, .layer, .rung-item, .rungs { min-width: 0; }
 
 /* ── promises ──────────────────────────────────────────────── */
-.promises { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.promises { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
 .promises li { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.15rem 1.3rem; font-size: .88rem; color: var(--muted); }
 .promises b { display: block; color: var(--ink); margin-bottom: .2rem; font-size: .92rem; }
 
@@ -403,7 +473,7 @@ pre.mini code { background: none; border: none; padding: 0; color: var(--accent)
 @media (min-width: 52rem) { .foot-in { grid-template-columns: 14rem 1fr; } }
 .foot-brand { font-weight: 700; letter-spacing: .06em; font-size: .95rem; margin: 0 0 .25rem; }
 .foot-tag { color: var(--muted); font-size: .85rem; }
-.foot-nav { display: grid; gap: 1.75rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.foot-nav { display: grid; gap: 1.75rem; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); }
 .foot-nav h4 { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .7rem; }
 .foot-nav a { display: block; font-size: .85rem; color: var(--ink-2); text-decoration: none; padding: .2rem 0; }
 .foot-nav a:hover { color: var(--accent); }
@@ -458,6 +528,18 @@ pre.mini code { background: none; border: none; padding: 0; color: var(--accent)
   .site-head.menu-open .nav a.active {
     background: color-mix(in oklab, var(--accent) 10%, transparent);
   }
+}
+@media (max-width: 26rem) {
+  /* 320px: brand + theme + GitHub no longer fit on one line. Drop the button
+     label rather than let the header push the page sideways. */
+  .head-in { gap: .45rem; }
+  .brand { gap: .4rem; min-width: 0; }
+  .brand .mark { width: 1.4rem; height: 1.4rem; }
+  .brand-txt { font-size: .74rem; letter-spacing: .02em; }
+  .head-act { gap: .35rem; }
+  .head-act .btn-sm { padding: .45rem .5rem; font-size: .75rem; }
+  .head-act .btn-sm svg { display: none; }
+  .icon-btn { width: 2.1rem; height: 2.1rem; }
 }
 @media (max-width: 30rem) {
   .wrap { padding-inline: 1.1rem; }

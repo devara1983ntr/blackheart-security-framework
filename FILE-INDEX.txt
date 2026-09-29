@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4392
+# Total entries: 4396
 
 .gitattributes
 .github/ISSUE_TEMPLATE/bug.yml
@@ -81,7 +81,11 @@ docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md
 examples/NEW-PROJECT-BOOTSTRAP.md
 site/404.html
 site/app.js
+site/architecture.html
+site/case-study.html
 site/check_site.py
+site/disclosure.html
+site/evidence.html
 site/favicon.svg
 site/gen_og.py
 site/index.html

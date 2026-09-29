@@ -23,7 +23,8 @@ time.sleep(1.5)
 
 from playwright.sync_api import sync_playwright
 
-BASE = f"http://127.0.0.1:{PORT}/index.html"
+ROOT = f"http://127.0.0.1:{PORT}"
+BASE = f"{ROOT}/index.html"
 results = []
 
 
@@ -184,6 +185,83 @@ with sync_playwright() as p:
       const id = s && s.getAttribute('href');
       return !!id && !!document.querySelector(id);
     }"""))
+    ctx.close()
+
+    # ---------- no horizontal overflow, on any page, at any width ----------
+    # A CSS class-name collision made one row 1,295px wide inside a 390px
+    # viewport. Nothing in the static checks could see that, and it shipped
+    # straight past them. Measure it instead.
+    for w, label in ((320, "320px"), (390, "390px"), (768, "768px"), (1440, "1440px")):
+        octx = br.new_context(viewport={"width": w, "height": 900})
+        opg = octx.new_page()
+        for page in ("index.html", "architecture.html", "evidence.html",
+                     "case-study.html", "disclosure.html", "404.html"):
+            opg.goto(f"{ROOT}/{page}", wait_until="networkidle")
+            over = opg.evaluate("""() => {
+                const d = document.documentElement;
+                const over = d.scrollWidth - d.clientWidth;
+                if (over <= 1) return null;
+                // name the widest offender so the failure is actionable
+                let worst = null, worstW = 0;
+                for (const el of document.querySelectorAll('body *')) {
+                    const r = el.getBoundingClientRect();
+                    if (r.right > d.clientWidth + 1 && r.width > worstW) {
+                        worstW = r.width; worst = el.tagName + '.' + (el.className || '?');
+                    }
+                }
+                return { over, worst, worstW: Math.round(worstW) };
+            }""")
+            t(f"{label} {page}: no horizontal overflow", over is None,
+              f"{over['over']}px, widest {over['worst']} ({over['worstW']}px)"
+              if over else "")
+        octx.close()
+
+    # ---------- copy button on a subpage ----------
+    ctx = br.new_context(viewport={"width": 1280, "height": 900},
+                         permissions=["clipboard-read", "clipboard-write"])
+    pg = ctx.new_page()
+    pg.on("pageerror", lambda e: errors.append(f"case-study: {e}"))
+    pg.goto(f"{ROOT}/case-study.html", wait_until="networkidle")
+    t("subpage script runs without error", True)
+    t("subpage theme toggle works", pg.evaluate("""() => {
+        const b = document.getElementById('theme');
+        const before = document.documentElement.getAttribute('data-theme');
+        b.click();
+        return before !== document.documentElement.getAttribute('data-theme');
+    }"""))
+    t("subpage copy button works", pg.evaluate("""async () => {
+        const btn = document.querySelector('[data-copy]');
+        btn.click();
+        await new Promise(r => setTimeout(r, 400));
+        return btn.textContent.trim() === 'Copied';
+    }"""))
+    t("subpage nav does not break the scroll spy", pg.evaluate("""() => {
+        // Nav links point at other documents here; resolving them as CSS
+        // selectors used to throw and take the rest of the script with it.
+        return document.querySelectorAll('.nav a').length > 0;
+    }"""))
+
+    # The mobile disclosure must exist on every page, not just the home page.
+    for page in ("index.html", "architecture.html", "evidence.html",
+                 "case-study.html", "disclosure.html"):
+        mctx = br.new_context(viewport={"width": 390, "height": 844})
+        mpg = mctx.new_page()
+        mpg.on("pageerror", lambda e: errors.append(f"{page}: {e}"))
+        mpg.goto(f"{ROOT}/{page}", wait_until="networkidle")
+        mpg.wait_for_timeout(300)
+        t(f"{page}: mobile menu opens", mpg.evaluate("""async () => {
+            const b = document.getElementById('nav-toggle');
+            const nav = document.getElementById('site-nav');
+            if (!b || !nav) return false;
+            b.click();
+            await new Promise(r => setTimeout(r, 200));
+            const open = b.getAttribute('aria-expanded') === 'true'
+                         && getComputedStyle(nav).display !== 'none';
+            b.click();
+            await new Promise(r => setTimeout(r, 200));
+            return open && b.getAttribute('aria-expanded') === 'false';
+        }"""))
+        mctx.close()
     ctx.close()
     br.close()
 

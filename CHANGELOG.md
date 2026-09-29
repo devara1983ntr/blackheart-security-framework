@@ -14,7 +14,61 @@ and the state of the executable layer.
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+- **Four content pages, turning a one-URL site into five.** The sitemap listed a
+  single URL, which is thin indexable surface for a project whose whole argument
+  is that unread content is where risk lives. Added, in the same design system:
+  - `site/architecture.html` — the five layers in depth, the precedence ladder,
+    and why each design choice was made.
+  - `site/evidence.html` — the mandatory evidence vocabulary and the status
+    ladder, including why there is deliberately no "confirmed safe" rung.
+  - `site/case-study.html` — F-01, F-02 and F-03 with evidence and consequence.
+  - `site/disclosure.html` — the 82-alert triage, as a public page rather than
+    a README table, plus the limits of what the assurance is worth.
+
+  `sitemap.xml` now lists all five. Every page carries its own canonical URL,
+  description, Open Graph and Twitter metadata, and is cross-linked from the
+  home page and from every other page's footer, so a crawler can reach any of
+  them from any other.
+- `site/check_site.py` extended from 43 to **114 checks**. It now holds every
+  page to the same metadata and asset rules as the home page, and fails if a
+  page drops out of the sitemap, if a sitemap entry points at a file that does
+  not exist, or if two pages stop linking to each other.
+- `site/test_interactions.py` extended from 35 to **68 checks**, including a
+  **horizontal-overflow assertion on every page at 320, 390, 768 and 1440px**,
+  and a mobile-menu check on all five pages.
+
+### Fixed
+- **A CSS class-name collision shipped a broken mobile layout.** The row
+  component introduced for the evidence page was called `.rung`, which was
+  already a small uppercase pill badge used by the precedence stack. The badge's
+  `white-space: nowrap` won, forcing those rows to 1,295px wide inside a 390px
+  viewport. The static checks could not see it — it only showed up when the page
+  was rendered. Renamed to `.rung-item`, and the overflow assertion above now
+  fails the suite if it recurs.
+- **The scroll-spy threw on every subpage.** It resolved nav hrefs with
+  `querySelector`, which throws on a relative path like `./`. It was written when
+  every nav link was a same-page fragment. Now resolved with `getElementById`,
+  and non-fragment links are ignored.
+- **A 592px `<code>` element and eight `minmax()` grid floors** could exceed a
+  320px viewport. Grid items now carry `min-width: 0`, every `minmax()` floor is
+  `minmax(min(<n>rem, 100%), 1fr)`, the coverage tables scroll inside their
+  panel, and the decorative glows are clamped to the viewport.
+- `body` used `overflow-x: hidden`, which papered over all of the above by
+  hiding it. Changed to `overflow-x: clip`, which prevents the stray scrollbar
+  without making body a scroll container — and without the sticky header
+  breaking. The underlying overflows are now actually fixed rather than masked.
+- The 320px header no longer pushes the page sideways: the brand and buttons
+  compress instead.
+
+### Changed
+- The four commits whose messages read `ci: bump $(title)` were rewritten to
+  their real messages via a history rewrite, pushed with `--force-with-lease`.
+  The resulting tree is **byte-identical** to what was published before
+  (`9f7545b`), so no file content changed — only commit messages. A backup of
+  the original `.git` was kept during the operation.
+
+## [2.4.0] — 2026-09-29
 
 ## [2.4.0] — 2026-09-29
 

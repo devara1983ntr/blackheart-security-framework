@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Architecture — five layers and one gate — BLACKHEART</title>
+
+<link rel="canonical" href="https://devara1983ntr.github.io/blackheart-security-framework/architecture.html">
+
+<meta name="description" content="How BLACKHEART governs 3,864 untrusted third-party files: five layers — pin and verify, adapter, conformance, security gate — and the agent that runs only when all five agree.">
+<meta name="author" content="Devara">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#070b11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="BLACKHEART">
+<meta property="og:title" content="Architecture — five layers and one gate">
+<meta property="og:description" content="Where vendored content and the conformance layer disagree, conformance wins. There is no exception and no negotiation.">
+<meta property="og:url" content="https://devara1983ntr.github.io/blackheart-security-framework/architecture.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BLACKHEART — verify before you enable">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Architecture — BLACKHEART">
+<meta name="twitter:description" content="Five layers, then the agent. Conformance wins every conflict.">
+<meta name="twitter:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow glow-a" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="wrap head-in">
+    <a class="brand" href="./" aria-label="BLACKHEART home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <path d="M20 2.5 35 11v18L20 37.5 5 29V11Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M20 13v14M13 20h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">BLACKHEART</span>
+    </a>
+    <nav class="nav" id="site-nav" aria-label="Sections">
+      <a href="./">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="evidence.html">Evidence</a>
+      <a href="case-study.html">Case study</a>
+      <a href="disclosure.html">Disclosure</a>
+    </nav>
+    <div class="head-act">
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-expanded="false" aria-controls="site-nav" aria-label="Open section menu">
+        <svg class="i-burger" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="i-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="sec sec-hero">
+    <div class="wrap">
+      <p class="kicker">Architecture</p>
+      <h1 class="h1">Five layers.<br>One of them always wins.</h1>
+      <p class="lede">
+        A security agent is exactly as trustworthy as the skills you load. The whole
+        design exists to make that statement structurally true rather than aspirational.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="stack">
+    <div class="wrap">
+      <p class="kicker">The model</p>
+      <h2 class="h2">From untrusted code to a running agent.</h2>
+
+      <div class="stack" role="img" aria-label="Architecture: five layers, then the agent. Untrusted upstream is pinned and verified, wrapped in an adapter layer, governed by the conformance layer, and constrained by the declarative security gate. The agent is the endpoint, not a sixth layer, and it is reachable only through all five.">
+        <div class="layer l-src">
+          <span class="l-tag">01</span>
+          <div class="l-body">
+            <b>Untrusted upstream</b>
+            <small>3,864 files from a third party, for a third party's purpose</small>
+          </div>
+          <span class="l-pill warn">untrusted</span>
+        </div>
+        <div class="flow" aria-hidden="true"><span></span></div>
+        <div class="layer l-pin">
+          <span class="l-tag">02</span>
+          <div class="l-body">
+            <b>Pin &amp; verify</b>
+            <small>compared byte-for-byte to a commit SHA on every push · zero drift tolerated</small>
+          </div>
+          <span class="l-pill">3,864 files</span>
+        </div>
+        <div class="flow" aria-hidden="true"><span></span></div>
+        <div class="layer l-adp">
+          <span class="l-tag">03</span>
+          <div class="l-body">
+            <b>Adapter layer</b>
+            <small>399 reviewed contracts: declared capability, declared prohibitions, conditions of use</small>
+          </div>
+          <span class="l-pill">399 adapters</span>
+        </div>
+        <div class="flow" aria-hidden="true"><span></span></div>
+        <div class="layer l-cnf">
+          <span class="l-tag">04</span>
+          <div class="l-body">
+            <b>Conformance layer <em>— wins every conflict</em></b>
+            <small>evidence vocabulary · status ladder · no scope, no test</small>
+          </div>
+          <span class="l-pill good">authoritative</span>
+        </div>
+        <div class="flow" aria-hidden="true"><span></span></div>
+        <div class="layer l-gate">
+          <span class="l-tag">05</span>
+          <div class="l-body">
+            <b>Security gate</b>
+            <small>declarative flags, machine-enforced — a refusal is the control working</small>
+          </div>
+          <span class="l-pill good">CI-enforced</span>
+        </div>
+        <div class="flow" aria-hidden="true"><span></span></div>
+        <div class="layer l-agent">
+          <span class="l-tag l-tag-end" aria-hidden="true">▶</span>
+          <div class="l-body">
+            <b>Agent <em class="sr-only">— the endpoint, not a layer</em></b>
+            <small>not a sixth layer — the only thing that runs, reachable only through all five above</small>
+          </div>
+          <span class="l-pill">scoped</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="precedence">
+    <div class="wrap">
+      <p class="kicker">Precedence</p>
+      <h2 class="h2">The ladder is total.</h2>
+      <p class="lede">
+        When two layers disagree there is no arbitration step, no vote, and no tie to
+        break. The order is fixed and the higher entry simply wins.
+      </p>
+
+      <ol class="rungs">
+        <li><b>Conformance</b><span>Blackhearts-authored rules. Non-negotiable, and they are what everything else is measured against.</span></li>
+        <li><b>Safety</b><span>Standing constraints on the agent itself. Cannot be relaxed by content.</span></li>
+        <li><b>Task scope</b><span>What this specific run was authorized to do. Narrow by default.</span></li>
+        <li><b>Adapter contract</b><span>What this skill declares it will do, and what it declares it will never do.</span></li>
+        <li><b>Vendored content</b><span>Upstream instruction. Advisory. Never authoritative about its own safety.</span></li>
+      </ol>
+
+      <div class="callout">
+        <h3>The rule that makes the rest work</h3>
+        <p>
+          Vendored content is last, and it is last on purpose. A skill's own
+          <code>SKILL.md</code> gets no vote on whether it is trustworthy, because a
+          document that could raise its own permissions would make the adapter layer
+          decorative.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="gate">
+    <div class="wrap">
+      <p class="kicker">The gate</p>
+      <h2 class="h2">A refusal is the control working.</h2>
+      <p class="lede">
+        Most security tooling is judged by what it lets through. This one is judged by
+        whether it stops. The gate is declarative — flags, not executable policy — and
+        weakening it fails the build.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Declared, not inferred</h3>
+          <p>
+            The gate is a JSON5 document of flags that CI parses. It contains no
+            executable policy at all. If a rule could be phrased as code, a rule could
+            be phrased as a backdoor, and nothing would notice.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Zero credentials, by construction</h3>
+          <p>
+            Not "zero credentials used in the exercise" — zero credentials are
+            <em>requested or handled</em>, for the target, for payment, or for the
+            agent. Write capability is answered by static analysis and reasoning,
+            never by writing to find out.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="design">
+    <div class="wrap">
+      <p class="kicker">Design</p>
+      <h2 class="h2">Why these choices and not the obvious ones.</h2>
+
+      <div class="cols">
+        <div class="card">
+          <h3>Mirror everything, not just skills</h3>
+          <p>
+            A mirror that contains only skills is not a mirror. Commands, personas,
+            plugin manifests, scripts and audit history are all vendored, because the
+            parts of a supply chain that go unexamined are the parts that matter.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Personas are hostile input</h3>
+          <p>
+            The 33 vendored agent personas change how an agent reasons and what it
+            agrees to. They are mirrored and documented, and they are disabled by
+            default — treated as untrusted instruction rather than as configuration.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Record defects, do not patch them</h3>
+          <p>
+            111 dead links inside vendored files are registered individually with
+            reasons instead of fixed. Editing them would break byte-identical
+            mirroring, and a mirror that quietly diverges is worse than one with
+            recorded blemishes.
+          </p>
+        </div>
+      </div>
+
+      <p class="hero-cta" style="margin-top:2.5rem">
+        <a class="btn" href="evidence.html">Read the evidence rules →</a>
+        <a class="btn btn-ghost" href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/ARCHITECTURE.md" rel="noopener">Full ARCHITECTURE.md</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-brand">BLACKHEART</p>
+      <p class="foot-tag">Verify before you enable.</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <div>
+        <h4>On this site</h4>
+        <a href="./">Home</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="evidence.html">Evidence rules</a>
+        <a href="case-study.html">Case study</a>
+        <a href="disclosure.html">Disclosure</a>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">Repository</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/ARCHITECTURE.md" rel="noopener">Architecture</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AGENT.md" rel="noopener">AGENT.md</a>
+      </div>
+      <div>
+        <h4>Upstream</h4>
+        <a href="https://github.com/alirezarezvani/claude-skills" rel="noopener">claude-skills</a>
+        <a href="https://github.com/VoltAgent/awesome-openclaw-skills" rel="noopener">awesome-openclaw-skills</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>
+      BLACKHEARTS-authored content is MIT, © 2026 Devara.
+      Vendored content is MIT, © 2025 Alireza Rezvani, mirrored byte-for-byte and never modified.
+    </p>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>

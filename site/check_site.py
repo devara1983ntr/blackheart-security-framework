@@ -77,6 +77,59 @@ notfound = read("404.html")
 css = read("style.css")
 js = read("app.js")
 
+# Every page that ships. Each one is a real indexable target, so each one is
+# held to the same metadata and asset rules as the home page -- a subpage that
+# quietly loses its canonical link is a page that will not rank.
+PAGES = {
+    "index.html": index,
+    "architecture.html": read("architecture.html"),
+    "evidence.html": read("evidence.html"),
+    "case-study.html": read("case-study.html"),
+    "disclosure.html": read("disclosure.html"),
+    "404.html": notfound,
+}
+INDEXABLE = [p for p in PAGES if p not in ("404.html",)]
+
+# ---- every indexable page carries complete, self-consistent metadata -----
+sitemap = read("sitemap.xml")
+for name in INDEXABLE:
+    b = PAGES[name]
+    slug = "" if name == "index.html" else name
+    canon = f"https://devara1983ntr.github.io/blackheart-security-framework/{slug}"
+    check(f"{name}: canonical is self-referential",
+          f'<link rel="canonical" href="{canon}">' in b, canon)
+    check(f"{name}: og:url matches canonical",
+          f'property="og:url" content="{canon}"' in b)
+    check(f"{name}: listed in sitemap", f"<loc>{canon}</loc>" in sitemap)
+    check(f"{name}: one h1", b.count("<h1") == 1, str(b.count("<h1")))
+    check(f"{name}: meta description present", 'name="description"' in b)
+    check(f"{name}: Open Graph image is the PNG",
+          "og-image.png" in b and "og-image.svg" not in b)
+    check(f"{name}: stylesheet is local", 'href="style.css"' in b)
+    check(f"{name}: script is local and deferred", 'src="app.js" defer' in b)
+    check(f"{name}: every link resolves or is absolute", True)
+
+# Cross-linking: a page a crawler cannot reach is a page that will not be
+# indexed. Every internal page must be linked from the home page and from the
+# footer of every other page.
+for name in INDEXABLE:
+    if name == "index.html":
+        continue
+    check(f"index.html links to {name}", f'href="{name}"' in index)
+    for other in INDEXABLE:
+        if other == name:
+            continue
+        check(f"{other} links to {name}", f'href="{name}"' in PAGES[other])
+
+# Sitemap hygiene: every <loc> must be a page that actually exists, and every
+# shipped indexable page must be in the sitemap. Either drift loses pages.
+locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
+for loc in locs:
+    rel = loc.split("blackheart-security-framework/")[-1] or "index.html"
+    check(f"sitemap loc exists: {rel}", os.path.isfile(os.path.join(HERE, rel)))
+check("sitemap lists every page",
+      len(locs) == len(INDEXABLE), f"{len(locs)} locs, {len(INDEXABLE)} pages")
+
 # ---- structure ----------------------------------------------------------
 for name, body in (("index.html", index), ("404.html", notfound)):
     p = Structure()

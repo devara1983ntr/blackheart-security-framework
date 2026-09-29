@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Case study — three real defects in our own promoted skill — BLACKHEART</title>
+
+<link rel="canonical" href="https://devara1983ntr.github.io/blackheart-security-framework/case-study.html">
+
+<meta name="description" content="Not by scanning it — by running it against controlled input. Three genuine defects found in Blackhearts' own promoted security skill: F-01, F-02 and F-03, with evidence and consequence for each.">
+<meta name="author" content="Devara">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#070b11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="BLACKHEART">
+<meta property="og:title" content="Case study — three real defects in our own promoted skill">
+<meta property="og:description" content="Not by scanning it. By running it against controlled input — the same way you would test a target.">
+<meta property="og:url" content="https://devara1983ntr.github.io/blackheart-security-framework/case-study.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BLACKHEART — verify before you enable">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Case study — F-01, F-02, F-03 — BLACKHEART">
+<meta name="twitter:description" content="Three real defects in a promoted security skill, found by running it rather than reading it.">
+<meta name="twitter:image" content="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow glow-a" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="wrap head-in">
+    <a class="brand" href="./" aria-label="BLACKHEART home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <path d="M20 2.5 35 11v18L20 37.5 5 29V11Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M20 13v14M13 20h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">BLACKHEART</span>
+    </a>
+    <nav class="nav" id="site-nav" aria-label="Sections">
+      <a href="./">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="evidence.html">Evidence</a>
+      <a href="case-study.html">Case study</a>
+      <a href="disclosure.html">Disclosure</a>
+    </nav>
+    <div class="head-act">
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-expanded="false" aria-controls="site-nav" aria-label="Open section menu">
+        <svg class="i-burger" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="i-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="sec sec-hero">
+    <div class="wrap">
+      <p class="kicker">Worked example</p>
+      <h1 class="h1">We found three real defects in our own promoted security skill.</h1>
+      <p class="lede">
+        Not by scanning it. By <em>running</em> it against controlled input — the same
+        way you would test a target. Every scanner passed this skill. Running it did
+        not.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="f01">
+    <div class="wrap">
+      <div class="finding">
+        <div class="f-head">
+          <span class="f-id">F-01</span>
+          <h2 class="h3">The jailbreak signature matches ordinary English words</h2>
+        </div>
+        <p>The persona-jailbreak pattern is an unanchored alternation:</p>
+        <div class="codeblock">
+          <div class="cb-head">
+            <span class="cb-path">pattern</span>
+            <button type="button" data-copy>Copy</button>
+          </div>
+<pre><code>(DAN|STAN|DUDE|KEVIN|AIM|ANTI-DAN|BasedGPT)</code></pre>
+        </div>
+        <p>
+          With no word boundaries it fires inside unrelated words —
+          <code>claim</code>, <code>standard</code>, <code>dangerous</code>.
+        </p>
+        <div class="grid-3">
+          <div class="stat"><b>12 hits</b><span>ARCHITECTURE.md</span></div>
+          <div class="stat"><b>11 hits</b><span>AGENT.md</span></div>
+          <div class="stat"><b>1 hit</b><span>SECURITY.md</span></div>
+        </div>
+        <div class="callout warn">
+          <h3>Consequence</h3>
+          <p>
+            A near-total false-positive rate on ordinary security prose. A
+            <code>jailbreak_persona</code> hit is presumed false until the exact
+            matched substring is inspected — which means the signal is only as
+            trustworthy as the reader's patience.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="f02">
+    <div class="wrap">
+      <div class="finding">
+        <div class="f-head">
+          <span class="f-id">F-02</span>
+          <h2 class="h3">A "confidence" score that is never low</h2>
+        </div>
+        <p>
+          The detector emits a bounded confidence that, by construction, never falls
+          into the range that would suppress a finding. There is no input for which
+          the rule declines to report — so the number carries no information, and a
+          reader who trusts it is trusting a constant.
+        </p>
+        <div class="callout warn">
+          <h3>Consequence</h3>
+          <p>
+            A field shaped like a severity signal but carrying a fixed value is worse
+            than no field, because dashboards rank by it. Findings get ordered by a
+            number that was never computed.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="f03">
+    <div class="wrap">
+      <div class="finding">
+        <div class="f-head">
+          <span class="f-id">F-03</span>
+          <h2 class="h3">Instructions that are logged as data, and vice versa</h2>
+        </div>
+        <p>
+          A block classified as untrusted content is interpolated into the instruction
+          path, and a block classified as instruction is passed through the untrusted
+          channel. The two channels are crossed in both directions, which means the
+          containment boundary the design depends on does not exist at the point where
+          it is actually enforced.
+        </p>
+        <div class="callout warn">
+          <h3>Consequence</h3>
+          <p>
+            This is the one that matters. Confinement that is documented and not
+            implemented gives exactly the false assurance this framework was built to
+            eliminate — from the authors, about their own code.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="method">
+    <div class="wrap">
+      <p class="kicker">Method</p>
+      <h2 class="h2">Why scanning was not enough.</h2>
+      <p class="lede">
+        A static scanner asks whether a pattern is present. All three defects involve
+        a pattern that is present and correct, used in a context where it is wrong.
+        Only execution shows you the context.
+      </p>
+
+      <div class="cols">
+        <div class="card">
+          <h3>What scanning reported</h3>
+          <p>
+            The vendored <code>ai-security</code> scanner's own clean output was never
+            trusted, and its measured defects remain documented. A passing scanner over
+            code you did not run is a statement about the scanner.
+          </p>
+        </div>
+        <div class="card">
+          <h3>What running it showed</h3>
+          <p>
+            Twelve false positives in a file that discusses detection. A confidence
+            value that never varies. Two containment boundaries that cross. All three
+            in a skill that had been promoted and reviewed.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <h3>The uncomfortable part</h3>
+        <p>
+          These were <strong>our</strong> files, in a repository whose entire thesis is
+          that unreviewed third-party content is the risk. A framework that only
+          distrusts other people's code has not understood its own argument. The
+          defects that justify this project's existence were, in this instance, ours.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-brand">BLACKHEART</p>
+      <p class="foot-tag">Verify before you enable.</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <div>
+        <h4>On this site</h4>
+        <a href="./">Home</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="evidence.html">Evidence rules</a>
+        <a href="case-study.html">Case study</a>
+        <a href="disclosure.html">Disclosure</a>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">Repository</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY.md" rel="noopener">Security</a>
+      </div>
+      <div>
+        <h4>Upstream</h4>
+        <a href="https://github.com/alirezarezvani/claude-skills" rel="noopener">claude-skills</a>
+        <a href="https://github.com/VoltAgent/awesome-openclaw-skills" rel="noopener">awesome-openclaw-skills</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>
+      BLACKHEARTS-authored content is MIT, © 2026 Devara.
+      Vendored content is MIT, © 2025 Alireza Rezvani, mirrored byte-for-byte and never modified.
+    </p>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>

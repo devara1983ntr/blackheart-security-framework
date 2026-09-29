@@ -14,6 +14,10 @@ document, script or collection that implements the capability, so a reader can
 check the row instead of trusting it. Where a capability is **not** held, that is
 stated as plainly as where it is — an unstated gap reads as coverage.
 
+Three families are classified: the security work this framework does (27
+capabilities), the engineering work it does on itself (15), and the framework
+machinery that carries both (18).
+
 This is not a feature list and not a roadmap. Nothing here is aspirational.
 
 ## How it was checked
@@ -53,14 +57,14 @@ DUPLICATE         two implementations of the same thing  -> none found
 | Secrets detection | ALREADY COVERED | `AGENT.md` §18 · `SECURITY.md` · the `secrets` check in `validate.py` · `.github/secret-allowlist.json` |
 | Supply-chain security | ALREADY COVERED | `guides/SUPPLY-CHAIN.md` · `skills/VENDOR.md` · `.github/UPSTREAM-MANIFEST.json` · 399 adapters · Rule 0 in `AGENT.md` §0 |
 | Cloud security | ALREADY COVERED | `guides/CLOUD-IDENTITY.md` §2–§8 · vendored `cloud-security`, `aws-solution-architect`, `azure-cloud-architect`, `gcp-cloud-architect`, `ms365-tenant-manager` |
-| Container security | PARTIAL | `guides/CLOUD-IDENTITY.md` and `guides/SUPPLY-CHAIN.md` touch image and registry integrity; there is no container-specific procedure. The vendored `docker-development` and `senior-devops` skills carry the depth. Deliberate — see §4 |
+| Container security | PARTIAL | `guides/CLOUD-IDENTITY.md` and `guides/SUPPLY-CHAIN.md` touch image and registry integrity; there is no container-specific procedure. The vendored `docker-development` and `senior-devops` skills carry the depth. Deliberate — see §5 |
 | Infrastructure security | PARTIAL | Covered through `guides/CLOUD-IDENTITY.md` and `guides/SUPPLY-CHAIN.md` §4 rather than as a standalone infrastructure guide |
 | Network security | PARTIAL | Named across 11 authored documents; no standalone network-assessment procedure. Deliberate — engagements in scope are web, API, mobile, payment and agentic surfaces |
 | Mobile security | ALREADY COVERED | `guides/ANDROID-TESTING.md` · `AGENT.md` §15, §16 · MASVS and OWASP Mobile in `guides/REFERENCE-MAPPINGS.md` §3 |
-| Configuration security | ALREADY COVERED | `AGENT.md` §4 · `guides/TOOL-AND-ENVIRONMENT.md` · and this repository's own configuration, now parse-checked (see §3) |
+| Configuration security | ALREADY COVERED | `AGENT.md` §4 · `guides/TOOL-AND-ENVIRONMENT.md` · and this repository's own configuration, now parse-checked (see §4) |
 | Threat modeling | ALREADY COVERED | `templates/AGENT-THREAT-MODEL.md` · `guides/AGENTIC-AI-SECURITY.md` §4 · `guides/METHODOLOGY-STANDARDS.md` |
 | Secure development | PARTIAL | `guides/REMEDIATION-AND-RETEST.md` gives fix patterns and regression tests; this is an assessment framework, not an SDLC. Vendored `security-guidance`, `tdd-guide`, `code-reviewer` carry the authoring side |
-| DevSecOps | PARTIAL | Assessment-side: `guides/SUPPLY-CHAIN.md` §4 build and publish integrity. Repository-side: the six workflows in §3 |
+| DevSecOps | PARTIAL | Assessment-side: `guides/SUPPLY-CHAIN.md` §4 build and publish integrity. Repository-side: the six workflows in §4 |
 | CI/CD security | ALREADY COVERED | `guides/SUPPLY-CHAIN.md` §4 · and enforced on this repository by `validate.yml`, `authored-scan.yml` |
 | Evidence collection | ALREADY COVERED | `guides/EVIDENCE.md` · `AGENT.md` §20 · `templates/TEST-LOG.md`, `templates/COVERAGE-MATRIX.md` |
 | Reporting | ALREADY COVERED | `guides/REPORTING.md` · `AGENT.md` §24 · `templates/FINDING.md`, `templates/FINAL-REPORT.md` |
@@ -76,21 +80,48 @@ DUPLICATE         two implementations of the same thing  -> none found
 |---|---|---|
 | Coding | ALREADY COVERED | Vendored `senior-*` family (backend, frontend, fullstack, architect, data, ML, QA, DevOps); `AGENT.md` §19 bounds automation |
 | Debugging | PARTIAL | `AGENT.md` §6 (enforcement-point location), §23 (failed tests are evidence). Deliberate: this is assessment debugging, not a debugger guide |
-| Testing | ALREADY COVERED | The framework's own gates (§3) · differential testing in `modes/ZERO-CREDENTIAL-ESCALATION-MODE.md` · vendored `tdd-guide` |
+| Testing | ALREADY COVERED | The framework's own gates (§4) · differential testing in `modes/ZERO-CREDENTIAL-ESCALATION-MODE.md` · vendored `tdd-guide` |
 | Code review | ALREADY COVERED | Vendored `code-reviewer`, `adversarial-reviewer` · `.github/PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` |
 | Architecture | ALREADY COVERED | `ARCHITECTURE.md` · vendored `senior-architect` |
 | Refactoring | OPTIONAL | Not authored here; vendored `fix` and `migrate` skills cover it. Adding an authored refactoring guide would duplicate them without new judgement |
 | Documentation | ALREADY COVERED | `docs/` (3 agent docs, 5 modes, 22 guides) · `templates/` · generated `FILE-INDEX.txt` · the link check in `validate.yml` |
 | Git/GitHub | ALREADY COVERED | `CONTRIBUTING.md` · `.github/ISSUE_TEMPLATE/` · `PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` · `.github/dependabot.yml` · `.github/scripts/repo_settings.py` · vendored `git-and-github` |
-| CI/CD | ALREADY COVERED | Six workflows — see §3. Two dimensions were REAL GAPS and are closed there |
+| CI/CD | ALREADY COVERED | Six workflows — see §4. Two dimensions were REAL GAPS and are closed there |
 | Release management | ALREADY COVERED | `RELEASE-CHECKLIST.md`, twelve sections, with the command for every gate |
 | Dependency management | ALREADY COVERED | `.github/dependabot.yml` (Actions weekly, pip monthly) · no authored runtime manifest by policy, enforced by audit group 20 |
-| Automation | ALREADY COVERED | 14 authored scripts in `.github/scripts/` · 6 site scripts · the scheduled jobs in §3 |
+| Automation | ALREADY COVERED | 14 authored scripts in `.github/scripts/` · 6 site scripts · the scheduled jobs in §4 |
 | Performance analysis | OUT OF SCOPE | The one performance control is the payload budget in `site/audit_seo.py`: a 150 KB visitor budget, enforced on every run. Runtime performance analysis is not what this framework is for |
 | Reliability | PARTIAL | Stated as generated artifacts, no build step, and gates that fail loudly. There is no uptime or SLO work, because there is no service to keep up |
 | Observability | PARTIAL | The framework is static: CI logs, job summaries and the `upstream-watch` report are its telemetry. In the *assessed* systems, observability appears as a detection question in `guides/ADVERSARY-EMULATION.md` |
 
-## 3. The real gaps, and what closed them
+## 3. Framework capabilities
+
+The machinery that carries the other two families: how content is admitted,
+bound to this framework's rules, checked, and regenerated. Eighteen capabilities,
+all eighteen held — the four that were not are in §4.
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Skills | ALREADY COVERED | 388 vendored skills under `skills/third-party/claude-skills/`; `skills/README.md` explains the two-layer design, `docs/SKILLS.md` the selection rules |
+| Commands | ALREADY COVERED | 39 vendored slash commands, catalogued in `docs/agent/AGENT-SKILL-CATALOGUE.md`. The authored command surface is the scripts below |
+| Scripts | ALREADY COVERED | 14 authored in `.github/scripts/`, 6 in `site/`; eleven authored scripts are wired into CI (§4) |
+| Agents | ALREADY COVERED | `AGENT.md` · `docs/agent/AGENT-BOOTSTRAP.md` · `docs/agent/AGENT-OPERATING-PROTOCOL.md` |
+| Personas | ALREADY COVERED | 33 vendored agent personas, listed in the catalogue; the authored stance is carried by the five engagement modes |
+| Adapters | ALREADY COVERED | 399 `_BLACKHEART-ADAPTER.md` files binding vendored content to this framework's non-negotiables; drift-checked by `validate.py` |
+| Templates | ALREADY COVERED | 7 in `templates/`: threat model, attack path, coverage matrix, engagement record, finding, test log, final report |
+| Standards | ALREADY COVERED | `docs/guides/METHODOLOGY-STANDARDS.md` · `modes/SECURITY-AUDIT.md` |
+| Collections | ALREADY COVERED | `skills/catalog/` carries the upstream catalogue with per-collection adapters generated by `.github/scripts/gen_collection_adapters.py` |
+| Engagement modes | ALREADY COVERED | 5 in `docs/modes/` |
+| Conformance | ALREADY COVERED | `skills/conformance/SKILL.md` — the mandatory wrapper applied before and after any vendored skill runs |
+| Manifests | ALREADY COVERED | `.github/UPSTREAM-MANIFEST.json` is the single source for pins, counts and exclusions; `skills/openclaw.example.json5` is generated from the mirror by `.github/scripts/gen_config.py` |
+| Integrity | ALREADY COVERED | `validate.py` adapter-drift and digest checks · `.github/scripts/gen_manifest.py` |
+| Provenance | ALREADY COVERED | `skills/VENDOR.md` §8 · `skills/licenses/claude-skills-LICENSE` · the per-source pins in the manifest · the licence/provenance bucket in `.github/scripts/watch_upstream.py` |
+| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,410 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
+| Registry | ALREADY COVERED | The link defect registry, 111 registered, reconciled by `.github/scripts/gen_link_registry.py --check` in CI |
+| Audit gates | ALREADY COVERED | `validate.py` · `gap_audit.py` · `check_site.py` · `audit_seo.py` · `check_contrast.py` · `test_interactions.py` · `check_authored_config.py` · `verify_capability_audit.py` — all in CI (§4) |
+| Doc generation | ALREADY COVERED | `gen_index.py` · `gen_link_registry.py` · `gen_manifest.py` · `gen_adapters.py` · `gen_collection_adapters.py` · `gen_config.py` |
+
+## 4. The real gaps, and what closed them
 
 Four capabilities were missing. Each is now implemented, and each was verified
 before being added.
@@ -133,7 +164,7 @@ upstream-sync.yml     scheduled · writes a branch · the skill mirror
 Detection is automatic. Preparation is automatic. **Admission is not.** Nothing in
 this repository merges third-party content without a person reading it.
 
-## 4. Deliberate non-additions
+## 5. Deliberate non-additions
 
 Capabilities that were considered during this audit and **not** added. Each is a
 decision with a reason, not an oversight.
@@ -154,7 +185,7 @@ Nothing was removed by this audit: no file, skill, command, script, template,
 collection, adapter or document. The change is additive, apart from corrections
 to published figures that were true of no commit in the repository's history.
 
-## 5. Re-verifying this document
+## 6. Re-verifying this document
 
 ```bash
 python3 .github/scripts/verify_capability_audit.py   # read-only, prints a table

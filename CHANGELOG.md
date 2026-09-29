@@ -48,7 +48,10 @@ and the state of the executable layer.
   every count that document publishes; and it runs static analysis over the
   ~3,800 lines of first-party Python, failing on anything at MEDIUM or above.
 - **`docs/CAPABILITY-AUDIT.md`.** What the framework can and cannot do, checked
-  against the tree rather than against its own claims. Every row names the file
+  against the tree rather than against its own claims. Three families are
+  classified — 27 security capabilities, 15 engineering capabilities and 18
+  framework capabilities — and every ALREADY COVERED row cites the file that
+  implements it. Every row names the file
   that implements the capability, so a reader can check the row instead of
   trusting it; capabilities that are **not** held are stated as plainly as those
   that are. Four real gaps were found and closed (the three above, plus the

@@ -28,6 +28,7 @@ Exit codes:  0 = every claim checks out,  1 = at least one did not.
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import os
 import re
@@ -66,6 +67,32 @@ def count_files(path, suffix=None):
                and (suffix is None or f.endswith(suffix)))
 
 
+def ci_wired_scripts():
+    """Authored scripts a workflow actually runs.
+
+    A script that no workflow names is a script nobody runs. Vendored scripts are
+    excluded: they are upstream's to change, not this repository's.
+    """
+    seen = set()
+    for wf in glob.glob(os.path.join(REPO, ".github", "workflows", "*.yml")):
+        for m in re.finditer(r"([\w./-]+\.py)", read(wf)):
+            token = m.group(1)
+            if token.startswith(("http", "/", "skills/")):
+                continue
+            if os.path.isfile(os.path.join(REPO, token)):
+                seen.add(token)
+    return len(seen)
+
+
+def framework_rows(body):
+    """Data rows in section 3, the framework family."""
+    section = body.split("## 3. Framework capabilities")[1].split("\n## ")[0]
+    return sum(1 for line in section.splitlines()
+               if line.strip().startswith("|")
+               and not line.strip().startswith("|-")
+               and "Capability" not in line)
+
+
 def catalog_upstream_files():
     """The 32 catalogue files that are byte-identical upstream content.
 
@@ -88,6 +115,9 @@ def main():
         print(f"missing {os.path.relpath(DOC, REPO)}", file=sys.stderr)
         return 1
     body = read(DOC)
+    # Claim phrases are matched against the reflowed text, so restating a
+    # paragraph does not break the check while a changed number still does.
+    flat = " ".join(body.split())
     problems, checked = [], 0
 
     # 1 ---- every cited path resolves -------------------------------------
@@ -110,6 +140,11 @@ def main():
         problems.append("cited paths that do not resolve: " + ", ".join(unresolved))
 
     # 2 ---- every published count is current ------------------------------
+    num_word = {n: w for n, w in zip(range(1, 21),
+        "one two three four five six seven eight nine ten eleven twelve thirteen "
+        "fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
+    rows = framework_rows(body)
+
     manifest = json.loads(read(MANIFEST))
     counts = manifest.get("counts", {})
     derived = {
@@ -124,6 +159,8 @@ def main():
         "modes": count_files(os.path.join(REPO, "docs", "modes"), ".md"),
         "agent docs": count_files(os.path.join(REPO, "docs", "agent"), ".md"),
         "templates": count_files(os.path.join(REPO, "templates"), ".md"),
+        "ci_wired_scripts": ci_wired_scripts(),
+        "framework_rows": rows,
     }
     claims = {
         "vendored skills": f"{derived['vendored skills']} vendored skills",
@@ -138,10 +175,14 @@ def main():
         "modes": f"5 modes, {derived['guides']} guides",
         "agent docs": f"{derived['agent docs']} agent docs",
         "templates": str(derived["templates"]),
+        "framework rows": f"Eighteen capabilities, all eighteen held"
+                          if rows == 18 else f"{rows} framework capabilities",
+        "ci-wired scripts": f"{num_word.get(derived['ci_wired_scripts'], '?')} "
+                            f"authored scripts are wired into CI",
     }
     for what, needle in claims.items():
         checked += 1
-        if needle not in body:
+        if needle not in flat:
             problems.append(
                 f"the document does not state the current {what} ({needle})")
 

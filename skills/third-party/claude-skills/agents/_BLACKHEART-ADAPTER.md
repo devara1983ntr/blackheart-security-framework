@@ -79,7 +79,12 @@ Any result this content produces is `UNVERIFIED` until independently demonstrate
 | `marketing/cs-content-creator.md` | `cs-content-creator` |
 | `marketing/cs-demand-gen-specialist.md` | `cs-demand-gen-specialist` |
 | `marketing/cs-webinar-marketer.md` | `cs-webinar-marketer` |
+> **Count: 38 files — 33 agent personas** (32 deployable plus `personas/TEMPLATE.md`, a blank starting point), plus `CLAUDE.md` and `personas/README.md` as collection documentation, and 3 empty `.gitkeep` files marking category directories. The `.gitkeep` files and the two documentation files are vendored byte-identical and carry no persona definition; they are listed here so the collection is fully accounted for. Earlier drafts of this repository claimed 34 personas — that figure counted `CLAUDE.md` as a persona and is corrected here.
+
 | `personas/README.md` | — |
+| `c-level/.gitkeep` | — |
+| `marketing/.gitkeep` | — |
+| `product/.gitkeep` | — |
 | `personas/TEMPLATE.md` | `Agent Name` |
 | `personas/content-strategist.md` | `Content Strategist` |
 | `personas/devops-engineer.md` | `DevOps Engineer` |

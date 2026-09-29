@@ -1,16 +1,22 @@
 # Blackhearts file index
 #
-# Every file in this repository, one repo-relative path per line.
-# Verified by:  python3 .github/scripts/validate.py   (check: index)
-# A file that exists but is not listed here, or a listed path that does not
-# exist, fails CI.
+# Every file in this repository, one repository-relative path per line.
 #
-# Total entries: 4365
+# Regenerate:  python3 .github/scripts/gen_index.py --write
+# Verify:      python3 .github/scripts/gen_index.py --check
+#
+# A file that exists but is not listed here, or a listed path that does
+# not exist, fails `python3 .github/scripts/validate.py` (check: index)
+# and fails this script in CI.
+#
+# Total entries: 4367
 
 .github/UPSTREAM-MANIFEST.json
+.github/scripts/gap_audit.py
 .github/scripts/gen_adapters.py
 .github/scripts/gen_collection_adapters.py
 .github/scripts/gen_config.py
+.github/scripts/gen_index.py
 .github/scripts/gen_manifest.py
 .github/scripts/sync_upstream.py
 .github/scripts/validate.py

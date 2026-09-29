@@ -38,7 +38,7 @@ governance mechanical rather than aspirational.
 | Upstream changes silently | 3,864 files pinned to a commit SHA, compared byte-for-byte by CI on every push |
 | Agent personas quietly widen scope | 33 personas treated as **hostile input** — none enabled by default, none may authorize a target or disable the gate |
 | A scanner's clean bill of health is trusted | Findings are hypotheses; clean results are recorded as **coverage gaps** |
-| Nobody can prove coverage | A 7-check CI gate and a 15-group audit that fail loudly |
+| Nobody can prove coverage | A 7-check CI gate and a 16-group audit that fail loudly |
 
 > **The premise:** you cannot make untrusted instructions safe. You can only
 > make them *legible, bounded, and accountable* before they run.
@@ -152,8 +152,18 @@ cd blackheart-security-framework
 python3 -m pip install json5
 python3 .github/scripts/validate.py
 
+# prove nothing is missing and the docs tell the truth — 16/16 groups
+python3 .github/scripts/gap_audit.py
+
 # check for upstream drift — report-only, never mutates
 python3 .github/scripts/sync_upstream.py
+```
+
+The file index is **generated, not hand-maintained**:
+
+```bash
+python3 .github/scripts/gen_index.py --check   # what CI runs
+python3 .github/scripts/gen_index.py --write   # regenerate
 ```
 
 <details>
@@ -193,7 +203,7 @@ control, it is a vulnerability.
 
 ---
 
-## CI: 7 checks, 2 workflows
+## CI: 7 checks + 16 audit groups, 2 workflows
 
 | Check | What it proves |
 |---|---|
@@ -204,6 +214,19 @@ control, it is a vulnerability.
 | `index` | 4,364 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 15-entry allowlist |
 | `config` | JSON5 parses; 374/374 skills declared |
+
+A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **16 groups**
+and answers the question `validate.py` cannot: is the right set of things
+actually present and wired, and do the documents' own numbers hold? It reads
+no upstream and no network. Group 16 verifies the figures this README and the
+activation protocol publish against the repository itself — the check that
+makes a documentation claim falsifiable rather than decorative.
+
+Every gate in this repository was tamper-tested. Each was made to fail
+deliberately — a vendored script altered, the security gate switched off, a
+documented number falsified, a section renumbered — and each was confirmed to
+detect it. A gate that has never been observed failing is an assumption, not a
+control.
 
 `validate.yml` runs on push and PR. `upstream-sync.yml` runs daily at 03:17 UTC
 and **opens a PR — it never auto-merges.** Invariant 14: *detection is

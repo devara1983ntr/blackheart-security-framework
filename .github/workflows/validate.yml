@@ -36,6 +36,19 @@ jobs:
       - name: Run validation
         run: python .github/scripts/validate.py
 
+      - name: Run the end-to-end gap audit
+        # validate.py proves the repository is internally consistent.
+        # This proves the right things are present, wired together, and
+        # accounted for -- and that the documentation's own numbers are true.
+        # It is a separate job step so a failure names which question broke.
+        run: python .github/scripts/gap_audit.py
+
+      - name: Confirm FILE-INDEX.txt is regenerable and in sync
+        # A generated artifact nobody can regenerate is an artifact nobody can
+        # trust after the fact. This fails the build if the committed index
+        # differs from what gen_index.py would produce right now.
+        run: python .github/scripts/gen_index.py --check
+
       - name: Confirm vendored scripts still parse
         # A vendored script that cannot be byte-compiled is either corrupt or
         # was modified after the integrity check ran.

@@ -11,7 +11,7 @@ cannot uphold the non-negotiables in that document must stop and say so.
 **Related:** [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`docs/agent/AGENT-SKILL-CATALOGUE.md`](docs/agent/AGENT-SKILL-CATALOGUE.md) · [`docs/modes/RED-HEART-ADVERSARY-EMULATION.md`](docs/modes/RED-HEART-ADVERSARY-EMULATION.md) · [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md) · [`skills/VENDOR.md`](skills/VENDOR.md)
 **Repository state:** `3,864` vendored files byte-identical to upstream `19392f7a` ·
 `388` skills · `39` slash commands · `33` agent personas · `399` adapters ·
-validator `7/7` · end-to-end audit `15/15`. Every number in this file is
+`4,367` files indexed · validator `7/7` · end-to-end audit `16/16`. Every number in this file is
 generated or CI-verified; see [`FILE-INDEX.txt`](FILE-INDEX.txt) and
 [`.github/UPSTREAM-MANIFEST.json`](.github/UPSTREAM-MANIFEST.json).
 

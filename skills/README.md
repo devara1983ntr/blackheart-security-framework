@@ -299,6 +299,8 @@ Re-vendor and re-audit   : python3 .github/scripts/sync_upstream.py --apply
 Regenerate the manifest  : python3 .github/scripts/gen_manifest.py
 Regenerate the config    : python3 .github/scripts/gen_config.py
 Validate everything      : python3 .github/scripts/validate.py
+End-to-end gap audit     : python3 .github/scripts/gap_audit.py
+Regenerate the file index: python3 .github/scripts/gen_index.py --write
 Add a skill              : audit → adapter → conformance check → register
 Change the methodology   : update docs/ first, then adapters, then this file
 ```

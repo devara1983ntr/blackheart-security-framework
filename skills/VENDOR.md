@@ -766,6 +766,8 @@ the mirror, and the only content in the repository that is not upstream's.
 | `.github/UPSTREAM-MANIFEST.json` | SHA-256 for all 3,864 vendored files | `gen_manifest.py` |
 | `.github/secret-allowlist.json` | Verified placeholders, each justified by hand | manual |
 | `.github/scripts/validate.py` | The seven-check validation gate | manual |
+| `.github/scripts/gap_audit.py` | Sixteen-group end-to-end gap audit: presence, wiring, accounting, and whether the documentation's own numbers are true | CI |
+| `.github/scripts/gen_index.py` | Regenerates `FILE-INDEX.txt`; `--check` fails CI on a stale index | CI |
 | `.github/scripts/sync_upstream.py` | Drift detection and re-vendoring | manual |
 | `.github/scripts/gen_adapters.py` | Per-skill adapter generation | manual |
 | `.github/scripts/gen_collection_adapters.py` | Collection adapter generation | manual |
@@ -808,6 +810,13 @@ python3 .github/scripts/gen_manifest.py
 
 # full gate — all seven checks must pass
 python3 .github/scripts/validate.py
+
+# end-to-end gap audit: 16 groups
+python3 .github/scripts/gap_audit.py
+
+# the file index is generated, not maintained by hand
+python3 .github/scripts/gen_index.py --check
+python3 .github/scripts/gen_index.py --write
 ```
 
 `upstream-sync.yml` runs the drift check daily and **opens a pull request**. It

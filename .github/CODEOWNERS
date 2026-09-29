@@ -1,0 +1,25 @@
+# Code owners
+#
+# These files decide what a human must look at. They are the ones where a
+# plausible-looking change could quietly weaken the guarantee this repository
+# makes, so they are also the ones the branch protection rule on `main`
+# should require a review for.
+#
+#   site/            the published site — every claim on it is a claim about
+#                    this repository
+#   .github/         the gates themselves; a weakened gate is the quietest
+#                    possible way to make this project look healthy
+#   AGENT.md         the activation contract
+#   docs/agent/      the same contract, in full
+#
+# Everything under skills/third-party/ is a byte-identical upstream mirror.
+# It must never be hand-edited, so it has no owner by design: changes there
+# are wrong by construction, and `validate.py` fails the push regardless of
+# who approved it.
+* @devara1983ntr
+
+/site/ @devara1983ntr
+/.github/workflows/ @devara1983ntr
+/.github/scripts/ @devara1983ntr
+/AGENT.md @devara1983ntr
+/docs/agent/ @devara1983ntr

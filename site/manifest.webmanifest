@@ -1,0 +1,17 @@
+{
+  "name": "BLACKHEART — Governed Security-Supply-Chain Framework for AI Agents",
+  "short_name": "BLACKHEART",
+  "description": "388 security skills, 39 commands and 33 agent personas mirrored byte-for-byte from upstream, each behind a reviewed adapter, behind a declarative authorization gate.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070b11",
+  "theme_color": "#070b11",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["security", "developer", "productivity"],
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "og-image.png", "sizes": "1200x630", "type": "image/png" }
+  ]
+}

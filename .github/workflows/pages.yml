@@ -87,6 +87,12 @@ jobs:
               print(f"{f}: has title, description, canonical")
           PY
 
+      - name: Run the site check suite
+        # Same script contributors run locally. Pure standard library, so it
+        # needs nothing installed, and it is the gate that catches a claim on
+        # the page drifting away from what the page actually renders.
+        run: python3 site/check_site.py
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

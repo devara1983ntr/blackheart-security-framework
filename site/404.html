@@ -1,13 +1,92 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Not found — BLACKHEART</title>
+
+<!-- This page must never be indexed. A 404 in the index competes with real
+     pages for the same query terms and dilutes the site. It is marked noindex
+     here and the rule is asserted in the Pages workflow. -->
 <meta name="robots" content="noindex, follow">
 <meta name="description" content="The requested BLACKHEART page does not exist.">
+<meta name="theme-color" content="#070b11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+
 <link rel="canonical" href="https://devara1983ntr.github.io/blackheart-security-framework/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
-</head><body>
-<header><h1><span class="mark">&#11044;</span> Not found</h1>
-<p class="tag">That page does not exist.</p>
-<p class="cta"><a class="btn" href="./">Return to BLACKHEART</a></p></header>
-</body></html>
+</head>
+
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow glow-a" aria-hidden="true"></div>
+
+<header class="site-head stuck">
+  <div class="wrap head-in">
+    <a class="brand" href="./" aria-label="BLACKHEART home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <path d="M20 2.5 35 11v18L20 37.5 5 29V11Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M20 13v14M13 20h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">BLACKHEART</span>
+    </a>
+    <div class="head-act">
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main class="sec" id="main">
+  <div class="wrap" style="max-width:44rem">
+    <p class="kicker">HTTP 404</p>
+    <h1 class="h2" style="max-width:none">That page does not exist.</h1>
+    <p class="lede">
+      The link is broken or the page was moved. Nothing is wrong with your setup,
+      and there is nothing to fix here.
+    </p>
+
+    <div class="callout" style="max-width:none;margin-bottom:2rem">
+      <h3>What usually goes wrong</h3>
+      <p class="fine">
+        Most links into this site point at the repository rather than at a page here,
+        because the documentation lives in Markdown in the repository. A 404 here
+        usually means a link to a site path was constructed rather than resolved.
+      </p>
+    </div>
+
+    <p class="hero-cta" style="margin-bottom:0">
+      <a class="btn btn-lg" href="./">Return to BLACKHEART</a>
+      <a class="btn btn-lg btn-ghost" href="https://github.com/devara1983ntr/blackheart-security-framework" rel="noopener">Go to the repository</a>
+    </p>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-legal" style="border-top:none;padding-top:0">
+    <p class="fine">BLACKHEART — verify before you enable. MIT licensed.</p>
+  </div>
+</footer>
+
+<script>
+/* Theme only. The full interaction layer is not needed on an error page, and
+   loading it would be dead weight on the one page most likely to be hit. */
+(function () {
+  var KEY = 'bh-theme', root = document.documentElement, btn = document.getElementById('theme');
+  var t;
+  try { t = localStorage.getItem(KEY); } catch (e) { t = null; }
+  root.setAttribute('data-theme', t ||
+    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+  if (btn) btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(KEY, next); } catch (e) { /* private mode */ }
+  });
+})();
+</script>
+</body>
+</html>

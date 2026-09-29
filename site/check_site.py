@@ -211,6 +211,34 @@ check("aria-live for copy feedback", 'aria-live' in js)
 check("roving tabindex on tabs", "tabIndex" in js and "ArrowRight" in js)
 check("decorative shapes hidden from AT", 'aria-hidden="true"' in index)
 
+# ---- every class used in markup is actually defined -----------------------
+# The reverse direction (a CSS rule with no markup using it) is noise. This
+# direction is not: a copy button shipped without `cb-copy` on two separate
+# pages rendered as a raw default browser button, and nothing else noticed.
+# Static checks and the class-collision scan both passed while it was broken.
+css_classes = set(re.findall(r"\.([a-zA-Z][\w-]*)", css))
+unclassed = []
+for fname, body in [(n, open(os.path.join(HERE, n), encoding="utf-8").read())
+                    for n in PAGES if n.endswith(".html")]:
+    # Walk full opening tags. group(0) is the entire tag, group(1) its name
+    # and group(2) its attributes.
+    for tag in re.finditer(r"<([a-zA-Z][\w-]*)\b([^>]*)>", body):
+        name = tag.group(1).lower()
+        if name not in ("button", "span", "div", "a"):
+            continue
+        cls = re.search(r'class="([^"]+)"', tag.group(2))
+        if not cls:
+            # A bare <button> with no class is the exact shape of that bug:
+            # it renders with default browser styling and no project styling.
+            if name == "button":
+                unclassed.append(f"{fname}: <button> with no class")
+            continue
+        for c in cls.group(1).split():
+            if c not in css_classes:
+                unclassed.append(f"{fname}: .{c} used but not defined in style.css")
+check("no unstyled element in markup", not unclassed,
+      "; ".join(sorted(set(unclassed))[:3]))
+
 # ---- local assets exist -------------------------------------------------
 missing = []
 for name, body in (("index.html", index), ("404.html", notfound)):

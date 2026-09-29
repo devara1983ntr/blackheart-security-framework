@@ -14,6 +14,65 @@ and the state of the executable layer.
 
 ## [Unreleased]
 
+### Fixed
+- **Two copy buttons shipped with no class and rendered as raw default browser
+  buttons.** `case-study.html` and `disclosure.html` each had
+  `<button type="button" data-copy>` where the design system expects
+  `class="cb-copy"`. It looked like a deliberate part of the page. Static
+  checks, the unstyled-class scan and the link audit all passed while it was
+  broken; only reading the computed style of the live page exposed it. Added a
+  check to `check_site.py` that fails on any class used in markup but not
+  defined in `style.css`, and on any `<button>` with no class at all. The
+  guard was negative-tested against both shapes of the original defect.
+- **`apple-touch-icon` pointed at an SVG.** iOS does not render SVG for the
+  home-screen icon — it ignores the link and falls back to a screenshot of the
+  page. Generated a real 180x180 PNG from `gen_og.py` and pointed every page at
+  it.
+- **Four WCAG AA contrast failures in the light theme**, found by measuring
+  rather than by reading the palette: the two status badges on their own tinted
+  backgrounds (4.41:1 and 4.34:1), the skip link (3.54:1), and the primary
+  button, which hardcoded a near-black label colour that works on the bright
+  dark-theme accent and fails on the deep light-theme one. Darkened
+  `--warn`/`--good`, reduced the badge tint from 15% to 10%, inverted the skip
+  link against the surface, and added an `--on-accent` token.
+- **The hero gradient word was invisible without `background-clip: text`.**
+  `color: transparent` was declared unconditionally, so any engine without
+  the property rendered nothing. The accent colour is now the declared value
+  and the gradient is applied inside `@supports`.
+
+### Added
+- **`RELEASE-CHECKLIST.md`** — a full pre-release checklist across
+  functionality, UI/UX, responsive, accessibility, SEO, performance, security,
+  testing, links, documentation, configuration, hygiene and deployment, with
+  the command for every gate and an explicit list of what is *not* fixed.
+- **`site/audit_seo.py`** — a new gate, also wired into the `pages` workflow.
+  Resolves every internal link and anchor against the filesystem, checks that
+  canonical and `og:url` agree with each page's own address, that titles and
+  descriptions are unique and within SERP truncation limits, that the sitemap
+  and the shipped pages describe the same set, and that a visitor's payload
+  stays under 150 KB. Running it found four meta descriptions between 176 and
+  263 characters, all of which Google truncates mid-sentence; all rewritten.
+- **`site/check_contrast.py`** — measures WCAG AA contrast in a real browser
+  across both themes and all six pages. Two measurement bugs were fixed before
+  its output was trusted: `color-mix(in oklab, ...)` computes to a syntax
+  canvas `fillStyle` silently rejects and leaves the *previous* colour in
+  place, which made every element under the sticky header measure as pure
+  black; and translucent ancestor layers were being flattened by taking the
+  nearest opaque one rather than composited. The instrument self-tests against
+  colour pairs with known-correct ratios and reports any syntax it cannot
+  resolve rather than guessing. Gradient-clipped text is measured through its
+  gradient stops instead of its (transparent) colour.
+- **Interaction states that were missing rather than wrong.** `:focus-visible`
+  on every control, `:active` pressed states, cross-page transitions via the
+  View Transitions API, a scroll progress indicator, and a back-to-top control.
+- **An error state.** The site fetches nothing, so the only runtime failures
+  are a script error or a lost stylesheet — both of which previously left a
+  blank panel with no explanation. There is now a dismissible banner saying
+  what failed and that the content below is complete, announced via
+  `role="status"`. Every enhancement is wrapped so a throw degrades to a
+  readable page instead of a silent one.
+
+
 ### Added
 - **Four content pages, turning a one-URL site into five.** The sitemap listed a
   single URL, which is thin indexable surface for a project whose whole argument

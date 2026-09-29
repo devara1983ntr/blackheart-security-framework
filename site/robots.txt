@@ -1,0 +1,18 @@
+# BLACKHEART is intended to be discoverable. Nothing here is secret.
+#
+# The repository contains no credentials, no target data and no private
+# material -- the `secrets` check in .github/scripts/validate.py fails the
+# build if that ever stops being true. There is therefore no reason to
+# disallow anything.
+
+User-agent: *
+Allow: /
+
+# Explicitly welcome search engines. Citing the framework is welcome.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://devara1983ntr.github.io/blackheart-security-framework/sitemap.xml

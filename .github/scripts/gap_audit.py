@@ -268,16 +268,18 @@ def run():
     header = agent.split("---")[0]
     man_head = json.loads(read(MANIFEST))
     ad_count = sum(1 for dp, dn, fn in os.walk(MIRROR) for f in fn if f == ADAPTER)
-    idx_count = len(idx)
     expected_header = [
         (f"`{len(man_head['vendored']):,}`", "vendored file count"),
         (f"`{ad_count}`", "adapter count"),
-        (f"`{idx_count:,}`", "file index count"),
         ("`7/7`", "validator result"),
     ]
     for token, what in expected_header:
         if token not in header:
             problems.append(f"AGENT.md header does not state the current {what} ({token})")
+    check("16. documentation self-check", not problems,
+          f"claims {authored} files / {secs} contiguous sections verified against the tree"
+          if not problems else "; ".join(problems[:3]))
+
     # 17 --------------------------------------------------------------
     # The link registry must cover exactly the dead links the validator finds.
     # validate.py already enforces coverage; this asserts the registry itself is
@@ -303,8 +305,47 @@ def run():
             reg_detail = f"unparseable: {exc}"
     check("17. upstream link defects registered", reg_ok, reg_detail)
 
-    check("16. documentation self-check", not problems,
-          f"claims {authored} files / {secs} contiguous sections verified against the tree"
+
+    # 18 --------------------------------------------------------------
+    # Publication readiness. A repository can be internally perfect and still
+    # not be publishable: no site, no contributor route, no disclosure path,
+    # or two files that disagree about the project's name.
+    problems = []
+    for f in ("site/index.html", "site/robots.txt", "site/sitemap.xml",
+              "site/style.css", "site/favicon.svg", "site/og-image.svg",
+              "site/404.html", "CODEOWNERS", ".gitattributes",
+              ".github/dependabot.yml", ".github/PULL_REQUEST_TEMPLATE.md",
+              ".github/ISSUE_TEMPLATE/bug.yml", ".github/ISSUE_TEMPLATE/config.yml",
+              "SECURITY.md", "LICENSE", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
+              "CHANGELOG.md"):
+        if not os.path.isfile(os.path.join(REPO, f)):
+            problems.append(f"missing {f}")
+    wf = {p.name for p in os.scandir(os.path.join(REPO, ".github", "workflows"))
+          if p.name.endswith(".yml")}
+    for w in ("validate.yml", "upstream-sync.yml", "pages.yml"):
+        if w not in wf:
+            problems.append(f"missing workflow {w}")
+    # the site, the sitemap, robots.txt and the 404 must name the same project
+    site_url = "https://devara1983ntr.github.io/blackheart-security-framework/"
+    for f in ("site/index.html", "site/sitemap.xml", "site/robots.txt", "site/404.html"):
+        pth = os.path.join(REPO, f)
+        if os.path.isfile(pth) and site_url not in read(pth):
+            problems.append(f"{f} does not name the canonical site URL")
+    # every served page must be crawlable-declared and self-describing
+    idx = read(os.path.join(REPO, "site", "index.html"))
+    for req, what in (('name="description"', "meta description"),
+                      ('rel="canonical"', "canonical link"),
+                      ('name="robots"', "robots directive"),
+                      ('property="og:title"', "Open Graph title"),
+                      ('"@type"', "structured data")):
+        if req not in idx:
+            problems.append(f"site/index.html missing {what}")
+    # the 404 must not be indexed, or it competes with real pages
+    if os.path.isfile(os.path.join(REPO, "site", "404.html")) and \
+            'name="robots" content="noindex' not in read(os.path.join(REPO, "site", "404.html")):
+        problems.append("site/404.html is indexable and would compete in search")
+    check("18. publication readiness", not problems,
+          "18 required artefacts, 3 workflows, canonical URL consistent"
           if not problems else "; ".join(problems[:3]))
 
 

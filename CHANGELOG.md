@@ -55,6 +55,40 @@ Nothing yet.
   because a generator that filtered differently from its checker is a new way
   for the index to lie.
 
+### Publication and metadata
+- **Canonical repository URL established and applied everywhere.**
+  `My-Hack` was renamed to `blackheart-security-framework`; the old name still
+  resolves via a GitHub 301 redirect, but the canonical name is now used in
+  every reference, and both the rename and the `git remote set-url` command are
+  documented so existing clones converge.
+- **Published site** at `devara1983ntr.github.io/blackheart-security-framework`,
+  built from `site/` by `.github/workflows/pages.yml`. Static HTML, no build
+  step, no third-party runtime. The deploy job refuses to publish if the site,
+  sitemap, `robots.txt` and 404 disagree about the canonical URL, or if
+  credential-shaped material appears in `site/`.
+- **SEO/discoverability** configured: canonical link, meta description, robots
+  directive, Open Graph and Twitter cards, JSON-LD `SoftwareSourceCode`,
+  `sitemap.xml`, `robots.txt`, an `og-image`, a favicon and a `noindex` 404.
+  Search Console verification is deliberately **not** shipped — the token is
+  issued to a site owner and was not invented.
+- **Repository metadata** set through the API: description, homepage, 20 topics
+  including `ai-security`, `llm-security`, `agent-security`, `agent-guardrails`,
+  `prompt-injection`, `supply-chain` and `mitre-atlas`; discussions enabled,
+  wiki disabled, delete-branch-on-merge on, squash enabled.
+- **`.gitattributes`** added. Without it, GitHub attributes this repository
+  mostly to vendored Python, so the language bar described the mirror rather
+  than the project. Vendored content is now `linguist-vendored`, generated
+  artefacts are marked generated, and the ~40 first-party Python lines are the
+  code GitHub should be reporting.
+- **Contributor routes**: `CODEOWNERS` separating governance and gate files
+  from documentation, issue templates for bug reports and proposals, a pull
+  request template carrying the five commands a contributor must run, and
+  `dependabot.yml` scoped to Actions and pip — deliberately **not** the vendored
+  mirror, which is pinned and reviewed by a human.
+- **Audit group 18** added: publication readiness. Verifies the required
+  artefacts exist, all three workflows are present, the canonical URL is
+  consistent across the site, and the 404 cannot be indexed.
+
 ### Fixed
 - **Two real holes in the gap audit itself**, found by tamper-testing it rather
   than trusting it: it checked that the security gate keys were *present* but

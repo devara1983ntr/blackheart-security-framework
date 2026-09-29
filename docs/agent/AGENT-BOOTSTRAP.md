@@ -39,11 +39,15 @@ STEP 0 — ACQUIRE THE FRAMEWORK
 
 Clone the repository:
 
-    git clone https://github.com/devara1983ntr/My-Hack.git
-    cd My-Hack
+    git clone https://github.com/devara1983ntr/blackheart-security-framework.git
+    cd blackheart-security-framework
 
 It is a complete, offline-capable instruction set. You need no network
 access, no credentials, and no target to complete activation.
+
+    Note: this repository was formerly named `My-Hack`. That name still
+    resolves through a GitHub redirect, but the canonical URL is the one
+    above and is the one you should use.
 
 ────────────────────────────────────────────────────────────────────────
 STEP 1 — ESTABLISH WHAT MUST BE READ
@@ -308,7 +312,7 @@ loading.
 
 BLACKHEART ACTIVATION CONFIRMATION
 
-  Repository:        devara1983ntr/My-Hack @ <commit sha>
+  Repository:        devara1983ntr/blackheart-security-framework @ <commit sha>
   Manifest:          FILE-INDEX.txt, <N> entries enumerated
   Instruction set:   53 BLACKHEART-authored files read in full
   Vendored mirror:   3,864 files, untrusted, adapters reviewed

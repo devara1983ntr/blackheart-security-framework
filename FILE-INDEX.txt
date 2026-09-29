@@ -9,9 +9,15 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4369
+# Total entries: 4384
 
+.gitattributes
+.github/ISSUE_TEMPLATE/bug.yml
+.github/ISSUE_TEMPLATE/config.yml
+.github/ISSUE_TEMPLATE/feature.yml
+.github/PULL_REQUEST_TEMPLATE.md
 .github/UPSTREAM-MANIFEST.json
+.github/dependabot.yml
 .github/scripts/gap_audit.py
 .github/scripts/gen_adapters.py
 .github/scripts/gen_collection_adapters.py
@@ -23,6 +29,7 @@
 .github/scripts/validate.py
 .github/secret-allowlist.json
 .github/upstream-link-defects.json
+.github/workflows/pages.yml
 .github/workflows/upstream-sync.yml
 .github/workflows/validate.yml
 .gitignore
@@ -30,6 +37,7 @@ AGENT.md
 ARCHITECTURE.md
 AUTHOR
 CHANGELOG.md
+CODEOWNERS
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 LICENSE
@@ -70,6 +78,13 @@ docs/modes/SECURITY-AUDIT.md
 docs/modes/SECURITY-RESEARCH-MODE.md
 docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md
 examples/NEW-PROJECT-BOOTSTRAP.md
+site/404.html
+site/favicon.svg
+site/index.html
+site/og-image.svg
+site/robots.txt
+site/sitemap.xml
+site/style.css
 skills/README.md
 skills/VENDOR.md
 skills/catalog/CATEGORY-INDEX.md

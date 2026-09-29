@@ -1,0 +1,60 @@
+name: Bug or incorrect claim
+description: Something in the repository is wrong, broken, or makes a claim that is not true.
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project treats an incorrect documented claim as a defect, not a
+        nitpick. If a number, path, or behaviour in the documentation does not
+        match reality, that is exactly what this form is for.
+
+  - type: textarea
+    id: claim
+    attributes:
+      label: What does the repository claim?
+      description: Quote the exact text, and give the file and line.
+      placeholder: "AGENT.md line 58 claims 159 broken links."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What is actually true?
+      description: What you observed, and how you observed it.
+      placeholder: "Ran `python3 .github/scripts/validate.py`; the links check reports 111 registered."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does this live?
+      options:
+        - Blackhearts-authored documentation
+        - A vendored `_BLACKHEART-ADAPTER.md` (Blackhearts-authored)
+        - A generator in `.github/scripts/`
+        - A CI workflow
+        - The vendored mirror (upstream content)
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Commands you ran, and their output.
+      render: shell
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirm
+      options:
+        - label: I have not modified any vendored file to produce this.
+          required: true
+        - label: I checked whether this is already recorded in `.github/upstream-link-defects.json` (for link issues).
+          required: false

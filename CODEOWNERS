@@ -1,0 +1,22 @@
+# Path-scoped review requirements.
+#
+# The security-critical paths are separated from the documentation so that a
+# documentation typo and a governance change do not get the same treatment.
+# The conformance layer and the adapters are the two places where a change
+# would alter what the framework permits an agent to do.
+
+*                       @devara1983ntr
+
+# Governance: changes here alter what an agent is permitted to do.
+/skills/conformance/    @devara1983ntr
+/skills/openclaw.example.json5 @devara1983ntr
+
+# The gate itself. A change that weakens these is a security regression.
+/.github/scripts/validate.py     @devara1983ntr
+/.github/scripts/gap_audit.py    @devara1983ntr
+/.github/scripts/gen_manifest.py @devara1983ntr
+/.github/workflows/              @devara1983ntr
+
+# The vendored mirror is read-only by policy.
+/skills/third-party/    @devara1983ntr
+/skills/catalog/        @devara1983ntr

@@ -1,0 +1,44 @@
+name: Proposal
+description: Propose a change to the framework, the gate, or the documentation.
+labels: [enhancement, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A proposal to BLACKHEART is a proposal to change what an agent is
+        permitted to do. Proposals that widen agent capability, relax a gate,
+        or lower an evidence standard will be declined on their merits, not on
+        their tone. Say plainly what the trade-off buys.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: A concrete failure mode, not a preference.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+
+  - type: textarea
+    id: security_impact
+    attributes:
+      label: Security impact
+      description: |
+        Does this widen what an agent may do? Does it weaken a gate, an
+        evidence rule, or the vendored-content boundary? Answer directly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: |
+        What did you measure? A measurement is a command and its output. An
+        opinion is an opinion, and will be labelled as one.

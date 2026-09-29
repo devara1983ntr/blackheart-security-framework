@@ -17,6 +17,23 @@
 
 ---
 
+## Repository identity
+
+| | |
+|---|---|
+| **Canonical URL** | [`https://github.com/devara1983ntr/blackheart-security-framework`](https://github.com/devara1983ntr/blackheart-security-framework) |
+| Former name | `My-Hack` — still resolves via a GitHub 301 redirect, but the canonical name is authoritative and the redirect is not depended on |
+| Upstream mirror | [`alirezarezvani/claude-skills`](https://github.com/alirezarezvani/claude-skills) @ `19392f7a` |
+| Documentation site | <https://devara1983ntr.github.io/blackheart-security-framework/> |
+| Discovery index | [`VoltAgent/awesome-openclaw-skills`](https://github.com/VoltAgent/awesome-openclaw-skills) @ `f274daa` |
+| Licence | MIT |
+
+If you cloned `My-Hack` before the rename, update your remote:
+
+```bash
+git remote set-url origin https://github.com/devara1983ntr/blackheart-security-framework.git
+```
+
 ## The problem
 
 A security agent is only as trustworthy as the skills it loads. Install an
@@ -132,7 +149,7 @@ only runs scanners would have shipped those silently. See
 ## Activate an agent
 
 ```bash
-git clone https://github.com/devara1983ntr/My-Hack.git
+git clone https://github.com/devara1983ntr/blackheart-security-framework.git
 ```
 
 Then hand the agent the prompt in
@@ -203,7 +220,7 @@ control, it is a vulnerability.
 
 ---
 
-## CI: 7 checks + 16 audit groups, 2 workflows
+## CI: 7 checks + 18 audit groups, 3 workflows
 
 | Check | What it proves |
 |---|---|
@@ -215,7 +232,7 @@ control, it is a vulnerability.
 | `secrets` | no credential material outside a 15-entry allowlist |
 | `config` | JSON5 parses; 374/374 skills declared |
 
-A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **16 groups**
+A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **18 groups**
 and answers the question `validate.py` cannot: is the right set of things
 actually present and wired, and do the documents' own numbers hold? It reads
 no upstream and no network. Group 16 verifies the figures this README and the

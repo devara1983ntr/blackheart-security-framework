@@ -1,0 +1,41 @@
+# GitHub language statistics must describe THIS project, not the mirror.
+#
+# The repository is 3,864 vendored third-party files plus Blackhearts-authored
+# documentation. Left alone, GitHub attributes the majority of the repo to
+# vendored Python and the language bar is a lie about what this project is.
+# These attributes make the statistics honest: vendored content is marked
+# vendored, generated artefacts are marked generated, and the documentation is
+# marked documentation, so the bar reflects the code Blackhearts actually owns.
+
+# --- vendored third-party content: counted separately, never "ours"
+skills/third-party/**      linguist-vendored
+skills/third-party/**      linguist-generated=true
+skills/catalog/**          linguist-vendored
+skills/licenses/**         linguist-vendored
+
+# --- Blackhearts-authored automation: this is the real code in the repo
+.github/scripts/*.py       linguist-language=Python
+.github/scripts/*.py       linguist-detectable=true
+
+# --- documentation, everywhere, including inside the mirror
+*.md                       linguist-documentation
+*.md                       linguist-documentation=true
+
+# --- generated and data artefacts
+.github/UPSTREAM-MANIFEST.json     linguist-generated=true
+.github/upstream-link-defects.json linguist-generated=true
+skills/openclaw.example.json5     linguist-generated=true
+skills/catalog/CATEGORY-INDEX.md   linguist-generated=true
+FILE-INDEX.txt                     linguist-generated=true
+CHANGELOG.md                       linguist-generated
+
+# --- keep line endings stable so the integrity check is meaningful
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff2 binary
+*.pdf binary
+*.apk binary
+*.aab binary

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/devara1983ntr/blackheart-security-framework/security/advisories/new
+    about: Report a vulnerability privately. Do not open a public issue.
+  - name: Framework documentation
+    url: https://github.com/devara1983ntr/blackheart-security-framework/blob/main/CONTRIBUTING.md
+    about: Read CONTRIBUTING.md first — most questions are answered there.

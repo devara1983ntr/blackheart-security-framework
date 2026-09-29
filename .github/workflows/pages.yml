@@ -1,0 +1,106 @@
+name: pages
+
+# Publishes site/ to GitHub Pages.
+#
+# This is the project's published rendering. It exists so the framework is
+# discoverable by search engines with a canonical URL, a sitemap, and crawlable
+# metadata -- a GitHub repository alone is not a web page, and "SEO" on a repo
+# that serves no site would be a claim rather than a configuration.
+#
+# The build is intentionally trivial: the site is static HTML with no build
+# step, no bundler, and no third-party runtime. A documentation site's build
+# chain is an attack surface with no upside, so there is none.
+#
+# It deploys from the same source of truth as everything else: the canonical
+# URL is asserted in the consistency check below, so the site and the
+# repository cannot disagree about what this project is called.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Validate and stage the site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Assert canonical URL is consistent across the site and the repository
+        # The site, the sitemap, robots.txt and the repository description all
+        # name the same project. If a rename happens and one is missed, this
+        # fails rather than publishing two competing canonical URLs.
+        run: |
+          set -euo pipefail
+          EXPECT="https://devara1983ntr.github.io/blackheart-security-framework/"
+          for f in site/index.html site/sitemap.xml site/robots.txt site/404.html; do
+            grep -qF "$EXPECT" "$f" || { echo "::error::$f does not name the canonical URL $EXPECT"; exit 1; }
+          done
+          echo "canonical URL consistent across the site"
+
+      - name: Assert no secret material in the published site
+        run: |
+          set -euo pipefail
+          if grep -rInE 'ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY' site/; then
+            echo "::error::credential-shaped material found in site/"; exit 1
+          fi
+          echo "site contains no credential material"
+
+      - name: Assert sitemap and robots agree with the canonical URL
+        run: |
+          set -euo pipefail
+          grep -q "Sitemap: https://devara1983ntr.github.io/blackheart-security-framework/sitemap.xml" site/robots.txt
+          grep -q "<loc>https://devara1983ntr.github.io/blackheart-security-framework/</loc>" site/sitemap.xml
+          echo "sitemap and robots are consistent"
+
+      - name: Basic well-formedness check
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import sys, xml.dom.minidom
+          for f in ("site/sitemap.xml",):
+              xml.dom.minidom.parse(f)
+              print(f"{f}: well-formed")
+          for f in ("site/index.html", "site/404.html"):
+              body = open(f, encoding="utf-8").read()
+              for req in ("<title>", 'name="description"', 'rel="canonical"'):
+                  if req not in body:
+                      sys.exit(f"{f} is missing {req}")
+              print(f"{f}: has title, description, canonical")
+          PY
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

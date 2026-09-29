@@ -1,0 +1,31 @@
+# Dependabot is enabled for the GitHub Actions surface only.
+#
+# The vendored mirror is deliberately NOT managed by dependabot: it is pinned to
+# an upstream commit and verified byte-for-byte by the integrity gate. An
+# automated bump would break the pin, change 3,864 files without review, and
+# defeat the point of the mirror. Upstream movement is detected by
+# upstream-sync.yml, which opens a pull request for a human to audit.
+#
+# Dependabot manages the opposite problem: the small set of first-party
+# dependencies this project actually has.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"
+    labels: [dependencies, ci]
+    reviewers: [devara1983ntr]
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "deps"
+    labels: [dependencies]
+    reviewers: [devara1983ntr]
+    open-pull-requests-limit: 3

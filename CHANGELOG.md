@@ -73,6 +73,11 @@ and the state of the executable layer.
   `FILE-INDEX.txt` `4,403` → `4,410` entries; local links `5,271` → `5,279`; the
   authored instruction set `54` → `55` files. `gap_audit.py` group 18's own
   detail line reported three workflows and now reports six.
+- **The index total was published in two places and asserted in none.**
+  `README.md` said 4,403 entries twice while `FILE-INDEX.txt` held 4,410, and
+  `validate.py` computed the real total without ever comparing it to the copies
+  it publishes. Both rows are corrected, and the figure is now asserted where it
+  is counted, negative-tested by making README stale again.
 - **The link check caught its own author.** The count assertion added in the
   previous change failed the build the moment this change added eight links,
   which is the entire point of asserting a published figure where it is counted

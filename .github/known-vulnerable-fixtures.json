@@ -1,0 +1,37 @@
+{
+  "$comment": [
+    "Known-vulnerable content that is vendored on purpose, and the reason it",
+    "is not a BLACKHEART defect. Enforced by audit group 20 in",
+    ".github/scripts/gap_audit.py: if an entry stops being vendored, or stops",
+    "being byte-identical to the upstream pin, the audit fails. That is the",
+    "point -- the file must remain a faithful mirror, not a patched copy.",
+    "",
+    "This is the same rule already applied to the 111 dead links in",
+    ".github/upstream-link-defects.json: fix ours, account for theirs."
+  ],
+  "policy": {
+    "blackhearts_authors_no_runtime_dependencies": true,
+    "rationale": "The repository ships no build step, no bundler and no third-party runtime, so it declares no dependency manifest of its own. Every manifest in the tree is vendored. A future contributor adding an authored manifest is a posture change and should be a deliberate, visible decision."
+  },
+  "known_vulnerable_fixtures": [
+    {
+      "path": "skills/third-party/claude-skills/engineering/skills/dependency-auditor/test-project/package.json",
+      "upstream": "alirezarezvani/claude-skills@19392f7a",
+      "ecosystem": "npm",
+      "open_alerts_when_enumerated": 82,
+      "severity_breakdown": {
+        "critical": 2,
+        "high": 36,
+        "medium": 37,
+        "low": 7
+      },
+      "why": [
+        "It is the test corpus of the vendored `dependency-auditor` skill, a tool whose entire job is to find vulnerable dependencies. Its outdated axios, nodemailer, multer, mongoose, lodash and jsonwebtoken pins are the input that makes the skill demonstrable.",
+        "It is vendored, not authored. Editing it would break the byte-identical mirror guarantee that validate.py's integrity check enforces, and would make BLACKHEART's own copy of upstream silently diverge.",
+        "It is a `sample-web-app` fixture. Nothing installs it, builds it, ships it or executes it. No lockfile is committed and there is no build step that could pull it in.",
+        "Patching it would destroy the very thing it exists to be."
+      ],
+      "disposition": "ACCEPTED -- do not patch. Re-verify with audit group 20 if the upstream pin moves."
+    }
+  ]
+}

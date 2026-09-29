@@ -725,6 +725,22 @@ as a divergence.
 - Round 4 recorded 3 unresolved links in `security-pen-testing` as an accepted defect. Vendoring
   the **full** tree resolved 2 of them (`../senior-secops/`, `../code-reviewer/`), because those
   siblings now exist in the mirror. The third, a repo-root-relative reference, still does not.
+- **82 open Dependabot vulnerability alerts, all in one vendored file.** Every alert resolves to
+  `engineering/skills/dependency-auditor/test-project/package.json` — the `sample-web-app` corpus
+  belonging to the vendored `dependency-auditor` skill, whose entire purpose is to find vulnerable
+  dependencies. Its stale `axios`, `nodemailer`, `multer`, `mongoose`, `lodash` and `jsonwebtoken`
+  pins are the input the skill is demonstrated against (2 critical, 36 high, 37 moderate, 7 low).
+
+  Patching it would break the byte-identical mirror **and** delete the test corpus, so it is
+  accepted, not fixed. Nothing installs, builds or executes it; no lockfile is committed and no
+  build step can pull it in. Dependabot security alerts were disabled when this repository was
+  created — the wrong default for a supply-chain-risk project — and are now enabled, so this
+  condition is visible rather than hidden.
+
+  The disposition, its reasons, and an enforcement check live in
+  `.github/known-vulnerable-fixtures.json` and audit group 20 of
+  `.github/scripts/gap_audit.py`. The same rule as the 111 registered dead links: **fix ours,
+  account for theirs** — and write the account down.
 
 ---
 

@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4391
+# Total entries: 4392
 
 .gitattributes
 .github/ISSUE_TEMPLATE/bug.yml
@@ -18,6 +18,7 @@
 .github/PULL_REQUEST_TEMPLATE.md
 .github/UPSTREAM-MANIFEST.json
 .github/dependabot.yml
+.github/known-vulnerable-fixtures.json
 .github/scripts/gap_audit.py
 .github/scripts/gen_adapters.py
 .github/scripts/gen_collection_adapters.py

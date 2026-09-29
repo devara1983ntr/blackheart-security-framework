@@ -169,6 +169,38 @@ target. This is the single most important design decision in the framework.
 
 ---
 
+## Known accepted risk
+
+**Dependabot reports 82 open vulnerability alerts on this repository. All 82
+are in one file, and none of them is a defect in BLACKHEART.**
+
+They are all in
+`skills/third-party/claude-skills/engineering/skills/dependency-auditor/test-project/package.json`
+— a `sample-web-app` fixture that exists so the vendored `dependency-auditor`
+skill has something to scan. Its outdated `axios`, `nodemailer`, `multer`,
+`mongoose`, `lodash` and `jsonwebtoken` pins are the *test data*. Two critical,
+36 high, 37 moderate, 7 low.
+
+Patching it would be the wrong fix twice over: it would break the
+byte-identical mirror that `validate.py` enforces, and it would delete the
+corpus the skill is built to analyse. Nothing installs, builds or executes it;
+no lockfile is committed and there is no build step that could pull it in.
+
+This is registered in
+[`.github/known-vulnerable-fixtures.json`](.github/known-vulnerable-fixtures.json)
+with written reasons, and **audit group 20** enforces it — it fails if the
+registry goes missing, if a registered entry stops being vendored, if an entry
+loses its reason, or if a Blackhearts-authored dependency manifest ever appears.
+That last one matters most: the whole argument above rests on this repository
+declaring no dependencies of its own, so the check asserts that premise instead
+of trusting it.
+
+The alerts were switched **off** when this repository was created, which is the
+wrong default for a project about supply-chain risk. They are now enabled, and
+they report 0 findings outside the fixture above.
+
+---
+
 ## The evidence rules
 
 Most security tooling overstates what it knows. Blackhearts does not.
@@ -261,7 +293,7 @@ control, it is a vulnerability.
 
 ---
 
-## CI: 7 checks + 18 audit groups, 3 workflows
+## CI: 7 checks + 20 audit groups, 3 workflows
 
 | Check | What it proves |
 |---|---|
@@ -273,7 +305,7 @@ control, it is a vulnerability.
 | `secrets` | no credential material outside a 15-entry allowlist |
 | `config` | JSON5 parses; 374/374 skills declared |
 
-A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **18 groups**
+A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **20 groups**
 and answers the question `validate.py` cannot: is the right set of things
 actually present and wired, and do the documents' own numbers hold? It reads
 no upstream and no network. Group 16 verifies the figures this README and the

@@ -480,6 +480,82 @@ def run():
           if not offenders else f"{len(offenders)}: {offenders[:3]}")
 
 
+    # 20 --------------------------------------------------------------
+    # Known-vulnerable vendored content has a written disposition.
+    #
+    # Dependabot security alerts were switched off on this repository, which
+    # is the wrong default for a project about supply-chain risk. Re-enabling
+    # them surfaced 82 open alerts, all in a single vendored test fixture: the
+    # `sample-web-app` corpus the vendored `dependency-auditor` skill exists
+    # to scan.
+    #
+    # Patching it would break the byte-identical mirror and destroy the test
+    # corpus, so it is accepted rather than fixed. Accepting is only honest if
+    # it is written down and re-checked, which is what this group is for. A
+    # silent "not a real vulnerability" is indistinguishable from having
+    # ignored it.
+    # ------------------------------------------------------------------
+    vproblems = []
+    REG = os.path.join(REPO, ".github", "known-vulnerable-fixtures.json")
+    fixtures = []
+    if not os.path.isfile(REG):
+        vproblems.append(".github/known-vulnerable-fixtures.json is missing")
+    else:
+        try:
+            fixtures = json.loads(read(REG)).get("known_vulnerable_fixtures", [])
+        except ValueError as e:
+            vproblems.append(f"known-vulnerable-fixtures.json is not valid JSON: {e}")
+    if not fixtures:
+        vproblems.append("no known-vulnerable fixture is registered")
+
+    vendored_root = "skills/third-party"
+    for fx in fixtures:
+        rel = fx.get("path", "")
+        if not rel:
+            vproblems.append("a registered fixture has no path")
+            continue
+        if not rel.startswith(vendored_root + "/"):
+            vproblems.append(
+                f"{rel} is registered as a known-vulnerable fixture but is "
+                f"not vendored -- if it is now Blackhearts-authored it must "
+                f"actually be fixed, not accepted")
+            continue
+        if not os.path.isfile(os.path.join(REPO, rel)):
+            vproblems.append(f"{rel} is registered but no longer exists")
+            continue
+        if not fx.get("why") or not fx.get("disposition"):
+            vproblems.append(f"{rel} has no recorded reason or disposition")
+
+    # The posture those dispositions rest on: we author no dependency manifest.
+    # If that ever changes, the accepted-alerts argument stops holding, so
+    # assert the premise rather than assuming it.
+    authored_manifests = []
+    for dp, dn, fn in os.walk(REPO):
+        pruned = os.path.join(dp, "").replace(os.sep, "/").lstrip("./")
+        if pruned == vendored_root or pruned.startswith(vendored_root + "/"):
+            dn[:] = []
+            continue
+        dn[:] = [d for d in dn if d not in (".git", "__pycache__")]
+        for name in fn:
+            if name not in ("package.json", "requirements.txt", "Pipfile",
+                            "pyproject.toml", "go.mod", "Cargo.toml",
+                            "package-lock.json", "yarn.lock", "poetry.lock"):
+                continue
+            rel = os.path.relpath(os.path.join(dp, name), REPO).replace(os.sep, "/")
+            if not rel.startswith(vendored_root + "/"):
+                authored_manifests.append(rel)
+    if authored_manifests:
+        vproblems.append(
+            f"Blackhearts-authored dependency manifest(s) present: "
+            f"{authored_manifests[:3]} -- that changes the security posture "
+            f"and the accepted-alert dispositions must be re-reviewed")
+
+    check("20. vulnerable-content disposition", not vproblems,
+          f"{len(fixtures)} vendored fixture(s) accepted with written "
+          f"reasons; 0 authored dependency manifests"
+          if not vproblems else "; ".join(vproblems[:3]))
+
+
 def main():
     run()
     width = max(len(n) for n, _, _ in RESULTS)

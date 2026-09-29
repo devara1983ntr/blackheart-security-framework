@@ -53,9 +53,26 @@ Nothing yet.
   release and each confirmed green afterwards: `actions/checkout` 4 → 7,
   `actions/setup-python` 5 → 7, `actions/upload-pages-artifact` 3 → 5,
   `actions/deploy-pages` 4 → 5, `peter-evans/create-pull-request` 6 → 8.
-- **Dependabot security alerts enabled.** They were switched off on a
-  repository whose entire subject is supply-chain risk. Re-enabled via the API;
-  the repository currently reports **0 open vulnerability alerts**.
+- **Dependabot security alerts enabled, and the 82 alerts they surfaced triaged.**
+  They were switched off on a repository whose entire subject is supply-chain
+  risk. Re-enabled via the API.
+
+  All **82 open alerts** (2 critical, 36 high, 37 moderate, 7 low) resolve to a
+  single vendored file: the `sample-web-app` corpus belonging to the vendored
+  `dependency-auditor` skill, whose entire purpose is to find vulnerable
+  dependencies. Its stale `axios`, `nodemailer`, `multer`, `mongoose`, `lodash`
+  and `jsonwebtoken` pins are the input it is demonstrated against. Patching it
+  would break the byte-identical mirror *and* delete the corpus, so it is
+  accepted, not fixed — the same "fix ours, account for theirs" rule already
+  applied to the 111 registered dead links.
+
+  Recorded in `.github/known-vulnerable-fixtures.json` with written reasons, and
+  enforced by **audit group 20**, which fails if the registry is deleted, if a
+  registered entry stops being vendored, if an entry loses its reason, or if a
+  Blackhearts-authored dependency manifest ever appears. That last check is the
+  load-bearing one: the acceptance argument rests on this repository declaring
+  no dependencies of its own, so the audit asserts that premise rather than
+  trusting it. All four failure modes were tested by deliberately breaking them.
 - The README's publication and Search Console wording now states what is true:
   the site is live, and it is **crawlable but not claimed** in Search Console.
 

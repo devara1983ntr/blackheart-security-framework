@@ -95,6 +95,32 @@ def read(path):
         return fh.read()
 
 
+def _probe_site(url, timeout=15):
+    """True if the published site serves 200, False if it answers otherwise,
+    None if the network could not be reached.
+
+    Used by group 18 so the required publication disclosure follows from what
+    is actually served rather than from a constant somebody flips. Returns None
+    rather than guessing, because "the audit could not check" and "the site is
+    down" are different facts, and the caller reports them differently.
+    """
+    try:
+        import urllib.request
+        import urllib.error
+    except ImportError:                                   # pragma: no cover
+        return None
+    req = urllib.request.Request(url, method="GET",
+                                 headers={"User-Agent": "blackheart-gap-audit"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status == 200
+    except urllib.error.HTTPError as e:
+        # A 404 from GitHub Pages is a definitive answer, not an outage.
+        return e.code == 200
+    except Exception:
+        return None
+
+
 def run():
     man = json.loads(read(MANIFEST))
     vend = man["vendored"]
@@ -341,12 +367,38 @@ def run():
         if req not in idx:
             problems.append(f"site/index.html missing {what}")
     # A documentation file must never present the Pages URL as live unless the
-    # site is actually published. The README linked to a URL that returned 404
-    # while describing it as the "documentation site", which is exactly the
-    # unfalsifiable claim this project exists to reject. If Pages is enabled
-    # this condition lifts; until then the disclosure must be present
-    # whereverver the URL appears in authored documentation.
-    pages_live = False  # flip when GitHub Pages is enabled and deployed
+    # site is actually published, and must not keep calling it unpublished
+    # after it is. The README once linked to a URL that returned 404 while
+    # describing it as the "documentation site", which is exactly the
+    # unfalsifiable claim this project exists to reject.
+    #
+    # The state is *measured*, not asserted by a constant. A hardcoded
+    # `pages_live = True` would make this control pass forever regardless of
+    # what is actually served -- the same failure in a new costume. So the URL
+    # is fetched, and the required disclosure follows from the answer.
+    live_state = _probe_site(site_url)
+    if live_state is True:
+        required = ("published", "live", "deployed")
+        forbidden = ("not published", "not live", "not enabled", "is unpublished")
+    elif live_state is False:
+        required = ("not published", "not live", "not enabled", "is unpublished")
+        forbidden = ()
+    else:
+        # Network unavailable. Do not silently pass: demand a stated position.
+        required = ("published", "live", "deployed", "not published",
+                    "not live", "not enabled", "is unpublished")
+        forbidden = ()
+        problems.append("could not reach the published site to verify its state")
+
+    # A changelog is a historical record. Its older entries legitimately say
+    # "not published" because that was true when they were written, and
+    # rewriting them to match the present would destroy the record and make
+    # the repository dishonest in the other direction. So a historical record
+    # is exempt from the forbidden-polarity check -- but only if it actually
+    # records the transition, which is checked below. Everything else, the
+    # README above all, must match reality right now.
+    historical = ("changelog.md", "history.md")
+
     for dp, dn, fn in os.walk(REPO):
         dn[:] = [d for d in dn if d not in (".git", "third-party", "catalog",
                                            "__pycache__", "site")]
@@ -358,12 +410,29 @@ def run():
             if "devara1983ntr.github.io" not in body:
                 continue
             low = body.lower()
+            is_record = f.lower() in historical
             # "no build step" is not a publication disclosure; accepting it
             # here made the control pass on a README that claimed a live site.
-            disclosed = ("not published" in low or "not live" in low
-                         or "not enabled" in low or "is unpublished" in low)
-            if not pages_live and not disclosed:
-                problems.append(f"{rel} cites the Pages URL with no publication disclosure")
+            if not any(w in low for w in required):
+                problems.append(
+                    f"{rel} cites the Pages URL but does not state its status "
+                    f"(probe says the site is "
+                    f"{'live' if live_state else 'NOT reachable'})")
+            if is_record:
+                # A record must not pretend the site was always live: the
+                # earlier unpublished state has to still be in there.
+                if live_state is True and not any(
+                        w in low for w in ("not published", "not live",
+                                           "not enabled", "is unpublished")):
+                    problems.append(
+                        f"{rel} describes the site as live but has erased the "
+                        f"earlier unpublished state from its history")
+                continue
+            for w in forbidden:
+                if w in low:
+                    problems.append(
+                        f"{rel} still calls the Pages URL '{w}' although the "
+                        f"site serves HTTP 200")
 
     # the 404 must not be indexed, or it competes with real pages
     if os.path.isfile(os.path.join(REPO, "site", "404.html")) and \

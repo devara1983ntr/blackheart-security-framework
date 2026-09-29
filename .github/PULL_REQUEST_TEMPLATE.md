@@ -9,8 +9,8 @@ before you open it; the maintainer will ask otherwise.
 
 ## Checklist
 
-- [ ] `python3 .github/scripts/validate.py` — 7/7
-- [ ] `python3 .github/scripts/gap_audit.py` — 17/17
+- [ ] `python3 .github/scripts/validate.py` — 8/8
+- [ ] `python3 .github/scripts/gap_audit.py` — 20/20
 - [ ] `python3 .github/scripts/gen_index.py --check` — in sync
 - [ ] `python3 .github/scripts/gen_link_registry.py --check` — in sync
 - [ ] `python3 .github/scripts/sync_upstream.py` — no drift

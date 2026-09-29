@@ -147,7 +147,7 @@ not survive being *run*. Testing `ai-security` against controlled input found:
 
 1. **Its jailbreak signature fires on ordinary words.** `(DAN|STAN|DUDE|KEVIN|AIM|...)`
    has no word boundaries, so it matches *claim*, *standard*, *dangerous*. It
-   scored 12 findings on `ARCHITECTURE.md` and 11 on `AGENT.md` — documents with
+   scored 12 findings on `ARCHITECTURE.md` and 24 on `AGENT.md` — documents with
    no attack content at all.
 2. **Its stdin path returns a constant.** Six different documents returned an
    identical score and an identical excerpt that was not in the input. Only

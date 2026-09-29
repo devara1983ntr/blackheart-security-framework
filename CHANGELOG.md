@@ -208,6 +208,34 @@ and the state of the executable layer.
 - The 320px header no longer pushes the page sideways: the brand and buttons
   compress instead.
 
+### Fixed
+- **Five published figures had drifted from the repository they describe, and
+  the no-JavaScript hero counters showed zero.** These were found by re-running
+  every gate and re-measuring each number rather than trusting the previous
+  audit, and each was correct when it was written:
+  - The case-study hit counts for `AGENT.md` (`11` → `24`) and `README.md`
+    (`9` → `8`). `AGENT.md` gained the three-defect table that quotes the
+    signature itself, which alone accounts for 5 of its hits; the README was
+    redesigned after its count was taken.
+  - The site's CI and audit figures (`7` → `8` checks, `19` → `20` groups) in
+    the prose, in the animated counters and in the quickstart comments.
+    `AGENT.md`'s header now states validator `8/8` and end-to-end audit `20/20`
+    for the same reason, and `gap_audit.py` group 16 asserts the corrected
+    validator token instead of the stale one.
+  - The link count (`5,262` → `5,271`) on the site and in
+    `RELEASE-CHECKLIST.md`.
+  - The PR template's own checklist, which asked for `7/7` and `17/17`.
+- **The F-03 case-study claim now states the scope it requires.** Score `0.0`
+  with zero findings reproduces with `--scope jailbreak`; unscoped, the same
+  phrase scores `0.1667` through a different category. The underlying finding —
+  the canonical instruction-override phrase is not covered — is unchanged and
+  was re-measured.
+- **The hero counters carried `0` in the markup.** With JavaScript disabled the
+  landing page therefore published `0 files verified` / `0 CI checks` as this
+  repository's measurements. The markup now carries the measured values
+  (`3,864` · `399` · `8` · `20`) and JavaScript still animates to them; under
+  `prefers-reduced-motion` they are set immediately, as before.
+
 ### Changed
 - The four commits whose messages read `ci: bump $(title)` were rewritten to
   their real messages via a history rewrite, pushed with `--force-with-lease`.

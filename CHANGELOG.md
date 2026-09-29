@@ -61,8 +61,13 @@ Nothing yet.
   resolves via a GitHub 301 redirect, but the canonical name is now used in
   every reference, and both the rename and the `git remote set-url` command are
   documented so existing clones converge.
-- **Published site** at `devara1983ntr.github.io/blackheart-security-framework`,
-  built from `site/` by `.github/workflows/pages.yml`. Static HTML, no build
+- **Site source and deployment workflow** in `site/` and
+  `.github/workflows/pages.yml`, building to
+  `devara1983ntr.github.io/blackheart-security-framework`. **Not yet published:**
+  GitHub Pages is not enabled on this repository, so that URL is not live. The
+  build job's six checks all pass; only the deploy step awaits the one manual
+  toggle. This is stated rather than implied, because a README claiming a live
+  URL is exactly the kind of unfalsifiable claim this project exists to reject. Static HTML, no build
   step, no third-party runtime. The deploy job refuses to publish if the site,
   sitemap, `robots.txt` and 404 disagree about the canonical URL, or if
   credential-shaped material appears in `site/`.

@@ -4,7 +4,7 @@
 
 ### A governed security-supply-chain framework for AI agents
 
-**388 security skills · 39 commands · 33 agent personas · 3,864 verified files · 399 audited adapters**
+**388 vendored skill directories · 39 commands · 33 agent personas · 3,864 verified files · 399 audited adapters**
 
 *Skills are not the problem. Unvetted skills are.*
 
@@ -129,7 +129,7 @@ Everything upstream ships, verified and accounted for — not just the skills.
 
 | Collection | Files | | Collection | Files |
 |---|---:|---|---|---:|
-| 🔐 Skills | **388** skills | | 📋 Standards | **11** |
+| 🔐 Skills | **388** skill directories | | 📋 Standards | **11** |
 | ⌘ Slash commands | **39** | | 🗂️ Audit records | **32** |
 | 🤖 Agent personas | **33** (+1 template) | | 📚 Doc pages | **667** |
 | 🧩 Plugin manifests | **2** | | 🧪 Test fixtures | **1** |
@@ -143,6 +143,19 @@ Everything upstream ships, verified and accounted for — not just the skills.
 
 **53 of 58 upstream top-level areas vendored. 5 excluded — every one with a
 recorded reason.** See [`skills/VENDOR.md`](skills/VENDOR.md) §2.0.1.
+
+> **On the two skill counts — 388 and 374 measure different things.**
+>
+> - **388** is the number of vendored `SKILL.md` *directories* on disk.
+> - **374** is the number of *configured entries* in
+>   `skills/openclaw.example.json5`: **373 distinct skill names** plus the
+>   `blackheart-conformance` layer.
+>
+> They differ because of upstream path duplication, not because anything is
+> missing or broken: upstream defines 14 names at two paths each (28
+> directories), so 373 names cover 387 loadable directories, and one nested test
+> fixture brings the on-disk total to 388. Both copies of a duplicated name are
+> vendored; a single config entry enables both.
 
 ---
 
@@ -306,7 +319,7 @@ That refusal is the feature.
 
 ## The gate
 
-`skills/openclaw.example.json5` — 374 entries, generated and CI-verified.
+`skills/openclaw.example.json5` — 374 configured entries (373 distinct skill names plus the `blackheart-conformance` layer), generated and CI-verified.
 
 ```json5
 security: {
@@ -335,7 +348,7 @@ control, it is a vulnerability.
 | `links` | 5,267 local links; **0 broken in authored docs** |
 | `index` | 4,400 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 15-entry allowlist |
-| `config` | JSON5 parses; 374/374 skills declared |
+| `config` | JSON5 parses; 374/374 configured skill entries declared |
 | `history` | no commit subject anywhere contains an unexpanded `$(name)` or `${name}` token |
 
 `gap_audit.py` — 20 groups:

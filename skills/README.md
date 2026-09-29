@@ -218,12 +218,19 @@ Because the mirror keeps upstream's nesting, some skills sit more than six
 levels below a configured root. The example config therefore lists all 20 group
 directories **plus** `commands/` and `agents/` in `skills.load.extraDirs`, so
 **nothing vendored is silently skipped by a depth limit**. It then declares an explicit `enabled` policy for
-every one of the 374 distinct skill names.
+every one of the 373 distinct skill names.
 
-Note that 374 names cover 387 loadable directories: 13 names are defined at two
-upstream paths each (for example `handoff` exists under both `engineering/` and
-`productivity/`). One entry enables both copies. The path-level mapping is in
-[`VENDOR.md`](VENDOR.md) §5.
+**Two counts appear across this repository and they measure different things.**
+
+- **388** is the number of vendored `SKILL.md` *directories* on disk.
+- **373** is the number of distinct skill *names* those directories resolve to.
+
+The gap is upstream path duplication, not missing or broken skills: 14 names are
+defined at two upstream paths each (28 directories), so 373 names cover 387
+loadable directories, and one nested test fixture brings the on-disk total to
+388. The configured entry count is **374** — those 373 names plus the
+`blackheart-conformance` layer. One entry enables both copies of a duplicated
+name. The path-level mapping is in [`VENDOR.md`](VENDOR.md) §5.
 
 A working configuration, including agent allowlists and per-skill gating, is in
 [`openclaw.example.json5`](openclaw.example.json5).

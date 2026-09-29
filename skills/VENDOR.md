@@ -746,7 +746,7 @@ as a divergence.
 
 ## 5. Name collisions
 
-Upstream defines **14 skill names at more than one path** (28 directories, 374 distinct names). Both copies are vendored; one config entry enables both.
+Upstream defines **14 skill names at more than one path** (28 directories, 373 distinct names). Both copies are vendored; one config entry enables both.
 
 | Name | Paths |
 |---|---|

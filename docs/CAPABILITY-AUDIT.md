@@ -14,9 +14,9 @@ document, script or collection that implements the capability, so a reader can
 check the row instead of trusting it. Where a capability is **not** held, that is
 stated as plainly as where it is — an unstated gap reads as coverage.
 
-Three families are classified: the security work this framework does (27
+Three families are classified: the security work this framework does (29
 capabilities), the engineering work it does on itself (15), and the framework
-machinery that carries both (18).
+machinery that carries both (18). Sixty-two in total, none of them aspirational.
 
 This is not a feature list and not a roadmap. Nothing here is aspirational.
 

@@ -84,9 +84,9 @@ def ci_wired_scripts():
     return len(seen)
 
 
-def framework_rows(body):
-    """Data rows in section 3, the framework family."""
-    section = body.split("## 3. Framework capabilities")[1].split("\n## ")[0]
+def section_rows(body, header):
+    """Data rows in a capability section, keyed by its heading."""
+    section = body.split(header)[1].split("\n## ")[0]
     return sum(1 for line in section.splitlines()
                if line.strip().startswith("|")
                and not line.strip().startswith("|-")
@@ -143,7 +143,11 @@ def main():
     num_word = {n: w for n, w in zip(range(1, 21),
         "one two three four five six seven eight nine ten eleven twelve thirteen "
         "fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
-    rows = framework_rows(body)
+    rows = {
+        "security": section_rows(body, "## 1. Security capabilities"),
+        "engineering": section_rows(body, "## 2. Engineering capabilities"),
+        "framework": section_rows(body, "## 3. Framework capabilities"),
+    }
 
     manifest = json.loads(read(MANIFEST))
     counts = manifest.get("counts", {})
@@ -160,7 +164,8 @@ def main():
         "agent docs": count_files(os.path.join(REPO, "docs", "agent"), ".md"),
         "templates": count_files(os.path.join(REPO, "templates"), ".md"),
         "ci_wired_scripts": ci_wired_scripts(),
-        "framework_rows": rows,
+        "framework_rows": rows["framework"],
+        "section_rows": rows,
     }
     claims = {
         "vendored skills": f"{derived['vendored skills']} vendored skills",
@@ -175,8 +180,13 @@ def main():
         "modes": f"5 modes, {derived['guides']} guides",
         "agent docs": f"{derived['agent docs']} agent docs",
         "templates": str(derived["templates"]),
+        "security rows": f"the security work this framework does "
+                         f"({rows['security']}",
+        "engineering rows": f"the engineering work it does on itself "
+                            f"({rows['engineering']})",
         "framework rows": f"Eighteen capabilities, all eighteen held"
-                          if rows == 18 else f"{rows} framework capabilities",
+                          if rows["framework"] == 18
+                          else f"{rows['framework']} framework capabilities",
         "ci-wired scripts": f"{num_word.get(derived['ci_wired_scripts'], '?')} "
                             f"authored scripts are wired into CI",
     }

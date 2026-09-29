@@ -157,19 +157,19 @@ library alone and are what CI enforces on every push.
 | 10.3 | `.gitattributes` marks vendored files `linguist-vendored` | ✅ |
 | 10.4 | `CODEOWNERS`, Dependabot config, issue/PR templates present | ✅ |
 | 10.5 | No temp, backup, log or editor-dropping files in the tree | ✅ |
-| 10.6 | Working tree clean; local `main` == `origin/main` | ✅ |
+| 10.6 | Working tree clean; local `main` == `origin/main` == `5921dd4` | ✅ |
 | 10.7 | Commit messages accurate and readable; `validate.py` `history` fails on any unexpanded `$(name)` token in any ref | ✅ |
-| 10.8 | Branches: `main` only, or stale branches verified empty before deletion | ✅ |
+| 10.8 | Branches: `main` only — `jules-*` deleted after re-verifying `ahead_by == 0` at the moment of deletion | ✅ |
 | 10.9 | No leftover backup refs (`refs/original/`) keeping superseded commits reachable | ✅ |
-| 10.10 | Repository settings (description, topics, branch protection) applied via `repo_settings.py` | ⏳ needs a token |
+| 10.10 | Repository settings (description, 20 topics, branch protection) applied via `repo_settings.py` and verified live against the API | ✅ |
 
 ## 11. Deployment
 
 | # | Check | Status |
 |---|---|---|
 | 11.1 | GitHub Pages enabled, `build_type: workflow` | ✅ |
-| 11.2 | `pages` workflow green on every `site/**` push | ✅ |
-| 11.3 | All assets 200; unknown paths 404 | ✅ |
+| 11.2 | `pages` workflow green on every `site/**` push (`d30e1d7`: success) | ✅ |
+| 11.3 | All assets 200; unknown paths 404 — verified against the live site | ✅ |
 | 11.4 | Deployed pages verified in a real browser, not just locally | ✅ |
 | 11.5 | Canonical URL consistent across site, sitemap, robots and 404 — build fails otherwise | ✅ |
 

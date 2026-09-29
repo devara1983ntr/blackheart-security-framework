@@ -41,6 +41,12 @@ and the state of the executable layer.
   and the gradient is applied inside `@supports`.
 
 ### Fixed
+- **`RELEASE-CHECKLIST.md` still claimed repository settings "need a token"
+  after they had been applied and verified.** A stale "not done" line is
+  worse than no line: it is a claim about the project that the project had
+  already disproved. Branch protection, the description, 20 topics, the
+  `jules-*` deletion, the green workflows and the live-site checks are all
+  now marked done, with the commit and run they were verified against.
 - **`repo_settings.py` applied cleanly only on the fourth attempt, and the
   first three failures were all in the script rather than the API.** Worth
   recording, because each looked like a GitHub restriction and none was:

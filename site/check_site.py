@@ -239,6 +239,66 @@ for fname, body in [(n, open(os.path.join(HERE, n), encoding="utf-8").read())
 check("no unstyled element in markup", not unclassed,
       "; ".join(sorted(set(unclassed))[:3]))
 
+# ---- HTML structure -------------------------------------------------------
+# A regex cannot tell you whether a document nests correctly. Parse it.
+VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+        "meta", "param", "source", "track", "wbr"}
+
+
+class _Validator(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack, self.errors = [], []
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in VOID:
+            self.stack.append((tag, self.getpos()))
+
+    def handle_endtag(self, tag):
+        if tag in VOID:
+            return
+        if not self.stack:
+            self.errors.append(f"stray </{tag}> at {self.getpos()}")
+            return
+        if self.stack[-1][0] == tag:
+            self.stack.pop()
+            return
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i][0] == tag:
+                skipped = [t for t, _ in self.stack[i + 1:]]
+                self.errors.append(
+                    f"</{tag}> closes over unclosed <{skipped}> "
+                    f"(opened at {self.stack[i][1]})")
+                del self.stack[i:]
+                return
+        self.errors.append(f"stray </{tag}> at {self.getpos()}")
+
+
+struct, meta_issues = [], []
+for _f in sorted(x for x in os.listdir(HERE) if x.endswith(".html")):
+    _src = open(os.path.join(HERE, _f), encoding="utf-8").read()
+    _v = _Validator()
+    _v.feed(_src)
+    _v.close()
+    for _e in _v.errors + [f"unclosed <{t}> opened at {p}" for t, p in _v.stack]:
+        struct.append(f"{_f}: {_e}")
+    if not re.search(r'<html[^>]*\slang="', _src):
+        meta_issues.append(f"{_f}: <html> has no lang attribute")
+    if not re.search(r"<meta[^>]+charset", _src, re.I):
+        meta_issues.append(f"{_f}: no charset declared")
+    if not re.search(r'<meta[^>]+name="viewport"', _src, re.I):
+        meta_issues.append(f"{_f}: no viewport meta")
+
+check("HTML is well-formed", not struct, "; ".join(struct[:3]))
+check("document metadata present", not meta_issues, "; ".join(meta_issues[:3]))
+
+# Single-language site, so every indexable page says so explicitly.
+_hreflang = [f for f in ("index.html", "architecture.html", "evidence.html",
+                         "case-study.html", "disclosure.html")
+             if 'hreflang="en"' not in
+             open(os.path.join(HERE, f), encoding="utf-8").read()]
+check("hreflang declared on every indexable page", not _hreflang, str(_hreflang))
+
 # ---- local assets exist -------------------------------------------------
 missing = []
 for name, body in (("index.html", index), ("404.html", notfound)):

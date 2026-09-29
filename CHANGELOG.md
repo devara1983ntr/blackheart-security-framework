@@ -41,6 +41,17 @@ and the state of the executable layer.
   and the gradient is applied inside `@supports`.
 
 ### Added
+- **HTML is now parsed, not pattern-matched.** `check_site.py` grew three
+  checks that no regex can do: whether every document nests correctly, whether
+  each declares `lang`, `charset` and a viewport, and whether every indexable
+  page declares `hreflang`. The audit that motivated them found the markup
+  already well-formed on all six pages, and one real gap — no `hreflang`
+  anywhere. This is a single-language site, so it now says so explicitly on all
+  five indexable pages with `hreflang="en"` and `hreflang="x-default"`. Both
+  new checks were negative-tested: an unclosed `<div>` and a removed
+  `hreflang` each fail the build.
+
+### Added
 - **`.github/scripts/guard_clean.py` — generators can no longer record a damaged
   tree as fact.** `gen_manifest.py` and `gen_index.py` turn the working tree into
   published claims. Neither warned: run either over an incomplete tree and it

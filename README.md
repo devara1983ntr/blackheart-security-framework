@@ -267,7 +267,7 @@ python3 .github/scripts/gap_audit.py
 python3 .github/scripts/sync_upstream.py
 
 # site gates: static, then a real browser
-python3 site/check_site.py       # 115 checks
+python3 site/check_site.py       # 118 checks
 python3 site/audit_seo.py        # links, metadata, payload budget
 python3 -m pip install playwright && python3 -m playwright install chromium
 python3 site/check_contrast.py   # WCAG AA, measured in both themes
@@ -350,7 +350,7 @@ every `site/**` change; the last two need a browser and run locally.
 
 | Gate | What it proves | Result |
 |---|---|---|
-| [`check_site.py`](site/check_site.py) | 115 static checks — canonical, `og:url`, sitemap membership, cross-linking, exactly one `h1`, and **no class used in markup but undefined in the stylesheet** | 115/115 in CI |
+| [`check_site.py`](site/check_site.py) | 118 static checks — canonical, `og:url`, sitemap membership, cross-linking, exactly one `h1`, and **no class used in markup but undefined in the stylesheet** | 115/115 in CI |
 | [`audit_seo.py`](site/audit_seo.py) | every internal link resolves, every anchor matches a real `id`, canonical and `og:url` agree with the page's own address, titles and descriptions are unique and within SERP truncation limits, sitemap and pages describe the same set, visitor payload under budget | clean in CI |
 | [`check_contrast.py`](site/check_contrast.py) | WCAG AA measured in a real browser across both themes — including gradient-clipped text, measured through its gradient stops | clean, local |
 | [`test_interactions.py`](site/test_interactions.py) | 81 behavioural checks in Chromium: overflow at four viewports, keyboard tab order, the tabs pattern, the error banner, and that a throwing script degrades to a readable page | 81/81, local |

@@ -23,3 +23,20 @@
 /.github/scripts/ @devara1983ntr
 /AGENT.md @devara1983ntr
 /docs/agent/ @devara1983ntr
+
+# Governance, carried over from the repository-root CODEOWNERS file.
+#
+# GitHub uses only one CODEOWNERS file, searching .github/, then root, then
+# docs/, and stopping at the first found. Because this file exists, the
+# root CODEOWNERS is never read, so the rules below had no effect at all
+# until they were copied here. They are the ones where a change would alter
+# what an agent is permitted to do, or weaken the gate itself.
+#
+# skills/third-party/ and skills/catalog/ are deliberately NOT listed: they
+# are a byte-identical upstream mirror that must never be hand-edited, so
+# they have no owner by design and validate.py fails the push regardless.
+/skills/conformance/            @devara1983ntr
+/skills/openclaw.example.json5  @devara1983ntr
+/.github/scripts/validate.py     @devara1983ntr
+/.github/scripts/gap_audit.py    @devara1983ntr
+/.github/scripts/gen_manifest.py @devara1983ntr

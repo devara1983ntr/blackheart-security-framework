@@ -9,9 +9,10 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4400
+# Total entries: 4402
 
 .gitattributes
+.github/CODEOWNERS
 .github/ISSUE_TEMPLATE/bug.yml
 .github/ISSUE_TEMPLATE/config.yml
 .github/ISSUE_TEMPLATE/feature.yml
@@ -26,6 +27,7 @@
 .github/scripts/gen_index.py
 .github/scripts/gen_link_registry.py
 .github/scripts/gen_manifest.py
+.github/scripts/repo_settings.py
 .github/scripts/sync_upstream.py
 .github/scripts/validate.py
 .github/secret-allowlist.json

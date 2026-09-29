@@ -41,6 +41,23 @@ and the state of the executable layer.
   and the gradient is applied inside `@supports`.
 
 ### Added
+- **`.github/scripts/repo_settings.py`** — applies the repository settings a
+  commit cannot: the page description, 25 topics, branch protection on `main`
+  (require green checks, refuse force-push and deletion, resolve conversations),
+  and deletion of a stale branch. Idempotent, `--dry-run` supported, token read
+  from the environment and never written anywhere. The stale-branch deletion
+  re-compares the branch tip against `main` immediately beforehand and refuses
+  if the branch holds any commit `main` does not; both outcomes were tested
+  against a mocked API.
+- **`.github/CODEOWNERS`** — names the files where a plausible change could
+  quietly weaken the guarantee: the published site, the gates themselves, and
+  the activation contract. The vendored mirror deliberately has no owner,
+  because a hand edit there is wrong by construction and `validate.py` fails
+  the push regardless of who approved it.
+- **The repository page itself** — a Pages status badge, the published site's
+  social card as a hero image, a navigation bar into the sections a visitor
+  most likely wants, and a rewritten CI section listing all six gates with what
+  each one actually proves and whether it runs in CI or locally.
 - **`RELEASE-CHECKLIST.md`** — a full pre-release checklist across
   functionality, UI/UX, responsive, accessibility, SEO, performance, security,
   testing, links, documentation, configuration, hygiene and deployment, with

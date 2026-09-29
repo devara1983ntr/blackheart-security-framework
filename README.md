@@ -10,10 +10,28 @@
 
 [![validate](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/validate.yml/badge.svg)](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/validate.yml)
 [![upstream-sync](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/upstream-sync.yml/badge.svg)](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/upstream-sync.yml)
+[![pages](https://github.com/devara1983ntr/blackheart-security-framework/actions/workflows/pages.yml/badge.svg)](https://devara1983ntr.github.io/blackheart-security-framework/)
 [![license](https://img.shields.io/badge/license-MIT-00d4a5.svg)](LICENSE)
 [![upstream](https://img.shields.io/badge/mirror-alirezarezvani%2Fclaude--skills-6f42c1.svg)](https://github.com/alirezarezvani/claude-skills)
 
 </div>
+
+<p align="center">
+  <a href="https://devara1983ntr.github.io/blackheart-security-framework/">
+    <img src="https://devara1983ntr.github.io/blackheart-security-framework/og-image.png"
+         alt="BLACKHEART — a governed security-supply-chain framework for AI agents"
+         width="640">
+  </a>
+</p>
+
+<p align="center">
+  <b><a href="#quick-start">Quick start</a></b> ·
+  <b><a href="#architecture">Architecture</a></b> ·
+  <b><a href="#known-accepted-risk">Known risk</a></b> ·
+  <b><a href="#the-gate">The gate</a></b> ·
+  <b><a href="RELEASE-CHECKLIST.md">Release checklist</a></b> ·
+  <b><a href="https://devara1983ntr.github.io/blackheart-security-framework/">Website</a></b>
+</p>
 
 ---
 
@@ -305,24 +323,36 @@ control, it is a vulnerability.
 
 ---
 
-## CI: 7 checks + 20 audit groups, 3 workflows
+## CI: 6 gates, 3 workflows
+
+`validate.py` — 7 checks, every push and pull request:
 
 | Check | What it proves |
 |---|---|
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA + 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,287 local links; **0 broken in authored docs** |
-| `index` | 4,364 entries; 0 unindexed, 0 dangling |
+| `links` | 5,267 local links; **0 broken in authored docs** |
+| `index` | 4,400 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 15-entry allowlist |
 | `config` | JSON5 parses; 374/374 skills declared |
 
-A second gate, [`gap_audit.py`](.github/scripts/gap_audit.py), runs **20 groups**
+`gap_audit.py` — 20 groups:
 and answers the question `validate.py` cannot: is the right set of things
 actually present and wired, and do the documents' own numbers hold? It reads
 no upstream and no network. Group 16 verifies the figures this README and the
 activation protocol publish against the repository itself — the check that
 makes a documentation claim falsifiable rather than decorative.
+
+Three further gates cover the published site. The first two run in CI on
+every `site/**` change; the last two need a browser and run locally.
+
+| Gate | What it proves | Result |
+|---|---|---|
+| [`check_site.py`](site/check_site.py) | 115 static checks — canonical, `og:url`, sitemap membership, cross-linking, exactly one `h1`, and **no class used in markup but undefined in the stylesheet** | 115/115 in CI |
+| [`audit_seo.py`](site/audit_seo.py) | every internal link resolves, every anchor matches a real `id`, canonical and `og:url` agree with the page's own address, titles and descriptions are unique and within SERP truncation limits, sitemap and pages describe the same set, visitor payload under budget | clean in CI |
+| [`check_contrast.py`](site/check_contrast.py) | WCAG AA measured in a real browser across both themes — including gradient-clipped text, measured through its gradient stops | clean, local |
+| [`test_interactions.py`](site/test_interactions.py) | 81 behavioural checks in Chromium: overflow at four viewports, keyboard tab order, the tabs pattern, the error banner, and that a throwing script degrades to a readable page | 81/81, local |
 
 Every gate in this repository was tamper-tested. Each was made to fail
 deliberately — a vendored script altered, the security gate switched off, a
@@ -330,7 +360,31 @@ documented number falsified, a section renumbered — and each was confirmed to
 detect it. A gate that has never been observed failing is an assumption, not a
 control.
 
-`validate.yml` runs on push and PR. `upstream-sync.yml` runs daily at 03:17 UTC
+`validate.yml` runs on push and PR. `pages.yml` deploys and re-runs the two
+site gates before publishing.
+
+### Protecting `main`
+
+`main` is the publication target for GitHub Pages and the integrity gate runs
+in CI, so it is configured to require green checks and to refuse force-pushes
+and deletions. `.github/CODEOWNERS` names the files where a plausible-looking
+change could quietly weaken the guarantee — the site, the gates themselves,
+and the activation contract.
+
+Those are repository settings, not files, so they cannot be applied by a
+commit. They are in [`repo_settings.py`](.github/scripts/repo_settings.py),
+which sets the description, topics, branch protection, and deletes a verified
+-merged stale branch in one idempotent pass:
+
+```bash
+GH_TOKEN=<token> python3 .github/scripts/repo_settings.py --dry-run   # show the plan
+GH_TOKEN=<token> python3 .github/scripts/repo_settings.py             # apply
+```
+
+The token is read from the environment and is never written to a file, a
+config, or the remote URL. The stale branch is re-compared against `main`
+immediately before deletion and **refuses** to delete if it has any commit
+that `main` does not. `upstream-sync.yml` runs daily at 03:17 UTC
 and **opens a PR — it never auto-merges.** Invariant 14: *detection is
 automated; judgement is not.*
 

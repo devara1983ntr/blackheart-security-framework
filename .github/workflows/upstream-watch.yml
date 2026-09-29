@@ -89,18 +89,35 @@ jobs:
           if [ -n "${{ inputs.source }}" ]; then
             args="--source ${{ inputs.source }}"
           fi
+          # No `set -e`: the watcher's exit code is the finding, and it must be
+          # read and published before anything else happens.
           python3 .github/scripts/watch_upstream.py $args --json --report watch-report.txt \
             > watch-report.json
+          rc=$?
           python3 - <<'PY'
           import json, os
-          with open('watch-report.json', encoding='utf-8') as fh:
-              report = json.load(fh)
+          try:
+              with open('watch-report.json', encoding='utf-8') as fh:
+                  report = json.load(fh)
+          except Exception:
+              report = {'sources': []}
           drift = [s for s in report['sources'] if s.get('drift')]
+          blind = [s for s in report['sources'] if s.get('error')]
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
               fh.write(f"drift={len(drift)}\n")
-              fh.write("names=" + ",".join(s['source'] for s in drift) + "\n")
+              fh.write(f"unreadable={len(blind)}\n")
+              fh.write("names=" + ",".join(s['source'] for s in drift + blind) + "\n")
           PY
           cat watch-report.txt
+          # Exit 1 means the watch could not do its job — an upstream could not be
+          # read. That fails the run on purpose: a watchdog that cannot see the
+          # thing it guards must not report silence as health, and the failure is
+          # the only signal that reaches a person without being looked for.
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::The upstream watch did not complete (watcher exit $rc)." \
+                 "A source could not be read; see the report above."
+            exit 1
+          fi
 
       - name: Publish the report to the run summary
         # Always, including on failure: a watchdog whose evidence is missing
@@ -118,9 +135,10 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Open or update the tracking issue when a person is needed
-        # Drift is information, not a build failure, so this job does not fail.
-        # It records the finding where a person will see it.
-        if: steps.watch.outputs.drift != '0'
+        # Drift is information, not a build failure. This step records it where a
+        # person will see it. A watch that could not run has already failed the
+        # job; the issue covers both, because both need the same decision.
+        if: always() && (steps.watch.outputs.drift != '0' || steps.watch.outputs.unreadable != '0')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -128,7 +146,7 @@ jobs:
           TITLE='Upstream drift needs a human decision'
           BODY=$(mktemp)
           {
-            echo "The scheduled \`upstream-watch\` job found movement in a pinned upstream source."
+            echo "The scheduled \`upstream-watch\` job needs a person: it either found movement in a pinned upstream source, or could not read one."
             echo
             echo "**Nothing has been changed by this job.** It runs with \`contents: read\` and"
             echo "writes no file into the repository. Detection is automatic; admission is not."

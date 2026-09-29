@@ -39,7 +39,8 @@ repository has. This script reads it; it does not maintain a parallel record.
 Exit codes
 ----------
   0  report produced (whether or not there is drift)
-  1  the watch itself failed — an upstream could not be read
+  1  the watch itself failed — an upstream could not be read (this includes a
+     network failure: a watch that cannot see upstream has established nothing)
   2  drift detected, and `--fail-on-drift` was passed
 """
 
@@ -312,14 +313,21 @@ def human(report):
             log(f"  security-sensitive paths ({len(sensitive)}, first 15):")
             for p in sorted(sensitive)[:15]:
                 log(f"      {p}")
+    unreadable = sum(1 for s in report["sources"] if s.get("error"))
+    readable = len(report["sources"]) - unreadable
     log("")
     log("=" * 66)
-    if drifted:
+    if unreadable:
+        log(f"  {unreadable} of {len(report['sources'])} source(s) could not be "
+            f"read. The watch did not complete.")
+        log("  A watch that cannot see upstream has established nothing: silence")
+        log("  is not a clean bill of health, and this run is a failure, not a pass.")
+    elif drifted:
         log(f"  {drifted} source(s) have moved. Nothing was fetched, vendored,")
         log("  written, or deleted. This report is the whole of the change.")
     else:
-        log("  Both sources are at their pinned commits.")
-    return drifted
+        log(f"  All {readable} source(s) are at their pinned commits.")
+    return drifted, unreadable
 
 
 def main():
@@ -354,18 +362,25 @@ def main():
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
 
+    unreadable = sum(1 for s in report["sources"] if s.get("error"))
+    drifted = sum(1 for s in report["sources"] if s.get("drift"))
+    report["drift_total"] = drifted
+    report["unreadable_total"] = unreadable
+
     if args.report:
         with open(args.report, "w", encoding="utf-8") as fh:
             with contextlib.redirect_stdout(fh):
                 human(report)
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))
-        drifted = sum(1 for s in report["sources"] if s.get("drift"))
     elif not args.report:
-        drifted = human(report)
-    else:
-        drifted = sum(1 for s in report["sources"] if s.get("drift"))
+        human(report)
 
+    # Exit codes are ordered by what a caller must do, not by what was found:
+    # a watch that could not run is a failure (1), drift is information (0, or 2
+    # when the caller asked to be told loudly).
+    if unreadable:
+        return 1
     if args.fail_on_drift and drifted:
         return 2
     return 0

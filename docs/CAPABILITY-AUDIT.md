@@ -164,6 +164,11 @@ upstream-sync.yml     scheduled · writes a branch · the skill mirror
 Detection is automatic. Preparation is automatic. **Admission is not.** Nothing in
 this repository merges third-party content without a person reading it.
 
+One more distinction the watcher's exit codes encode: a source it *cannot read* fails the
+run (exit 1), while drift is information (exit 0, or 2 when a caller asks to be told
+loudly). A watchdog that cannot see the thing it guards has established nothing, and
+reporting silence as health would be worse than not watching at all.
+
 ## 5. Deliberate non-additions
 
 Capabilities that were considered during this audit and **not** added. Each is a

@@ -28,7 +28,9 @@ and the state of the executable layer.
   needs no dependencies, uses the standard library and `git` only, fetches no
   blob content, and writes nothing: it runs with `contents: read` and produces a
   report. A pin that upstream has rewritten or dropped is reported as its own
-  condition, because a diff cannot describe it.
+  condition, because a diff cannot describe it — and a source it *cannot read*
+  fails the run rather than passing quietly, because a watch that cannot see
+  upstream has established nothing.
 - **`site-verify.yml` — the only gates that CI never ran.** `check_contrast.py`
   and `test_interactions.py` measure the published site in a real browser: WCAG
   AA across both themes including gradient-clipped text, and 81 behavioural

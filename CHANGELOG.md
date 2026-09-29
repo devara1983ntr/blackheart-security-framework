@@ -235,6 +235,18 @@ and the state of the executable layer.
   repository's measurements. The markup now carries the measured values
   (`3,864` · `399` · `8` · `20`) and JavaScript still animates to them; under
   `prefers-reduced-motion` they are set immediately, as before.
+- **The case study now describes the defects that are actually documented.**
+  Its F-02 and F-03 sections described a "confidence score that is never low"
+  and "instructions that are logged as data, and vice versa". Neither matches
+  the record: the scanner emits no confidence value (the word appears once, in
+  a risk-description string) and it has no instruction/untrusted-content
+  channel logic at all — `scan_prompts()` regex-matches input and divides
+  matches by signatures in scope. The home page and the adapter already
+  documented the real pair: the constant standard-input path (`0.8333`, 7
+  findings, an excerpt absent from the input) and the uncovered
+  instruction-override phrasing (`0.0` with `--scope jailbreak`, `0.1667`
+  unscoped). The page now states those, and the Method summary no longer
+  repeats the unsupported claims.
 
 ### Changed
 - The four commits whose messages read `ci: bump $(title)` were rewritten to

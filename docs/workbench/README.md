@@ -119,8 +119,11 @@ summary the tool will enforce:
 }
 ```
 
-`max_requests` defaults to `0`, which allows nothing. A scope file that does not
-name a budget authorises no requests at all, rather than an unlimited number.
+`max_requests` is required and must be positive: a scope file that does not name a
+request budget is refused when it is loaded, because an unbounded budget is not a
+scope. The same applies to `allowed_hosts` and `allowed_methods` — a file that
+names no host or no method authorises nothing, so it is rejected rather than
+accepted as an empty scope.
 
 ## What this documentation does not claim
 

@@ -510,3 +510,27 @@ def test_decisions_are_deterministic():
     a = _guard().check("http://127.0.0.1/text").as_dict()
     b = _guard().check("http://127.0.0.1/text").as_dict()
     equal(a, b)
+
+
+# ------------------------------------------------- and what refuses such a file
+def test_a_scope_file_with_no_request_budget_is_refused_not_defaulted():
+    """The documentation claims this, so it is asserted here.
+
+    "An unbounded request budget is not a scope" is a stronger and more useful
+    statement than "the default is zero": a file that forgot the field is a
+    mistake in the operator's authorization, and accepting it silently — even as
+    a scope that permits nothing — leaves a document that looks like authority.
+    """
+    # `None` is a value that is not a number at all; an absent field is the same
+    # case, and 0 is a number that is not a budget. Both are refused.
+    contains(str(raises(sc.ScopeError, _scope, max_requests=0)),
+             "unbounded request budget is not a scope")
+    contains(str(raises(sc.ScopeError, _scope, max_requests=None)), "max_requests")
+    data = fixtures.scope_data()
+    del data["max_requests"]
+    contains(str(raises(sc.ScopeError, sc.Scope, data)), "max_requests")
+
+
+def test_a_scope_file_that_names_no_host_or_no_method_is_refused():
+    contains(str(raises(sc.ScopeError, _scope, allowed_hosts=[])), "authorizes nothing")
+    contains(str(raises(sc.ScopeError, _scope, methods=[])), "authorizes nothing")

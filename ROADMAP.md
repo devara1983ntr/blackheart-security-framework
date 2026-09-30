@@ -40,7 +40,8 @@ would not belong here:
 
 - **Authorization first.** Every request is checked against a scope file the
   operator supplies. There is no default scope and no flag that skips the check;
-  a scope file that does not name a request budget authorises nothing.
+  a scope file that does not name a request budget, a host or a method is
+  refused when it is loaded, because an unbounded scope is not a scope.
 - **A refusal is a stop.** A `401`, `402`, `403`, `407`, `451`, a challenge page
   or a paywall ends that path, is recorded with its status and reason, and is
   answered with the route that *is* authorised.

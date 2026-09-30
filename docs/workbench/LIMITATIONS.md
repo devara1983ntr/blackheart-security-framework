@@ -73,9 +73,13 @@ recorded with the file and the file is not redistributed.
   and may be captured by the shell's history. The tool redacts it from
   everything it writes; it cannot redact it from the shell.
 - Redaction is by header name and by the literal values the operator lists with
-  `--secret`. A secret that appears in a form the tool was not told about — a
-  randomly generated token in a response body, say — is not redacted by magic.
-  Inspect a bundle before sharing it.
+  `--secret`, which covers request and response bodies, the URL, the query
+  string and every URL in a redirect chain. A stored record whose URL was
+  redacted cannot be replayed or fuzzed: the tool refuses rather than sending
+  the marker, and tells you to capture the request again with the value.
+- A secret that appears in a form the tool was not told about — a randomly
+  generated token in a response body, for instance, with no `--secret` given
+  for it — is not redacted by magic. Inspect a bundle before sharing it.
 - The history file and evidence bundles contain the requests and responses that
   were made, with sensitive values removed. They do not contain credentials, but
   they do contain the target's own data, and they are the operator's

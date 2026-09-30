@@ -17,6 +17,18 @@ Invoke as `python3 -m workbench.cli <group> <command> [options]`.
 A program reading the output should branch on the exit code and then on the
 payload, which always carries a `status` field of `ok` or `failed`.
 
+## Flags that appear on every command that sends a request
+
+| Flag | What it does |
+|---|---|
+| `--scope FILE` | Required. The authorization file every request is checked against. There is no default and no flag that skips it. |
+| `--secret VALUE` | Repeatable. A value to redact from everything recorded: request and response bodies, the URL, the query string and every URL in a redirect chain. A record whose URL was redacted cannot be replayed or fuzzed — the tool refuses rather than sending the marker. |
+| `--json` | One JSON object on stdout, with the human-readable lines on stderr. |
+| `--history FILE` | Append every exchange to this file as JSON Lines, for `http diff`, `http mutate`, `http replay` and `http fuzz`. |
+
+`api inspect` also accepts `--scope` (it can fetch the description) but does not
+require it, because `--file` reads a local document and sends nothing.
+
 ## Commands
 
 `--scope` is **required** where a command sends a request, **optional** only for

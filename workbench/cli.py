@@ -661,7 +661,7 @@ def build_parser():
                              help="authorization scope file; required, with no default"
                                   + ("" if needs_scope else " for a request"))
             sub.add_argument("--secret", action="append", default=[],
-                             help="a value to redact from recorded bodies (repeatable)")
+                             help="a value to redact from recorded bodies and URLs (repeatable)")
         sub.set_defaults(command_name=name)
         return sub
 

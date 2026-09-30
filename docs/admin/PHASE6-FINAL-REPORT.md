@@ -211,7 +211,7 @@ the exact dependency versions the workflows pin:
 
 | # | Gate | Command, as the workflow runs it | Result |
 |---|---|---|---|
-| 1 | Workbench suite | `python3 workbench/run_tests.py` | **490 passed, 0 failed**, 15 modules (100.6 s) |
+| 1 | Workbench suite | `python3 workbench/run_tests.py` | **490 passed, 0 failed**, 15 modules (~101 s: measured at 100.0, 100.6, 101.2 and 102.3 s across runs of this code; the spread is machine variance, not a change of state) |
 | 2 | Loopback guard | verbatim `phase5-validation.yml` step | passed — the guard aborts on any non-loopback connect, and it did not trip |
 | 3 | Determinism | two runs compared, as CI does | **two runs agree: 490 passed, 0 failed, 15 modules** |
 | 4 | Repository validation | `python3 .github/scripts/validate.py` | **8/8** — adapters, integrity (3,864 files), catalogue, links **5,485** with 0 broken authored, index **4,488** with 0 unindexed and 0 dangling, secrets, config 374/374, history |

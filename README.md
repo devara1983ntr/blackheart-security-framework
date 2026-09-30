@@ -252,7 +252,7 @@ Six workflows, nine verification scripts.
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
 | `links` | 5,279 local links; **0 broken in authored docs** |
-| `index` | 4,431 entries; 0 unindexed, 0 dangling |
+| `index` | 4,433 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |
 | `history` | no commit subject contains an unexpanded `$(name)` token |
@@ -347,7 +347,7 @@ operations and are not configured here; the site is crawlable but unclaimed.
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to contribute safely |
 | [`CHANGELOG.md`](CHANGELOG.md) | version history |
 | [`ROADMAP.md`](ROADMAP.md) | what comes next |
-| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,431 files, one per line |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,433 files, one per line |
 | [`skills/VENDOR.md`](skills/VENDOR.md) | provenance, exclusions, upstream defects |
 | [`skills/README.md`](skills/README.md) | the catalogue and its rules |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | the rules that win |

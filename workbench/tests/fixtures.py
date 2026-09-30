@@ -312,6 +312,15 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(429, "too many requests", headers={"Retry-After": "30"})
         elif path == "/missing":
             self._send(404, "not found")
+        elif path == "/challenge":
+            # An intermediary in front of the document. 200, HTML, and nothing
+            # that resembles the file that was asked for.
+            self._send(200, (
+                "<html><head><title>Just a moment...</title></head><body>"
+                "<h1>Checking your browser before accessing the site</h1>"
+                "<p>Please complete the security check to continue.</p>"
+                "</body></html>"), "text/html; charset=utf-8",
+                headers={"Server": "fixture-interstitial/1.0"})
         elif path == "/stack-trace":
             # A 5xx whose body carries the kind of detail a framework leaks when
             # debug output reaches the client. The path and the call are invented.

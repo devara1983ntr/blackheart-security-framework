@@ -256,6 +256,11 @@ class Exchange:
             "timestamp": self.timestamp,
             "method": self.method,
             "url": self.url,
+            # The URL that actually answered. A stored record whose `url` is only
+            # the first hop makes every consumer re-derive the final address from
+            # the chain, and one of them will get it wrong.
+            "final_url": (self.redirect_chain[-1]["location"]
+                          if self.redirect_chain else self.url),
             "scheme": parsed.scheme,
             "host": parsed.hostname,
             "port": parsed.port,

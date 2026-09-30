@@ -398,6 +398,16 @@ class _Handler(BaseHTTPRequestHandler):
             value = query.split("=", 1)[1] if "=" in query else ""
             self._send(200, f"<html><body><p>You searched for: {value}</p></body></html>",
                        "text/html; charset=utf-8")
+        elif path == "/fixture.js":
+            # A script that references more paths, so the discovery reader has
+            # something real to read and the GraphQL reference is one the site
+            # makes rather than one the tool guessed at.
+            self._send(200, (
+                "// fixture script: generated locally for the test suite\n"
+                "const items = fetch('/api/items/1');\n"
+                "const search = '/search?q=';\n"
+                "const gql = '/graphql';\n"
+                "export { items, search, gql };\n"), "application/javascript")
         elif path == "/encoded":
             value = query.split("=", 1)[1] if "=" in query else ""
             self._send(200, f"<html><body><p>You searched for: {value}</p></body></html>",
@@ -470,11 +480,15 @@ def _index_html(host):
 
 
 def _sitemap(host):
+    # The sitemap lists one path the scope excludes. A crawler that ignores the
+    # exclusion would fetch it, so this is the fixture's check on the scope gate
+    # being consulted for references the tool found by itself.
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>http://{host}/</loc></url>
   <url><loc>http://{host}/text</loc></url>
   <url><loc>http://{host}/file.pdf</loc></url>
+  <url><loc>http://{host}/private/notes</loc></url>
 </urlset>
 """
 

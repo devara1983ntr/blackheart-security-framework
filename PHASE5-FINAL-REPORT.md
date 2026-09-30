@@ -23,7 +23,7 @@ to declare completion if any listed condition fails, and two conditions are open
 | Mandatory scope file checked before every request; no bypass | **Met** — §7, asserted by test |
 | No bypass switch, no hidden override | **Met** — §7, a test walks the argument tree |
 | Findings stay potential; differences stay observable differences | **Met** — §10, §15 |
-| Comprehensive positive and negative tests | **Met** — §18, 421 tests |
+| Comprehensive positive and negative tests | **Met** — §18, 490 tests |
 | Deterministic local fixtures only | **Met** — §18, §19 |
 | `phase5-validation.yml` exists | **Met** — §19 |
 | End-to-end test with deliberate failure paths | **Met** — §18 |
@@ -78,7 +78,7 @@ potential finding as confirmed.
 | Emergency | Read-only collection, structurally read-only | `workbench/emergency.py` |
 | Reporting | Report assembly with derived counts and verification | `workbench/report.py` |
 | Surface | 21 commands, four exit codes, JSON output | `workbench/cli.py` |
-| Tests | 12 modules, 421 tests, loopback fixtures | `workbench/tests/` |
+| Tests | 15 modules, 490 tests, loopback fixtures | `workbench/tests/` |
 | Documentation | 5 documents including a real transcript | `docs/workbench/` |
 | CI | Workbench suite with a loopback-only socket layer, run twice, plus bandit | `.github/workflows/phase5-validation.yml` |
 
@@ -116,12 +116,12 @@ third-party package, and has no build step.
 
 | Measure | Value | How measured |
 |---|---|---|
-| Production modules | 17 | `ls workbench/*.py \| wc -l` |
-| Production lines | 8,151 | `wc -l workbench/*.py` |
-| Test modules | 12 | `ls workbench/tests/test_*.py \| wc -l` |
-| Test lines | 5,807 | `wc -l workbench/tests/*.py` |
-| Tests | 421 | `python3 workbench/run_tests.py --json` |
-| Commands | 17 | `workbench/cli.py` `COMMANDS`, asserted equal to the parser by test |
+| Production modules | 18 | `ls workbench/*.py \| wc -l` |
+| Production lines | 8,699 | `wc -l workbench/*.py` |
+| Test modules | 15 | `ls workbench/tests/test_*.py \| wc -l` |
+| Test lines | 6,965 | `wc -l workbench/tests/*.py` |
+| Tests | 490 | `python3 workbench/run_tests.py --json` |
+| Commands | 21 | `workbench/cli.py` `COMMANDS`, asserted equal to the parser by test |
 
 The module set is listed in `docs/workbench/README.md`. The two modules a
 reviewer should read first are `scope.py` and `http_client.py`, because they are
@@ -346,7 +346,7 @@ plain text while the field beside them showed `[redacted]`.
 
 ## 18. The test suite
 
-`python3 workbench/run_tests.py` — **421 tests, 12 modules, 0 failures**, ~90
+`python3 workbench/run_tests.py` — **490 tests, 15 modules, 0 failures**, ~100
 seconds.
 
 | Module | Tests | What it covers |
@@ -704,7 +704,7 @@ was re-run on that tree after the last content change, and the values in §23 an
 
 **Frozen at that commit:**
 
-- the workbench: 17 production modules, 15 test modules, 490 tests, 21 commands;
+- the workbench: 18 production modules, 15 test modules, 490 tests, 21 commands;
 - the policy layer: `policy/BLACKHEART-POLICY.json` v1.0.0, `workbench/policy.py`,
   the acceptance gate at the socket, and the ten documents it names;
 - the agent layer: two new documents, two extended, and the activation prompt's
@@ -741,6 +741,8 @@ amendment to this one.
 | `ebd3a70` | workbench: document `--secret` and `--history`, and say what redaction now covers |
 | `65db525` | docs: a scope file with no request budget is refused, not defaulted |
 | — | the Phase 5 report and CHANGELOG entry |
+| `85ebf32` | Phase 5: the policy layer, the legal documents, and the adversarial review |
+| — | the finalization: figures reconciled, the review recorded, the freeze declared |
 
 ## Appendix B: reproducing every claim in this report
 

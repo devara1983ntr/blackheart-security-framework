@@ -31,7 +31,7 @@ the design, and the assumptions are exactly what an independent reviewer is for.
 
 ## 2. Scope
 
-In scope: `workbench/` (17 modules), the policy layer (`policy/`,
+In scope: `workbench/` (18 modules), the policy layer (`policy/`,
 `workbench/policy.py`) and the ten documents it names, the CLI surface, the
 evidence and reporting path, and the CI workflow that runs the suite.
 

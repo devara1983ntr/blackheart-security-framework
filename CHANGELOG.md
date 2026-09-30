@@ -61,8 +61,8 @@ documentation maturity and the state of the executable layer.
   failing with `NameError`. **Independent review remains outstanding** — no separate
   reviewer was available, and the document says so in its first section.
 
-- **The workbench — `workbench/`, a first-party authorized-use toolkit.** Seventeen
-  production modules and a suite of 421 tests, with no dependency outside the
+- **The workbench — `workbench/`, a first-party authorized-use toolkit.** Eighteen
+  production modules and a suite of 490 tests, with no dependency outside the
   standard library and no subprocess anywhere. Every request goes through one
   function, `workbench/scope.py`'s `require()`, which raises on an unlisted host,
   an excluded path, a disallowed method, an exhausted budget or an expired

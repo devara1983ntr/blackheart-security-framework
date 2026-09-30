@@ -312,6 +312,15 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(429, "too many requests", headers={"Retry-After": "30"})
         elif path == "/missing":
             self._send(404, "not found")
+        elif path == "/stack-trace":
+            # A 5xx whose body carries the kind of detail a framework leaks when
+            # debug output reaches the client. The path and the call are invented.
+            self._send(500, (
+                "Traceback (most recent call last):\n"
+                '  File "/var/www/app/views.py", line 42, in handler\n'
+                "    payload = fetch(item_id)\n"
+                "ValueError: fixture error, present to exercise the disclosure check\n"),
+                "text/plain; charset=utf-8")
         elif path == "/big":
             size = int(dict(p.split("=", 1) for p in query.split("&") if "=" in p)
                        .get("size", "2000000")) if query else 2000000
@@ -570,6 +579,12 @@ def write_scope(tmpdir, **overrides):
     return path
 
 
+def tempfile_dir():
+    """A fresh temporary directory. Re-exported so tests import one module."""
+    import tempfile
+    return tempfile.mkdtemp(prefix="bh-workbench-")
+
+
 def guess_free_port():
     """A port that is free right now, for tests that need a closed one."""
     s = socket.socket()
@@ -583,6 +598,6 @@ __all__ = [
     "FIXTURE_MARKER", "FIXTURE_NOTE", "FixtureServer", "scope_data",
     "write_scope", "build_pdf", "build_zip", "build_nested_zip",
     "build_traversal_zip", "build_bomb_zip", "build_many_entries_zip",
-    "build_malformed_zip", "build_tar_gz", "guess_free_port",
+    "build_malformed_zip", "build_tar_gz", "guess_free_port", "tempfile_dir",
     "PDF_TITLE", "PDF_AUTHOR", "PDF_TEXT_PAGE1", "PDF_TEXT_PAGE2", "PDF_LINK_URL",
 ]

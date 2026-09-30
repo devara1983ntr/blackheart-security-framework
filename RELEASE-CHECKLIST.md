@@ -147,7 +147,7 @@ library alone and are what CI enforces on every push.
 | 9.2 | 111 vendored defects registered individually with reasons | ✅ |
 | 9.3 | 48 authored defects fixed | ✅ |
 | 9.4 | Every internal link resolves; every anchor matches a real `id` | ✅ |
-| 9.5 | `FILE-INDEX.txt` in sync (4,410 entries) | ✅ |
+| 9.5 | `FILE-INDEX.txt` in sync (4,429 entries) | ✅ |
 | 9.6 | Every documented figure verified against the tree by audit group 16 | ✅ |
 | 9.7 | No unfinished-work markers or placeholders outside templates | ✅ |
 

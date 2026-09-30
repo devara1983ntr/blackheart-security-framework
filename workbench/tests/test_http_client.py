@@ -14,7 +14,7 @@ import time
 from workbench import http_client as hc
 from workbench import scope as sc
 from workbench.tests import fixtures
-from workbench.tests.harness import contains, equal, not_contains, raises
+from workbench.tests.harness import check, contains, equal, not_contains, raises
 
 HOST = "127.0.0.1"
 
@@ -249,11 +249,17 @@ def test_cookie_headers_are_redacted_in_the_record():
                         headers={"Cookie": "sid=fixture-cookie-value",
                                  "X-API-Key": "fixture-api-key"})
         record = ex.record()
-        equal(record["request_headers"]["Cookie"], hc.REDACTED)
+        equal(record["request_headers"]["Cookie"], f"sid={hc.REDACTED}")
         equal(record["request_headers"]["X-API-Key"], hc.REDACTED)
-        equal(record["response"]["headers"]["Set-Cookie"], hc.REDACTED)
+        # The cookie's value goes; its attributes stay, because the flags are the
+        # part a review needs and they are not secret.
+        set_cookie = record["response"]["headers"]["Set-Cookie"]
+        contains(set_cookie, "HttpOnly")
+        contains(set_cookie, "SameSite=Strict")
+        check(hc.is_redacted(set_cookie), "the cookie value must be removed")
         blob = json.dumps(record)
         not_contains(blob, "fixture-cookie-value")
+        not_contains(blob, "fixture-not-a-real-value")
         not_contains(blob, "fixture-api-key")
 
 

@@ -46,16 +46,79 @@ SENSITIVE_HEADERS = (
 DEFAULT_UA = "BLACKHEART-workbench/1.0 (+authorized assessment; see workbench/AUTHORIZED-USE.md)"
 
 
+# Cookie attributes are configuration, not secrets: whether a session cookie
+# carries HttpOnly is exactly the kind of thing a review needs to see, and it is
+# not something an attacker learns anything from. Values are removed; attributes
+# are kept.
+COOKIE_ATTRIBUTES = ("path", "domain", "expires", "max-age", "samesite",
+                     "priority", "partitioned")
+
+
+def _redact_cookie_header(value):
+    """`Cookie: a=1; b=2` becomes `Cookie: a=[redacted]; b=[redacted]`."""
+    parts = []
+    for segment in str(value).split(";"):
+        stripped = segment.strip()
+        if not stripped:
+            continue
+        if "=" in stripped:
+            name = stripped.split("=", 1)[0].strip()
+            parts.append(f"{name}={REDACTED}")
+        else:
+            parts.append(stripped)
+    return "; ".join(parts) if parts else REDACTED
+
+
+def _redact_set_cookie(value):
+    """Keep the cookie name and its attributes; remove the value it carries.
+
+    Replacing the whole line with `[redacted]` was the first thing this code did
+    and it made the response unusable as evidence: the flags are the part a
+    reviewer reads. The value is the part that must not be stored.
+    """
+    parts = []
+    for index, segment in enumerate(str(value).split(";")):
+        stripped = segment.strip()
+        if not stripped:
+            continue
+        if "=" not in stripped:
+            parts.append(stripped)                      # HttpOnly, Secure, ...
+            continue
+        name, _, attr_value = stripped.partition("=")
+        name = name.strip()
+        if index == 0 or name.lower() not in COOKIE_ATTRIBUTES:
+            parts.append(f"{name}={REDACTED}")
+        else:
+            parts.append(f"{name}={attr_value.strip()}")
+    return "; ".join(parts) if parts else REDACTED
+
+
+def is_redacted(value):
+    """True when a header value carries the marker, wholly or in part."""
+    return REDACTED in str(value)
+
+
 def redact_headers(headers):
     """Case-insensitive redaction, applied wherever headers are recorded.
 
     The point is not tidiness: an exchange written to disk with a live
     `Authorization` header turns the evidence directory into a credential store,
     and evidence gets copied, pasted into reports and attached to tickets.
+
+    Cookie headers are redacted value-by-value rather than line-by-line, so the
+    record still says which flags were set without storing what the cookie held.
     """
     out = {}
     for name, value in headers.items():
-        out[name] = REDACTED if name.lower() in SENSITIVE_HEADERS else value
+        lowered = name.lower()
+        if lowered == "set-cookie":
+            out[name] = _redact_set_cookie(value)
+        elif lowered == "cookie":
+            out[name] = _redact_cookie_header(value)
+        elif lowered in SENSITIVE_HEADERS:
+            out[name] = REDACTED
+        else:
+            out[name] = value
     return out
 
 

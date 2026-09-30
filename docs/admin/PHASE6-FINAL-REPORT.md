@@ -223,7 +223,8 @@ difference is normal machine variance, not a change of state.
 | Prerequisite commits | none — this phase sits directly on `3703312` |
 | Follow-up commit | **`2c05e1a`** — this report's own measured figures |
 | Second follow-up | the documentation commit that records the repeated gate sweep below |
-| Delivery-status record | `e38f103` — this report's §10a, recording the credential boundary; and the revision that carries the corrected figures in this table |
+| Delivery-status record | `e38f103` — the commit that first recorded §10a's delivery boundary; the commits after it carry only this report's text |
+| Figures in this table | measured at the tree of `e38f103`; no commit after it changes any file except this one |
 | Branch state | `phase5/workbench`, one commit ahead of `3703312` |
 | Push / PR / CI / merge | **Not performed — blocked at the credential boundary.** See §10a |
 | Independent review | **Outstanding — not performed.** No genuinely separate reviewer is available, and none is claimed |
@@ -240,7 +241,7 @@ section records that fact rather than an assumption about it.**
 
 | Delivery element | Actual state |
 |---|---|
-| Local branch | **Ready.** `phase5/workbench`, working tree clean, **25 commits** ahead of `main` (`776c89fe`), **89 files**, **+23,222 / −32** — measured with `git rev-list --count main..HEAD` and `git diff --shortstat main..HEAD` at the head recorded in §10 |
+| Local branch | **Ready.** `phase5/workbench`, working tree clean. At `e38f103` — the commit that first recorded this delivery boundary — the branch was **25 commits** ahead of `main` (`776c89fe`), **89 files**, **+23,222 / −32**, measured with `git rev-list --count main..HEAD` and `git diff --shortstat main..HEAD`. The commits after it carry only this report's own delivery record, so they add this file's text and nothing else |
 | Remote configuration | **Missing.** No `origin` is configured in this environment |
 | Credential mechanism | **Unavailable.** No GitHub CLI, no credential helper, no stored credential file, no token in the environment, no SSH key or agent |
 | Push | **Not performed.** Nothing was sent to any remote |

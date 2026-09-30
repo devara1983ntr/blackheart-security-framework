@@ -119,7 +119,7 @@ third-party package, and has no build step.
 | Production modules | 18 | `ls workbench/*.py \| wc -l` |
 | Production lines | 8,699 | `wc -l workbench/*.py` |
 | Test modules | 15 | `ls workbench/tests/test_*.py \| wc -l` |
-| Test lines | 6,965 | `wc -l workbench/tests/*.py` |
+| Test lines | 6,969 | `wc -l workbench/tests/*.py` |
 | Tests | 490 | `python3 workbench/run_tests.py --json` |
 | Commands | 21 | `workbench/cli.py` `COMMANDS`, asserted equal to the parser by test |
 
@@ -684,7 +684,7 @@ command parser so that a command requiring `--scope` cannot be described as exem
 | Step | State |
 |---|---|
 | Local gates on the frozen tree | **green** — suite 490, `validate.py` 8/8, `gap_audit.py` 20/20, capability audit current, `bandit -ll` exit 0 |
-| Push of `phase5/workbench` | **not performed here.** The remote is configured, but the credential is the operator's and is not held by this environment. §29 forbids asking for it in a transcript |
+| Push of `phase5/workbench` | **not performed here.** The branch is 18 commits ahead of `main` (`3f166f6`); the remote is configured and no credential exists in this environment. §29 forbids asking for one in a transcript, so the push is the operator's to make: `git push -u origin phase5/workbench` |
 | One pull request, base `main` | prepared — the body is reconciled to the measured values; opening it needs the same credential |
 | CI on the pull request | **not run** — it runs when the push happens |
 | Independent review | **outstanding**, per §29 |
@@ -742,7 +742,9 @@ amendment to this one.
 | `65db525` | docs: a scope file with no request budget is refused, not defaulted |
 | — | the Phase 5 report and CHANGELOG entry |
 | `85ebf32` | Phase 5: the policy layer, the legal documents, and the adversarial review |
-| — | the finalization: figures reconciled, the review recorded, the freeze declared |
+| `670ce06` | Phase 5: reconcile every published figure with the gates, and record the review |
+| `3f166f6` | workbench: keep the static-analysis gate clean rather than suppressing the finding |
+| — | the freeze: this report's final figures, and the branch is frozen |
 
 ## Appendix B: reproducing every claim in this report
 

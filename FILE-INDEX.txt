@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4403
+# Total entries: 4410
 
 .gitattributes
 .github/CODEOWNERS
@@ -20,6 +20,7 @@
 .github/UPSTREAM-MANIFEST.json
 .github/dependabot.yml
 .github/known-vulnerable-fixtures.json
+.github/scripts/check_authored_config.py
 .github/scripts/gap_audit.py
 .github/scripts/gen_adapters.py
 .github/scripts/gen_collection_adapters.py
@@ -31,10 +32,15 @@
 .github/scripts/repo_settings.py
 .github/scripts/sync_upstream.py
 .github/scripts/validate.py
+.github/scripts/verify_capability_audit.py
+.github/scripts/watch_upstream.py
 .github/secret-allowlist.json
 .github/upstream-link-defects.json
+.github/workflows/authored-scan.yml
 .github/workflows/pages.yml
+.github/workflows/site-verify.yml
 .github/workflows/upstream-sync.yml
+.github/workflows/upstream-watch.yml
 .github/workflows/validate.yml
 .gitignore
 AGENT.md
@@ -49,6 +55,7 @@ README.md
 RELEASE-CHECKLIST.md
 ROADMAP.md
 SECURITY.md
+docs/CAPABILITY-AUDIT.md
 docs/GLOSSARY.md
 docs/README.md
 docs/SKILLS.md

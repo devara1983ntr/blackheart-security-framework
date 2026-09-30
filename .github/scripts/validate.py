@@ -369,8 +369,27 @@ def check_index(r):
     on_disk = set(walk_files(REPO)) - {"FILE-INDEX.txt"}
     unindexed = sorted(p for p in on_disk if p not in entries)
     dangling = sorted(e for e in entries if e not in on_disk)
-    ok = not (unindexed or dangling)
+    # The same rule as the link check, applied to this check's own total: a
+    # published figure is a claim, and this one had drifted. README published
+    # 4,403 entries in two places while the index held 4,410, and nothing failed,
+    # because only the link total was ever asserted. A number that is published
+    # where nobody counts it is a number that will be wrong.
+    stale = []
+    for rel, pattern in (
+            ("README.md", "| `index` | {n:,} entries"),
+            ("README.md", "all {n:,} files, one per line"),
+            ("RELEASE-CHECKLIST.md", "| 9.5 | `FILE-INDEX.txt` in sync ({n:,} entries)")):
+        path = os.path.join(REPO, rel)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            if pattern.format(n=len(entries)) not in fh.read():
+                stale.append(rel)
+
+    ok = not (unindexed or dangling or stale)
     detail = f"{len(entries)} entries; {len(unindexed)} unindexed; {len(dangling)} dangling"
+    if stale:
+        detail += f"; published index figure stale in {stale}"
     r.add("index", ok, detail + (f"; e.g. unindexed {unindexed[:3]}" if unindexed else ""))
 
 

@@ -135,16 +135,19 @@ library alone and are what CI enforces on every push.
 | 8.6 | `test_interactions.py` | 81/81 |
 | 8.7 | Vendored integrity: 3,864 files byte-identical to `19392f7a` | ✅ |
 | 8.8 | Link registry: 111 registered, 0 unregistered defects | ✅ |
+| 8.9 | `upstream-watch.yml`: read-only, both pinned sources, drift classified | ✅ |
+| 8.10 | `site-verify.yml`: browser gates run in CI, not only locally | ✅ |
+| 8.11 | `authored-scan.yml`: authored config parses, capability audit claims hold, authored Python clean at MEDIUM+ | ✅ |
 
 ## 9. Links & documentation
 
 | # | Check | Status |
 |---|---|---|
-| 9.1 | 5,271 local links; 0 broken in Blackhearts-authored docs | ✅ |
+| 9.1 | 5,279 local links; 0 broken in Blackhearts-authored docs | ✅ |
 | 9.2 | 111 vendored defects registered individually with reasons | ✅ |
 | 9.3 | 48 authored defects fixed | ✅ |
 | 9.4 | Every internal link resolves; every anchor matches a real `id` | ✅ |
-| 9.5 | `FILE-INDEX.txt` in sync (4,403 entries) | ✅ |
+| 9.5 | `FILE-INDEX.txt` in sync (4,410 entries) | ✅ |
 | 9.6 | Every documented figure verified against the tree by audit group 16 | ✅ |
 | 9.7 | No unfinished-work markers or placeholders outside templates | ✅ |
 
@@ -153,7 +156,7 @@ library alone and are what CI enforces on every push.
 | # | Check | Status |
 |---|---|---|
 | 10.1 | JSON5 config parses; 374/374 skills declared | ✅ |
-| 10.2 | 3 workflows: `validate`, `pages`, `upstream-sync` | ✅ |
+| 10.2 | 6 workflows: `validate`, `pages`, `upstream-sync`, `upstream-watch`, `site-verify`, `authored-scan` | ✅ |
 | 10.3 | `.gitattributes` marks vendored files `linguist-vendored` | ✅ |
 | 10.4 | `CODEOWNERS`, Dependabot config, issue/PR templates present | ✅ |
 | 10.5 | No temp, backup, log or editor-dropping files in the tree | ✅ |

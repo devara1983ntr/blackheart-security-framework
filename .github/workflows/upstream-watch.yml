@@ -1,0 +1,188 @@
+name: upstream-watch
+
+# Read-only detection of movement in either pinned third-party source.
+#
+# What this job is, and what it is not
+# ------------------------------------
+# It **observes**. Weekly, it resolves the head of each upstream repository,
+# compares it with the commit Blackhearts has pinned, classifies the difference,
+# and writes a report. It has `contents: read`, it does not check out with
+# credentials it could push with, and the script it runs writes nothing into the
+# working tree. There is no path from this job to a commit on any branch.
+#
+# It is not a second sync system, and it deliberately does not duplicate
+# `upstream-sync.yml`:
+#
+#   upstream-watch.yml (this job)   scheduled, read-only, both sources.
+#                                   Reports *what* moved and *what kind* of
+#                                   change it is. Cannot write anything.
+#
+#   upstream-sync.yml               scheduled, writes a branch, re-vendors the
+#                                   skill mirror, re-audits it, regenerates the
+#                                   adapters, and opens a pull request for a
+#                                   human to merge. Covers the skill mirror.
+#
+# Why both sources matter: `upstream-sync` covers `claude-skills`. The catalogue
+# (`awesome-openclaw-skills`) has its own pinned commit, recorded in the same
+# manifest, and until this job existed nothing watched it. A pin that is written
+# down but never checked is a claim, not a control.
+#
+# When drift is found
+# -------------------
+# Nothing is fetched downstream, vendored, patched, or deleted. A single
+# tracking issue is opened — or, if one is already open, commented on, so a
+# weekly repeat cannot spam the tracker — naming what moved and linking the
+# classified report. A human decides. That is the whole mechanism: automatic
+# *detection*, automatic *preparation*, never automatic *admission*.
+#
+# Schedule: Mondays 06:41 UTC. Weekly is frequent enough to notice movement
+# within days and rare enough that neither upstream sees meaningful traffic;
+# the script needs no blob content, so a full run costs seconds. Off the hour on
+# purpose, because scheduled workflows are heavily contended at :00.
+#
+# Note: GitHub disables scheduled workflows after 60 days of repository
+# inactivity. If the weekly report stops arriving, re-enable it from the
+# Actions tab.
+on:
+  schedule:
+    - cron: '41 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'Limit the watch to one source'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - skills
+          - catalogue
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    name: Watch both pinned upstreams
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Watch both sources
+        # No dependencies to install: the watcher uses git and the standard
+        # library only. A watchdog that needs a supply chain of its own would be
+        # a poor watchdog for a supply-chain project.
+        id: watch
+        run: |
+          set -uo pipefail
+          args=""
+          if [ -n "${{ inputs.source }}" ]; then
+            args="--source ${{ inputs.source }}"
+          fi
+          # No `set -e`: the watcher's exit code is the finding, and it must be
+          # read and published before anything else happens.
+          python3 .github/scripts/watch_upstream.py $args --json --report watch-report.txt \
+            > watch-report.json
+          rc=$?
+          python3 - <<'PY'
+          import json, os
+          try:
+              with open('watch-report.json', encoding='utf-8') as fh:
+                  report = json.load(fh)
+          except Exception:
+              report = {'sources': []}
+          drift = [s for s in report['sources'] if s.get('drift')]
+          blind = [s for s in report['sources'] if s.get('error')]
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f"drift={len(drift)}\n")
+              fh.write(f"unreadable={len(blind)}\n")
+              fh.write("names=" + ",".join(s['source'] for s in drift + blind) + "\n")
+          PY
+          cat watch-report.txt
+          # Exit 1 means the watch could not do its job — an upstream could not be
+          # read. That fails the run on purpose: a watchdog that cannot see the
+          # thing it guards must not report silence as health, and the failure is
+          # the only signal that reaches a person without being looked for.
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::The upstream watch did not complete (watcher exit $rc)." \
+                 "A source could not be read; see the report above."
+            exit 1
+          fi
+
+      - name: Publish the report to the run summary
+        # Always, including on failure: a watchdog whose evidence is missing
+        # when it matters is not evidence.
+        if: always()
+        run: |
+          {
+            echo '## Upstream watch — read-only'
+            echo
+            echo 'Nothing was fetched downstream, vendored, written, or deleted.'
+            echo
+            echo '```text'
+            cat watch-report.txt 2>/dev/null || echo 'no report produced'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update the tracking issue when a person is needed
+        # Drift is information, not a build failure. This step records it where a
+        # person will see it. A watch that could not run has already failed the
+        # job; the issue covers both, because both need the same decision.
+        if: always() && (steps.watch.outputs.drift != '0' || steps.watch.outputs.unreadable != '0')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TITLE='Upstream drift needs a human decision'
+          BODY=$(mktemp)
+          {
+            echo "The scheduled \`upstream-watch\` job needs a person: it either found movement in a pinned upstream source, or could not read one."
+            echo
+            echo "**Nothing has been changed by this job.** It runs with \`contents: read\` and"
+            echo "writes no file into the repository. Detection is automatic; admission is not."
+            echo
+            echo '```text'
+            cat watch-report.txt
+            echo '```'
+            echo
+            echo "### What happens next"
+            echo
+            echo "- **\`claude-skills\` drift** — \`.github/workflows/upstream-sync.yml\` opens a"
+            echo "  pull request that re-vendors the changed files, re-audits them, regenerates"
+            echo "  the affected adapters and updates the manifest. Review that diff and merge it,"
+            echo "  or close it. Nothing merges itself."
+            echo "- **\`catalogue\` drift** — the index is vendored verbatim and no entry is ever"
+            echo "  resolved automatically. Re-vendoring it is a deliberate, reviewed change; see"
+            echo "  \`skills/catalog/README.md\` for the process each entry must pass first."
+            echo "- **A pin that is no longer reachable upstream** means history was rewritten or"
+            echo "  the branch was replaced. The diff cannot be produced. Decide the pin and the"
+            echo "  mirror deliberately: \`VENDOR.md\` §8 describes the re-vendor path."
+            echo
+            echo "### Where this came from"
+            echo
+            echo "Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Report produced by \`.github/scripts/watch_upstream.py\` (read-only)."
+          } > "$BODY"
+
+          existing=$(gh issue list --state open --limit 200 --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$BODY"
+            echo "Commented on existing tracking issue #$existing."
+          else
+            gh issue create --title "$TITLE" --body-file "$BODY"
+          fi
+
+      - name: Up to date — done
+        if: steps.watch.outputs.drift == '0'
+        run: echo 'Both pinned sources are at their recorded commits. Nothing to do.'

@@ -9,10 +9,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This repository is documentation-first, but it also carries executable content: a
 complete mirror of a third-party catalogue (3,864 files), a validation gate, and
-two automation workflows. Versions therefore track both documentation maturity
+six automation workflows. Versions therefore track both documentation maturity
 and the state of the executable layer.
 
 ## [Unreleased]
+
+### Added
+- **`upstream-watch.yml` and `watch_upstream.py` — the second pinned source was
+  unwatched.** `upstream-sync.yml` covers the skill mirror. The catalogue
+  (`VoltAgent/awesome-openclaw-skills`) had its commit recorded in
+  `.github/UPSTREAM-MANIFEST.json` and nothing that ever checked it: a pin that
+  is written down and never verified is a claim, not a control. The watch runs
+  weekly and on demand, resolves the head of **both** sources, compares it with
+  the recorded pin, and classifies what moved — added, removed, renamed,
+  modified, type-changed, symlink, generated, licence/provenance,
+  workflow/config, and security-sensitive, the last deliberately overlapping the
+  others so a changed workflow is reported as both configuration and risk. It
+  needs no dependencies, uses the standard library and `git` only, fetches no
+  blob content, and writes nothing: it runs with `contents: read` and produces a
+  report. A pin that upstream has rewritten or dropped is reported as its own
+  condition, because a diff cannot describe it — and a source it *cannot read*
+  fails the run rather than passing quietly, because a watch that cannot see
+  upstream has established nothing.
+- **`site-verify.yml` — the only gates that CI never ran.** `check_contrast.py`
+  and `test_interactions.py` measure the published site in a real browser: WCAG
+  AA across both themes including gradient-clipped text, and 81 behavioural
+  checks covering overflow at four viewports, keyboard tab order, the tabs
+  pattern, the error banner, and graceful degradation when a script throws. They
+  were local-only, on the grounds that they need a browser — and a gate that
+  runs when someone remembers is a gate that runs when it is least needed. The
+  failures they catch are exactly the ones static analysis cannot see.
+- **`authored-scan.yml`, `check_authored_config.py` and
+  `verify_capability_audit.py` — the control was never itself controlled.**
+  GitHub does not run a workflow whose YAML it cannot parse, and does not fail a
+  build over it: the error appears in the Actions tab and the repository keeps
+  looking healthy. A typo could therefore disable the gate protecting everything
+  else, and every gate here lives inside the thing that would break. The scan
+  parses every authored YAML/JSON/JSON5 file and checks the shape each workflow
+  needs; it re-resolves every path cited by the capability audit and re-derives
+  every count that document publishes; and it runs static analysis over the
+  ~3,800 lines of first-party Python, failing on anything at MEDIUM or above.
+- **`docs/CAPABILITY-AUDIT.md`.** What the framework can and cannot do, checked
+  against the tree rather than against its own claims. Three families are
+  classified — 27 security capabilities, 15 engineering capabilities and 18
+  framework capabilities — and every ALREADY COVERED row cites the file that
+  implements it. Every row names the file
+  that implements the capability, so a reader can check the row instead of
+  trusting it; capabilities that are **not** held are stated as plainly as those
+  that are. Four real gaps were found and closed (the three above, plus the
+  unscanned authored code); the rest were already covered, partial by design, or
+  deliberately out of scope, with the reason recorded for each.
+
+### Fixed
+- **Four MEDIUM static-analysis findings in the authored tooling, none
+  previously known** — two `urllib.request.urlopen` calls whose scheme is a
+  constant chosen by the script, one `xml.dom.minidom.parseString` on this
+  repository's own `sitemap.xml`, and a literal `/tmp` scratch path in a local
+  screenshot helper. Each is suppressed **at its line** with the reason in a
+  comment, never by disabling a check class globally, and the gate was
+  negative-tested by injecting a real finding and watching it fail.
+- **Published counts that the new workflows made stale**, each re-derived rather
+  than adjusted to match: workflows `3` → `6`; verification scripts `6` → `9`;
+  `FILE-INDEX.txt` `4,403` → `4,410` entries; local links `5,271` → `5,279`; the
+  authored instruction set `54` → `55` files. `gap_audit.py` group 18's own
+  detail line reported three workflows and now reports six.
+- **The index total was published in two places and asserted in none.**
+  `README.md` said 4,403 entries twice while `FILE-INDEX.txt` held 4,410, and
+  `validate.py` computed the real total without ever comparing it to the copies
+  it publishes. Both rows are corrected, and the figure is now asserted where it
+  is counted, negative-tested by making README stale again.
+- **The link check caught its own author.** The count assertion added in the
+  previous change failed the build the moment this change added eight links,
+  which is the entire point of asserting a published figure where it is counted
+  instead of trusting a reader to notice.
 
 ### Fixed
 - **Five published figures were wrong, and the audit that found them was the

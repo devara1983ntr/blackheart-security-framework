@@ -84,7 +84,9 @@ def call(method, path, body=None):
         data=json.dumps(body).encode() if body is not None else None,
     )
     try:
-        with urllib.request.urlopen(req) as r:
+        # Scheme is not attacker-controlled: the URL is a constant GitHub API
+        # endpoint chosen by this script.  # nosec B310
+        with urllib.request.urlopen(req) as r:  # nosec B310
             raw = r.read()
             return r.status, (json.loads(raw) if raw else None)
     except urllib.error.HTTPError as e:

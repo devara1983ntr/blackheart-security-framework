@@ -82,7 +82,9 @@ for page in pages:
 
 # ---- sitemap agrees with the shipped pages --------------------------------
 sm = read(os.path.join(HERE, "sitemap.xml"))
-xml.dom.minidom.parseString(sm)          # raises if malformed
+# Parses this repository's own sitemap.xml from disk, never untrusted input.
+# A malformed file fails the gate, which is the whole purpose of the line.
+xml.dom.minidom.parseString(sm)          # nosec B318
 locs = re.findall(r"<loc>([^<]+)</loc>", sm)
 indexable = [p for p in pages if p != "404.html"]
 if len(locs) != len(indexable):

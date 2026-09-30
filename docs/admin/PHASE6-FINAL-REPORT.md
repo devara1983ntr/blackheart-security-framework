@@ -206,6 +206,11 @@ All gates run on the final tree of this phase, at the commit named in §10.
 | Static analysis | `python3 -m bandit -q -r workbench -ll` | exit 0 |
 | Index | `python3 .github/scripts/gen_index.py --check` | in sync, **4,488** entries |
 
+**The sweep was repeated after the commits that carry this report.** The suite ran
+in 101.1 s on the tree at `29e69e8` and 100.0 s on the final tree; every other gate
+returned the same result in both runs. Both figures are measurements, and the
+difference is normal machine variance, not a change of state.
+
 ## 10. Commit, and the state of the branch
 
 | | |
@@ -216,7 +221,8 @@ All gates run on the final tree of this phase, at the commit named in §10.
 | Insertions / deletions | **+2,158 / −12** |
 | Composition of the diff | **12 new `docs/admin/*.md` files**, `FILE-INDEX.txt`, and five count-bearing carriers (`README.md`, `RELEASE-CHECKLIST.md`, `docs/CAPABILITY-AUDIT.md`, `docs/agent/AGENT-BOOTSTRAP.md`, `site/index.html`) |
 | Prerequisite commits | none — this phase sits directly on `3703312` |
-| Follow-up commit | this report's own measured figures, in the documentation commit immediately after `29e69e8` |
+| Follow-up commit | **`2c05e1a`** — this report's own measured figures |
+| Second follow-up | the documentation commit that records the repeated gate sweep below |
 | Branch state | `phase5/workbench`, one commit ahead of `3703312` |
 | Push / PR / CI / merge | **Not yet performed at the time of writing.** The branch is local; the push boundary is handled by the project's credential mechanism, never by a pasted token and never by storing one |
 

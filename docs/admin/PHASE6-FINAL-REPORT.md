@@ -253,7 +253,7 @@ Three things that earlier revisions of this report ran together:
 | | Commit(s) | What it is |
 |---|---|---|
 | **(a) The original Phase 6 documentation commit** | `29e69e8` — `docs: add the Phase 6 administrator governance layer` | **18 files, +2,158 / −12.** The twelve `docs/admin/` files, `FILE-INDEX.txt`, and the five count-bearing carriers (`README.md`, `RELEASE-CHECKLIST.md`, `docs/CAPABILITY-AUDIT.md`, `docs/agent/AGENT-BOOTSTRAP.md`, `site/index.html`) |
-| **(b) Report and artifact correction commits** | `2c05e1a`, `4bebc6e`, `e38f103`, `3321dca`, `8288c46` | Five commits that touch **only `docs/admin/PHASE6-FINAL-REPORT.md`**. Verified: `git diff --name-only 29e69e8..HEAD` returns exactly that one path |
+| **(b) Report correction commits** | `2c05e1a`, `4bebc6e`, `e38f103`, `3321dca`, `8288c46`, and every later revision of this report | Commits that touch **only `docs/admin/PHASE6-FINAL-REPORT.md`**. The rule is stated so it cannot drift: **every commit after `29e69e8` changes exactly one file**, verifiable with `git diff --name-only 29e69e8..HEAD` however many revisions follow |
 | **(c) The baseline Phase 6 started from** | `3703312` | The Phase 5 documentation head — 21 commits, 77 files, +21,001 / −31, complete through §39 |
 
 ### Branch state, measured at `8288c46`
@@ -267,14 +267,16 @@ figures to it means no later edit to this report can invalidate them.
 | Commits ahead of `main` | **27** — `git rev-list --count main..HEAD` |
 | File changes | **89** — 78 added, 11 modified |
 | Diff | **+23,224 / −32** — `git diff --shortstat main..HEAD` |
-| Ahead of the Phase 6 baseline | **6** commits — `29e69e8` plus the five corrections above |
-| Everything after `29e69e8` | `docs/admin/PHASE6-FINAL-REPORT.md`, and nothing else |
+| Ahead of the Phase 6 baseline | `29e69e8` plus each commit that revises this report. **No total is given**, because it increases by one every time this report is corrected — which is exactly the drift that produced the stale figure this section replaces |
+| Everything after `29e69e8` | `docs/admin/PHASE6-FINAL-REPORT.md`, and nothing else — the stable form of the claim above |
 | Working tree | clean |
 
 **This replaces a stale claim.** Earlier revisions said the branch was "one commit
-ahead of `3703312`". It is **six** ahead. The sentence was true when written and
-became false as the branch grew — which is the argument for pinning figures to a
-named commit rather than describing a moving one.
+ahead of `3703312`"; a later revision said six. Both were true when written and
+both became false as the branch grew. The lesson is recorded rather than hidden:
+**counts that a correction commit can change do not belong in a correction
+document.** Figures here are pinned to the named commit `8288c46`, and claims about
+the branch's shape are stated as rules that hold however much it grows.
 
 **Note on the branch.** This work sits on top of the Phase 5 branch, complete
 through §39 and awaiting its own push. Phase 6 added documentation, and the commits

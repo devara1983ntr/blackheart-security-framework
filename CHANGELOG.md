@@ -15,6 +15,37 @@ documentation maturity and the state of the executable layer.
 
 ## [Unreleased]
 
+### Documentation
+- **The AI-agent documentation set, finalised.** [`docs/agent/README.md`](docs/agent/README.md)
+  is the entry point: the reading order, the policy index, a six-level hierarchy and
+  the conflict rule (stricter wins, then check the implementation, then report it).
+  Six documents carry the operational detail an agent needs and none of it was
+  published before: [`PHASE5-AGENT-OVERVIEW.md`](docs/agent/PHASE5-AGENT-OVERVIEW.md)
+  (read-only vs active, the five statuses and their permitted transitions, limitations),
+  [`PHASE5-AUTHORIZATION-PROTOCOL.md`](docs/agent/PHASE5-AUTHORIZATION-PROTOCOL.md)
+  (the four conditions, the record's fields, the pre-request checklist, the route when
+  authorization is unclear), [`PHASE5-SCOPE-PROTOCOL.md`](docs/agent/PHASE5-SCOPE-PROTOCOL.md)
+  (every field, every refusal and its wording), [`PHASE5-EVIDENCE-PROTOCOL.md`](docs/agent/PHASE5-EVIDENCE-PROTOCOL.md)
+  (the record, the hash checks, what an agent must never do),
+  [`PHASE5-FAILURE-HANDLING.md`](docs/agent/PHASE5-FAILURE-HANDLING.md) (the
+  deterministic matrix over twenty-one conditions) and
+  [`PHASE5-CAPABILITY-NOTES.md`](docs/agent/PHASE5-CAPABILITY-NOTES.md) (how to use
+  HTTP, API, discovery, fuzzing, acquisition, extraction and emergency mode properly).
+  Sixteen candidate documents in the directive became seven: the rest would have
+  restated the command reference, so the agent-specific judgement was consolidated into
+  one file rather than spread across six. Every command, field, status, limit and
+  refusal named in these documents was read out of the implementation.
+- **The usage policies, linked from where a reader will look.** The README, the
+  activation prompt and the published site all point at Terms of Use, Acceptable Use,
+  Privacy Policy, Security Research Disclaimer, Authorization Agreement, Responsible
+  Use, Third-Party Content, the Download and Acquisition Policy, the AI Agent Terms and
+  the machine-readable policy. The site's links use absolute repository URLs, because
+  Pages serves only `site/` and a relative root link there would be dead.
+- **Documentation reconciled with the tree.** `FILE-INDEX.txt`, the link count, the
+  authored-file count the activation prompt publishes, the agent-document count in the
+  capability audit and the workbench command reference were each re-derived from the
+  gate that measures them. No figure in this entry was typed from memory.
+
 ### Added
 - **The policy layer — rules that are enforced, not described.** `policy/BLACKHEART-POLICY.json`
   (v1.0.0) names ten documents and carries the requirements, the acceptance block

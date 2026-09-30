@@ -455,13 +455,13 @@ fixture target.
 |---|---|---|
 | Workbench suite | `python3 workbench/run_tests.py` | 490 passed, 0 failed, 15 modules |
 | Static analysis | `python3 -m bandit -r workbench -ll` | exit 0; 0 issues at MEDIUM or above; 5 line-level suppressions, each with its reason on the preceding line; 97 LOW findings at the full-severity run, expected in test tooling |
-| Repository validation | `python3 .github/scripts/validate.py` | 8/8 — adapters 387, integrity 3,864 vendored files byte-identical, catalogue 32, links 5,381 with 0 broken in authored docs, index 4,467 with 0 unindexed and 0 dangling, secrets, config, history |
+| Repository validation | `python3 .github/scripts/validate.py` | 8/8 — adapters 387, integrity 3,864 vendored files byte-identical, catalogue 32, links 5,424 with 0 broken in authored docs, index 4,475 with 0 unindexed and 0 dangling, secrets, config, history |
 | Gap audit | `python3 .github/scripts/gap_audit.py` | 20/20 |
 | Capability audit | `python3 .github/scripts/verify_capability_audit.py` | 85 claims; every cited path resolves; every published count current |
 | Authored config | `python3 .github/scripts/check_authored_config.py` | 17 files parse; every workflow well-formed |
 | Policy gate | `python3 -m workbench.cli policy validate` | the policy parses; all ten documents it names exist |
 | Policy enforcement | `python3 workbench/run_tests.py test_policy` | 28 passed — including every route the directive named for getting past the gate |
-| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,467 entries |
+| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,475 entries |
 | End-to-end | `python3 workbench/run_tests.py test_end_to_end` | 1 passed |
 
 ---
@@ -473,8 +473,8 @@ from memory.
 
 | Figure | Before the phase | At the phase commit | Final | Derived from |
 |---|---|---|---|---|
-| `FILE-INDEX.txt` entries | 4,435 | 4,449 | 4,467 | `gen_index.py --check` |
-| Local links checked | 5,279 | 5,297 | 5,381 | `validate.py` |
+| `FILE-INDEX.txt` entries | 4,435 | 4,449 | 4,475 | `gen_index.py --check` |
+| Local links checked | 5,279 | 5,297 | 5,424 | `validate.py` |
 | Workflows | 6 | 7 | 7 | `.github/workflows/*.yml` |
 | Authored files (activation prompt) | 55 | 60 | 74 | the walk `gap_audit.py` performs |
 | Capability rows | 62 (29/15/18) | 74 (40/16/18) | 74 (40/16/18) | section row counts |

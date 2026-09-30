@@ -98,7 +98,7 @@ DUPLICATE         two implementations of the same thing  -> none found
 | Code review | ALREADY COVERED | Vendored `code-reviewer`, `adversarial-reviewer` · `.github/PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` |
 | Architecture | ALREADY COVERED | `ARCHITECTURE.md` · vendored `senior-architect` |
 | Refactoring | OPTIONAL | Not authored here; vendored `fix` and `migrate` skills cover it. Adding an authored refactoring guide would duplicate them without new judgement |
-| Documentation | ALREADY COVERED | `docs/` (5 agent docs, 5 modes, 22 guides) · `templates/` · generated `FILE-INDEX.txt` · the link check in `validate.yml` |
+| Documentation | ALREADY COVERED | `docs/` (12 agent docs, 5 modes, 22 guides) · `templates/` · generated `FILE-INDEX.txt` · the link check in `validate.yml` |
 | Git/GitHub | ALREADY COVERED | `CONTRIBUTING.md` · `.github/ISSUE_TEMPLATE/` · `PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` · `.github/dependabot.yml` · `.github/scripts/repo_settings.py` · vendored `git-and-github` |
 | CI/CD | ALREADY COVERED | 7 workflows — see §4. Three dimensions were REAL GAPS and are closed there |
 | Release management | ALREADY COVERED | `RELEASE-CHECKLIST.md`, twelve sections, with the command for every gate |
@@ -131,7 +131,7 @@ all eighteen held — the four that were not are in §4.
 | Manifests | ALREADY COVERED | `.github/UPSTREAM-MANIFEST.json` is the single source for pins, counts and exclusions; `skills/openclaw.example.json5` is generated from the mirror by `.github/scripts/gen_config.py` |
 | Integrity | ALREADY COVERED | `validate.py` adapter-drift and digest checks · `.github/scripts/gen_manifest.py` |
 | Provenance | ALREADY COVERED | `skills/VENDOR.md` §8 · `skills/licenses/claude-skills-LICENSE` · the per-source pins in the manifest · the licence/provenance bucket in `.github/scripts/watch_upstream.py` |
-| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,467 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
+| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,475 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
 | Registry | ALREADY COVERED | The link defect registry, 111 registered, reconciled by `.github/scripts/gen_link_registry.py --check` in CI |
 | Audit gates | ALREADY COVERED | `validate.py` · `gap_audit.py` · `check_site.py` · `audit_seo.py` · `check_contrast.py` · `test_interactions.py` · `check_authored_config.py` · `verify_capability_audit.py` — all in CI (§4) |
 | Doc generation | ALREADY COVERED | `gen_index.py` · `gen_link_registry.py` · `gen_manifest.py` · `gen_adapters.py` · `gen_collection_adapters.py` · `gen_config.py` |

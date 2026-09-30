@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4467
+# Total entries: 4475
 
 .gitattributes
 .github/CODEOWNERS
@@ -57,6 +57,7 @@ CONTRIBUTING.md
 DOWNLOAD-AND-ACQUISITION-POLICY.md
 LEGAL.md
 LICENSE
+PHASE5-DOCUMENTATION-FINAL-REPORT.md
 PHASE5-FINAL-REPORT.md
 PRIVACY-POLICY.md
 README.md
@@ -74,8 +75,15 @@ docs/SKILLS.md
 docs/agent/AGENT-BOOTSTRAP.md
 docs/agent/AGENT-OPERATING-PROTOCOL.md
 docs/agent/AGENT-SKILL-CATALOGUE.md
+docs/agent/PHASE5-AGENT-OVERVIEW.md
+docs/agent/PHASE5-AUTHORIZATION-PROTOCOL.md
+docs/agent/PHASE5-CAPABILITY-NOTES.md
+docs/agent/PHASE5-EVIDENCE-PROTOCOL.md
+docs/agent/PHASE5-FAILURE-HANDLING.md
 docs/agent/PHASE5-SAFETY-RULES.md
+docs/agent/PHASE5-SCOPE-PROTOCOL.md
 docs/agent/PHASE5-WORKBENCH-OPERATIONS.md
+docs/agent/README.md
 docs/guides/ADVERSARY-EMULATION.md
 docs/guides/AGENTIC-AI-SECURITY.md
 docs/guides/ANDROID-TESTING.md

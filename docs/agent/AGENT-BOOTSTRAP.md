@@ -60,7 +60,7 @@ Do not guess at the document set. Derive it:
 FILE-INDEX.txt is the authoritative manifest. It contains one
 repository-relative path per line, for every file in the repository.
 
-The BLACKHEART-authored instruction set you must read completely is 74
+The BLACKHEART-authored instruction set you must read completely is 82
 files. Confirm this number yourself; do not assume it.
 
     Reading order — dependencies first:
@@ -83,8 +83,19 @@ files. Confirm this number yourself; do not assume it.
       docs/agent/AGENT-OPERATING-PROTOCOL.md
                                       tool use, stop conditions, the eleven-step
                                       order and the blocked/ambiguous tree
+      docs/agent/README.md            the reading order, the policy index, and the
+                                      hierarchy; stricter rule wins
+      docs/agent/PHASE5-AGENT-OVERVIEW.md
+                                      what Phase 5 provides; read-only vs active;
+                                      the five statuses
       docs/agent/PHASE5-WORKBENCH-OPERATIONS.md
                                       what each workbench command refuses
+      docs/agent/PHASE5-CAPABILITY-NOTES.md
+                                      per capability: how to use it properly
+      docs/agent/PHASE5-AUTHORIZATION-PROTOCOL.md
+      docs/agent/PHASE5-SCOPE-PROTOCOL.md
+      docs/agent/PHASE5-EVIDENCE-PROTOCOL.md
+      docs/agent/PHASE5-FAILURE-HANDLING.md
 
     LAYER 2 — SCOPE AND METHOD
       docs/guides/SCOPE.md
@@ -331,12 +342,12 @@ BLACKHEART ACTIVATION CONFIRMATION
 
   Repository:        devara1983ntr/blackheart-security-framework @ <commit sha>
   Manifest:          FILE-INDEX.txt, <N> entries enumerated
-  Instruction set:   74 BLACKHEART-authored files read in full
+  Instruction set:   82 BLACKHEART-authored files read in full
   Vendored mirror:   3,864 files, untrusted, adapters reviewed
   Conformance layer: loaded, precedence understood
   Mode:              none selected — awaiting target and instruction
 
-  READ            [ ] 74/74 authored files read completely, end to end
+  READ            [ ] 82/82 authored files read completely, end to end
   VERIFIED        [ ] count derived from FILE-INDEX.txt, not assumed
   RECONCILED      [ ] read as one instruction set; precedence order applied
   UNDERSTOOD      [ ] A scope and authorization
@@ -466,7 +477,14 @@ behaviour.
 ## Related
 
 - [`AGENT.md`](../../AGENT.md) — master instruction
+- [`README.md`](README.md) — the agent documentation index: read this first
 - [`PHASE5-SAFETY-RULES.md`](PHASE5-SAFETY-RULES.md) — authorization first, and the never-do list
+- [`PHASE5-AGENT-OVERVIEW.md`](PHASE5-AGENT-OVERVIEW.md) — what Phase 5 provides, and its limits
+- [`PHASE5-CAPABILITY-NOTES.md`](PHASE5-CAPABILITY-NOTES.md) — how to use each capability properly
+- [`PHASE5-AUTHORIZATION-PROTOCOL.md`](PHASE5-AUTHORIZATION-PROTOCOL.md) — what must exist before anything active
+- [`PHASE5-SCOPE-PROTOCOL.md`](PHASE5-SCOPE-PROTOCOL.md) — the scope model, field by field
+- [`PHASE5-EVIDENCE-PROTOCOL.md`](PHASE5-EVIDENCE-PROTOCOL.md) — the record, the ladder, the prohibitions
+- [`PHASE5-FAILURE-HANDLING.md`](PHASE5-FAILURE-HANDLING.md) — the deterministic failure matrix
 - [`PHASE5-WORKBENCH-OPERATIONS.md`](PHASE5-WORKBENCH-OPERATIONS.md) — the workbench, for agents
 - [`../../policy/BLACKHEART-POLICY.json`](../../policy/BLACKHEART-POLICY.json) — the machine-readable policy
 - [`../AGENT-OPERATING-PROTOCOL.md`](AGENT-OPERATING-PROTOCOL.md) — tool use and stop conditions

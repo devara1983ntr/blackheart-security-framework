@@ -211,9 +211,12 @@ All gates run on the final tree of this phase, at the commit named in §10.
 | | |
 |---|---|
 | Baseline at the start of Phase 6 | `3703312` |
-| Phase 6 commit | the commit that adds this report and the ten documents beside it, subject `docs: add the Phase 6 administrator governance layer` |
-| Files changed, and their measured diffstat | recorded in the follow-up documentation commit that completes this table |
+| Phase 6 commit | **`29e69e8`** — `docs: add the Phase 6 administrator governance layer` |
+| Files changed | **18** |
+| Insertions / deletions | **+2,158 / −12** |
+| Composition of the diff | **12 new `docs/admin/*.md` files**, `FILE-INDEX.txt`, and five count-bearing carriers (`README.md`, `RELEASE-CHECKLIST.md`, `docs/CAPABILITY-AUDIT.md`, `docs/agent/AGENT-BOOTSTRAP.md`, `site/index.html`) |
 | Prerequisite commits | none — this phase sits directly on `3703312` |
+| Follow-up commit | this report's own measured figures, in the documentation commit immediately after `29e69e8` |
 | Branch state | `phase5/workbench`, one commit ahead of `3703312` |
 | Push / PR / CI / merge | **Not yet performed at the time of writing.** The branch is local; the push boundary is handled by the project's credential mechanism, never by a pasted token and never by storing one |
 

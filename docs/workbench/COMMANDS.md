@@ -1,6 +1,6 @@
 # Command surface
 
-One command per capability. `--json` is available on every command and prints a
+Twenty-one commands in eight groups. One command per capability. `--json` is available on every command and prints a
 single object on stdout; without it, the human-readable lines go to stdout.
 
 Invoke as `python3 -m workbench.cli <group> <command> [options]`.
@@ -37,6 +37,10 @@ local files only.
 
 | Command | Scope | What it does |
 |---|---|---|
+| `policy validate [--policy FILE]` | — | Parses the policy, checks every version field, and checks that each of the ten documents it names exists. Sends nothing. |
+| `policy status [--policy FILE] [--state-dir DIR]` | — | Whether an acceptance is recorded on this machine and whether it is current. Exit `1` when it is not. |
+| `policy accept [--policy FILE] [--state-dir DIR]` | — | Records acceptance of the current policy version, locally, with no identity and nothing transmitted. |
+| `policy show [--policy FILE]` | — | Prints the policy as loaded, including the requirements and the enforcement block. |
 | `scope validate --scope FILE` | — | Checks a scope file and prints the summary that will be enforced. |
 | `http inspect --scope FILE --url URL [--method M] [--header 'N: v'] [--history F]` | required | One request, in full: status, final URL, redirect chain, headers, size, timing, the scope decision. |
 | `http replay --scope FILE --history F --id ID [--method M] [--header] [--body] [--confirm-write]` | required | Re-sends a stored request as a new record, linked to the original, and reports how the response differs. A write method needs `--confirm-write` and a scope that allows it. |
@@ -54,6 +58,38 @@ local files only.
 | `evidence manifest --directory DIR [--out FILE] [--verify]` | — | Indexes a directory of records, or re-hashes a bundle or download manifest and reports what disagrees. It will not overwrite an existing manifest unless `--out` names a different file. |
 | `emergency collect --scope FILE --url URL [--out DIR] [--budget N] [--yes]` | required | Read-only collection: the target URL, `/robots.txt` and `/.well-known/security.txt`. Plans and sends nothing until `--yes`. |
 | `report generate [--bundle DIR] [--manifest FILE] [--scope FILE] --out FILE [--title T] [--note N]` | optional | Writes a report from the records a run produced. Every count in it is derived from those records. |
+
+### Policy, and the gate on active work
+
+Every command that would open a socket requires **both** a recorded policy
+acceptance and a scope file. The twelve commands that never reach the network —
+the four `policy` commands, `scope validate`, `http diff`, `http mutate`,
+`resource inspect`, `resource extract`, `evidence hash`, `evidence manifest` and
+`report generate` — are exempt from both, so that analysing evidence someone else
+collected needs no authorization. `api inspect --file` and `report generate` are
+exempt in the same way when they read local files; `api inspect --url` sends a
+request and is gated at the socket even though its `--scope` is optional.
+
+The exemption list is published in `policy/BLACKHEART-POLICY.json` under
+`exempt_operations`, and a test checks it against the command parser, so a command
+that requires `--scope` cannot be described as exempt.
+
+Acceptance is not authorization. `policy status` returning `accepted` establishes
+that the rules were read on this machine and nothing else; the scope file is what
+asserts an authorization, and the tool enforces the file, not the assertion.
+
+```bash
+python3 -m workbench.cli policy status                 # is it accepted, and current?
+python3 -m workbench.cli policy accept                 # record acceptance of v1.0.0
+python3 -m workbench.cli http inspect --scope scope.json --url https://example.test/
+#   -> refused, exit 2, when no acceptance is recorded, before any connection
+```
+
+The acceptance lives in `~/.blackheart/policy-acceptance.json`, mode `600`:
+the policy version, the policy document's SHA-256, and the time. No user name,
+no hostname, nothing about the target, and nothing is uploaded. Change the
+policy and the hash no longer matches, so the acceptance goes stale and active
+work is refused until someone reads the change and accepts again.
 
 ## Examples
 

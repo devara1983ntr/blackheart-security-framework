@@ -16,6 +16,51 @@ documentation maturity and the state of the executable layer.
 ## [Unreleased]
 
 ### Added
+- **The policy layer — rules that are enforced, not described.** `policy/BLACKHEART-POLICY.json`
+  (v1.0.0) names ten documents and carries the requirements, the acceptance block
+  and the exemption list; `workbench/policy.py` records acceptance locally —
+  version, policy SHA-256, timestamp, mode 600, no identity, nothing transmitted —
+  and `require_acceptance()` is the **first statement of `http_client.request()`**,
+  which is the socket boundary rather than the command line. Active operations need
+  a recorded acceptance *and* a valid scope; twelve local, read-only commands are
+  exempt from both so that analysing evidence someone else collected needs no
+  authorization. A material change to the policy invalidates a prior acceptance by
+  content hash, and a record with no hash is refused rather than trusted. Anyone who
+  can write to the state directory can accept the policy — recorded as a residual in
+  the policy itself. Four new commands (`policy validate|status|accept|show`) bring
+  the surface to 21, asserted against the parser.
+- **The legal and usage layer — ten documents, and tests that keep them honest.**
+  [`LEGAL.md`](LEGAL.md), [`TERMS-OF-USE.md`](TERMS-OF-USE.md),
+  [`ACCEPTABLE-USE.md`](ACCEPTABLE-USE.md),
+  [`AUTHORIZATION-AGREEMENT.md`](AUTHORIZATION-AGREEMENT.md),
+  [`RESPONSIBLE-USE.md`](RESPONSIBLE-USE.md),
+  [`SECURITY-RESEARCH-DISCLAIMER.md`](SECURITY-RESEARCH-DISCLAIMER.md),
+  [`PRIVACY-POLICY.md`](PRIVACY-POLICY.md),
+  [`THIRD-PARTY-CONTENT.md`](THIRD-PARTY-CONTENT.md),
+  [`DOWNLOAD-AND-ACQUISITION-POLICY.md`](DOWNLOAD-AND-ACQUISITION-POLICY.md) and
+  [`AI-AGENT-TERMS.md`](AI-AGENT-TERMS.md). Each states what it has not been
+  reviewed for and where effect depends on jurisdiction; the privacy policy
+  describes only audited behaviour; the acquisition policy matches the code's own
+  statuses. Tests assert that no compliance badge, invented company, legal
+  professional or absolute liability claim appears in authored content, that the
+  README and the site link every document, and that the documents and the
+  implementation agree.
+- **The agent documentation layer.** [`docs/agent/PHASE5-SAFETY-RULES.md`](docs/agent/PHASE5-SAFETY-RULES.md)
+  (AUTHORIZATION FIRST, the never-do list, acceptance is not authorization, stop
+  conditions) and [`docs/agent/PHASE5-WORKBENCH-OPERATIONS.md`](docs/agent/PHASE5-WORKBENCH-OPERATIONS.md)
+  (what each command refuses, and the deterministic tree for a blocked or ambiguous
+  path). The existing protocol and activation prompt were extended rather than
+  duplicated: the eleven-step operating order, the decision tree, a Layer 0 for the
+  binding rules, and a reading list and authored-count re-derived to 74 files.
+- **An adversarial review, and the six defects it found.** [`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`](docs/workbench/INDEPENDENT-SECURITY-REVIEW.md)
+  records the method, the findings and a fifteen-route bypass campaign against the
+  policy gate. Fixed: a challenge page written as a successful page acquisition; a
+  record serialised without validation; a report counting records that failed their
+  own hash check; an operator tag written to disk unredacted; a policy acceptance
+  whose hash check could be skipped by deleting a field; and the `policy` commands
+  failing with `NameError`. **Independent review remains outstanding** — no separate
+  reviewer was available, and the document says so in its first section.
+
 - **The workbench — `workbench/`, a first-party authorized-use toolkit.** Seventeen
   production modules and a suite of 421 tests, with no dependency outside the
   standard library and no subprocess anywhere. Every request goes through one

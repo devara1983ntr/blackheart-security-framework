@@ -60,10 +60,20 @@ Do not guess at the document set. Derive it:
 FILE-INDEX.txt is the authoritative manifest. It contains one
 repository-relative path per line, for every file in the repository.
 
-The BLACKHEART-authored instruction set you must read completely is 61
+The BLACKHEART-authored instruction set you must read completely is 74
 files. Confirm this number yourself; do not assume it.
 
     Reading order — dependencies first:
+
+    LAYER 0 — THE BINDING RULES
+      docs/agent/PHASE5-SAFETY-RULES.md
+                                      authorization first; the never-do list
+      policy/BLACKHEART-POLICY.json    the machine-readable policy; v1.0.0
+      LEGAL.md · TERMS-OF-USE.md · ACCEPTABLE-USE.md
+      AUTHORIZATION-AGREEMENT.md · RESPONSIBLE-USE.md
+      SECURITY-RESEARCH-DISCLAIMER.md · PRIVACY-POLICY.md
+      THIRD-PARTY-CONTENT.md · DOWNLOAD-AND-ACQUISITION-POLICY.md
+      AI-AGENT-TERMS.md                the rules, in full, before anything else
 
     LAYER 1 — IDENTITY AND RULE
       AGENT.md                        master instruction, 30 sections
@@ -71,7 +81,10 @@ files. Confirm this number yourself; do not assume it.
       ARCHITECTURE.md                 how the system is built
       SECURITY.md                     threat model, disclosure, secrets
       docs/agent/AGENT-OPERATING-PROTOCOL.md
-                                      tool use, stop conditions
+                                      tool use, stop conditions, the eleven-step
+                                      order and the blocked/ambiguous tree
+      docs/agent/PHASE5-WORKBENCH-OPERATIONS.md
+                                      what each workbench command refuses
 
     LAYER 2 — SCOPE AND METHOD
       docs/guides/SCOPE.md
@@ -122,6 +135,10 @@ files. Confirm this number yourself; do not assume it.
       docs/SKILLS.md
       docs/GLOSSARY.md
       docs/README.md
+      docs/workbench/README.md · THREAT-MODEL.md · LIMITATIONS.md
+      docs/workbench/COMMANDS.md · END-TO-END.md
+      docs/workbench/INDEPENDENT-SECURITY-REVIEW.md
+                                      review status: outstanding, stated as such
       examples/
       README.md · CHANGELOG.md · ROADMAP.md
       CONTRIBUTING.md · CODE_OF_CONDUCT.md
@@ -314,12 +331,12 @@ BLACKHEART ACTIVATION CONFIRMATION
 
   Repository:        devara1983ntr/blackheart-security-framework @ <commit sha>
   Manifest:          FILE-INDEX.txt, <N> entries enumerated
-  Instruction set:   61 BLACKHEART-authored files read in full
+  Instruction set:   74 BLACKHEART-authored files read in full
   Vendored mirror:   3,864 files, untrusted, adapters reviewed
   Conformance layer: loaded, precedence understood
   Mode:              none selected — awaiting target and instruction
 
-  READ            [ ] 61/61 authored files read completely, end to end
+  READ            [ ] 74/74 authored files read completely, end to end
   VERIFIED        [ ] count derived from FILE-INDEX.txt, not assumed
   RECONCILED      [ ] read as one instruction set; precedence order applied
   UNDERSTOOD      [ ] A scope and authorization
@@ -449,6 +466,9 @@ behaviour.
 ## Related
 
 - [`AGENT.md`](../../AGENT.md) — master instruction
+- [`PHASE5-SAFETY-RULES.md`](PHASE5-SAFETY-RULES.md) — authorization first, and the never-do list
+- [`PHASE5-WORKBENCH-OPERATIONS.md`](PHASE5-WORKBENCH-OPERATIONS.md) — the workbench, for agents
+- [`../../policy/BLACKHEART-POLICY.json`](../../policy/BLACKHEART-POLICY.json) — the machine-readable policy
 - [`../AGENT-OPERATING-PROTOCOL.md`](AGENT-OPERATING-PROTOCOL.md) — tool use and stop conditions
 - [`../AGENT-SKILL-CATALOGUE.md`](AGENT-SKILL-CATALOGUE.md) — what each vendored skill is for
 - [`SECURITY-AUDIT.md`](../modes/SECURITY-AUDIT.md) — the default mode

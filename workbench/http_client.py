@@ -33,6 +33,7 @@ import ssl
 import time
 import urllib.parse
 
+from . import policy as policymod
 from .scope import ScopeError, require
 
 REDACTED = "[redacted]"
@@ -294,6 +295,20 @@ def _scrub(text, secrets):
     return text
 
 
+def redact_text(text, secrets=()):
+    """The value-level redaction, for text that is not part of an exchange.
+
+    Operator-written strings — history tags, notes — are stored beside the
+    records rather than inside them, so they never pass through `record()` and
+    were the one field written verbatim. They land in the same file, which made a
+    credential typed into a tag visible in a file that is otherwise redacted end
+    to end. Same redaction, same marker, applied at the same boundary.
+    """
+    if not isinstance(text, str):
+        return text
+    return _scrub(text, secrets)
+
+
 def _scrub_urls(data, secrets):
     """Redact the URL-bearing fields of a record, in place.
 
@@ -379,7 +394,14 @@ def request(guard, url, method="GET", *, headers=None, body=None, timeout=None,
     Returns an `Exchange`. Raises `ScopeError` — and only `ScopeError` — when the
     scope gate refuses, because a refusal is a decision the caller must see
     rather than a transport failure to log and continue past.
+
+    Raises `PolicyError` when the policy has not been accepted. That check is
+    here rather than in the command layer because this function is the only
+    place in the framework that opens a socket: an agent that imports the module
+    and calls it directly meets the same gate as one that uses the CLI.
     """
+    policymod.require_acceptance()
+
     scope = guard.scope
     timeout = float(timeout if timeout is not None else scope.timeout_s)
     max_bytes = int(max_bytes if max_bytes is not None else scope.max_response_bytes)

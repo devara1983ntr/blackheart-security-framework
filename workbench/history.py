@@ -52,7 +52,9 @@ class History:
         self._next_id += 1
         record = exchange.record(secrets=self.secrets)
         record["id"] = entry_id
-        record["tag"] = tag
+        # The tag is written to the same file as the record, so it gets the same
+        # redaction. A credential typed into a tag used to reach disk in the clear.
+        record["tag"] = hc.redact_text(tag, self.secrets)
         record["parent"] = parent
         self.entries.append(record)
         if self.path:

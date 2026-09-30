@@ -12,6 +12,7 @@ licensing controls, or other access restrictions.
 | [`THREAT-MODEL.md`](THREAT-MODEL.md) | What this code must not do, and what it protects against |
 | [`LIMITATIONS.md`](LIMITATIONS.md) | What it cannot establish, stated plainly |
 | [`COMMANDS.md`](COMMANDS.md) | The command surface, with exit codes and worked examples |
+| [`INDEPENDENT-SECURITY-REVIEW.md`](INDEPENDENT-SECURITY-REVIEW.md) | The adversarial review, its findings, and its status: independent review **outstanding** |
 | [`END-TO-END.md`](END-TO-END.md) | A real run against the built-in fixture server, output included |
 
 ## What it is

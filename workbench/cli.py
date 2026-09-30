@@ -50,6 +50,7 @@ from . import fuzz as fuzzmod
 from . import history as hist
 from . import http_client as hc
 from . import mutate as mutatemod
+from . import policy as policymod
 from . import report as reportmod
 from . import scope as sc
 
@@ -64,6 +65,8 @@ PROGRAM = "blackheart"
 #: that a command cannot exist in the code and be missing from the documentation
 #: (or the other way round).
 COMMANDS = (
+    ("policy", "validate"), ("policy", "status"), ("policy", "accept"),
+    ("policy", "show"),
     ("scope", "validate"),
     ("http", "inspect"), ("http", "replay"), ("http", "diff"),
     ("http", "mutate"), ("http", "fuzz"),
@@ -102,7 +105,16 @@ class Result:
 
 # ------------------------------------------------------------------ plumbing
 def _guard(args):
-    """Load the scope file and build a guard. The only way a command gets one."""
+    """Load the scope file and build a guard. The only way a command gets one.
+
+    The policy check comes first and deliberately: an operator who has not
+    accepted the policy is told that, rather than being told their scope file is
+    fine and then having the request refused deeper down.
+    """
+    try:
+        policymod.require_acceptance()
+    except policymod.PolicyError as exc:
+        raise Usage(str(exc)) from None
     scope_path = getattr(args, "scope", None)
     if not scope_path:
         raise Usage(f"{args.command_name} sends requests and requires --scope <file>")
@@ -182,6 +194,89 @@ def _emit(result, args):
         if result.exit_code != EXIT_OK:
             print(f"exit {result.exit_code}", file=sys.stderr)
     return result.exit_code
+
+
+
+# -------------------------------------------------------------------- policy
+def cmd_policy_validate(args):
+    problems = policymod.validate(path=getattr(args, "policy", None))
+    try:
+        policy = policymod.load(getattr(args, "policy", None))
+        versions = {key: policy.get(key) for key in policymod.REQUIRED_VERSIONS}
+    except policymod.PolicyError:
+        versions = {}
+    lines = [f"policy document: {policymod.policy_path(getattr(args, 'policy', None))}"]
+    if problems:
+        lines.append("valid: no")
+        lines.extend(f"  {problem}" for problem in problems)
+    else:
+        lines.append("valid: yes")
+        for key in sorted(versions):
+            lines.append(f"  {key}: {versions[key]}")
+        lines.append("  every document the policy names exists")
+    return Result("policy validate",
+                  {"valid": not problems, "problems": problems, "versions": versions},
+                  lines, EXIT_OK if not problems else EXIT_FAILED)
+
+
+def cmd_policy_status(args):
+    status = policymod.acceptance_status(path=getattr(args, "policy", None))
+    lines = [f"acceptance record: {status['target']}",
+             f"  accepted      : {'yes' if status['accepted'] else 'no'}",
+             f"  policy now    : {status['current_version']}",
+             f"  accepted      : {status['accepted_version'] or 'never'}",
+             f"  accepted at   : {status['accepted_at'] or '-'}",
+             f"  reason        : {status['reason']}"]
+    lines.append("  acceptance records that the policy was read; it is not "
+                 "authorization for any target")
+    lines.append("  active operations need a scope file as well, on every command "
+                 "that sends a request")
+    return Result("policy status", status, lines,
+                  EXIT_OK if status["accepted"] else EXIT_FAILED)
+
+
+def cmd_policy_accept(args):
+    try:
+        record = policymod.accept(getattr(args, "state_dir", None),
+                                  path=getattr(args, "policy", None))
+    except policymod.PolicyError as exc:
+        raise Usage(str(exc)) from None
+    lines = [f"accepted policy version {record['policy_version']} "
+             f"at {record['accepted_at']}",
+             f"  recorded at   : {policymod.acceptance_path(getattr(args, 'state_dir', None))}",
+             f"  policy sha256 : {record['policy_sha256'][:16]}...",
+             "  no identity is recorded and nothing is transmitted",
+             "  this is an acknowledgement, not authorization: scope is still "
+             "required for every request"]
+    return Result("policy accept", record, lines)
+
+
+def cmd_policy_show(args):
+    data = policymod.summary(path=getattr(args, "policy", None),
+                            directory=getattr(args, "state_dir", None))
+    lines = [f"{data['project']} ({data['repository']})",
+             f"  author        : {data['author']}",
+             f"  legal review  : {data['legal_review']}",
+             f"  updated       : {data['updated']}", ""]
+    lines.append("  versions")
+    for key in sorted(data["versions"]):
+        lines.append(f"    {key}: {data['versions'][key]}")
+    lines.append("")
+    lines.append("  documents")
+    for key in sorted(data["documents"]):
+        lines.append(f"    {key}: {data['documents'][key]}")
+    lines.append("")
+    lines.append("  requirements")
+    for key in sorted(data["requirements"]):
+        if key != "active_operation_definition":
+            lines.append(f"    {key}: {data['requirements'][key]}")
+    lines.append("")
+    lines.append(f"  prohibited actions: {len(data['prohibited_actions'])}")
+    lines.append(f"  allowed actions   : {len(data['allowed_actions'])}")
+    lines.append(f"  acceptance        : "
+                 f"{'recorded' if data['status']['accepted'] else 'not recorded'}"
+                 f" ({data['status']['reason']})")
+    return Result("policy show", data, lines)
 
 
 # -------------------------------------------------------------------- scope
@@ -664,6 +759,33 @@ def build_parser():
                              help="a value to redact from recorded bodies and URLs (repeatable)")
         sub.set_defaults(command_name=name)
         return sub
+
+    # policy
+    policy_group = groups.add_parser("policy").add_subparsers(dest="command",
+                                                              required=True)
+    pol_validate = policy_group.add_parser("validate", help="check the policy document")
+    pol_validate.add_argument("--policy", help="path to the policy document")
+    pol_validate.add_argument("--json", action="store_true")
+    pol_validate.set_defaults(handler=cmd_policy_validate, command_name="policy validate")
+
+    pol_status = policy_group.add_parser("status", help="is the policy accepted here?")
+    pol_status.add_argument("--policy")
+    pol_status.add_argument("--state-dir", dest="state_dir",
+                            help="where the acceptance record is kept")
+    pol_status.add_argument("--json", action="store_true")
+    pol_status.set_defaults(handler=cmd_policy_status, command_name="policy status")
+
+    pol_accept = policy_group.add_parser("accept", help="record acceptance locally")
+    pol_accept.add_argument("--policy")
+    pol_accept.add_argument("--state-dir", dest="state_dir")
+    pol_accept.add_argument("--json", action="store_true")
+    pol_accept.set_defaults(handler=cmd_policy_accept, command_name="policy accept")
+
+    pol_show = policy_group.add_parser("show", help="print the policy and its status")
+    pol_show.add_argument("--policy")
+    pol_show.add_argument("--state-dir", dest="state_dir")
+    pol_show.add_argument("--json", action="store_true")
+    pol_show.set_defaults(handler=cmd_policy_show, command_name="policy show")
 
     # scope
     scope_group = groups.add_parser("scope").add_subparsers(dest="command", required=True)

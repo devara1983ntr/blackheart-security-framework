@@ -118,6 +118,11 @@ library alone and are what CI enforces on every push.
 | 7.4 | Pages deploy refuses to run if credential-shaped material appears in `site/` | ✅ |
 | 7.5 | Dependabot security alerts **enabled**; 82 alerts triaged, all in one vendored fixture | ✅ |
 | 7.6 | Accepted-risk disposition written down and enforced by audit group 20 | ✅ |
+| 7.7 | The policy parses and all ten documents it names exist (`policy validate`) | ✅ |
+| 7.8 | Active operations refused without a recorded acceptance, and refused again when an acceptance goes stale (`test_policy`) | ✅ |
+| 7.9 | Local, read-only commands run without an acceptance; the exemption list matches the command parser | ✅ |
+| 7.10 | No compliance badge, invented entity or absolute liability claim in authored content (`test_legal`) | ✅ |
+| 7.11 | Independent security review — **outstanding; not claimed as performed** | ⬜ |
 | 7.7 | Zero Blackhearts-authored dependency manifests | ✅ |
 | 7.8 | Declarative security gate, no executable policy | ✅ |
 | 7.9 | `innerHTML` avoided for dynamic content | ✅ |
@@ -143,11 +148,11 @@ library alone and are what CI enforces on every push.
 
 | # | Check | Status |
 |---|---|---|
-| 9.1 | 5,297 local links; 0 broken in Blackhearts-authored docs | ✅ |
+| 9.1 | 5,381 local links; 0 broken in Blackhearts-authored docs | ✅ |
 | 9.2 | 111 vendored defects registered individually with reasons | ✅ |
 | 9.3 | 48 authored defects fixed | ✅ |
 | 9.4 | Every internal link resolves; every anchor matches a real `id` | ✅ |
-| 9.5 | `FILE-INDEX.txt` in sync (4,449 entries) | ✅ |
+| 9.5 | `FILE-INDEX.txt` in sync (4,467 entries) | ✅ |
 | 9.6 | Every documented figure verified against the tree by audit group 16 | ✅ |
 | 9.7 | No unfinished-work markers or placeholders outside templates | ✅ |
 

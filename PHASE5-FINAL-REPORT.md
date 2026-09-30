@@ -77,7 +77,7 @@ potential finding as confirmed.
 | Reading | PDF, zip, tar, gzip, OOXML and text under limits | `workbench/extract.py` |
 | Emergency | Read-only collection, structurally read-only | `workbench/emergency.py` |
 | Reporting | Report assembly with derived counts and verification | `workbench/report.py` |
-| Surface | 17 commands, four exit codes, JSON output | `workbench/cli.py` |
+| Surface | 21 commands, four exit codes, JSON output | `workbench/cli.py` |
 | Tests | 12 modules, 421 tests, loopback fixtures | `workbench/tests/` |
 | Documentation | 5 documents including a real transcript | `docs/workbench/` |
 | CI | Workbench suite with a loopback-only socket layer, run twice, plus bandit | `.github/workflows/phase5-validation.yml` |
@@ -453,13 +453,15 @@ fixture target.
 
 | Gate | Command | Result |
 |---|---|---|
-| Workbench suite | `python3 workbench/run_tests.py` | 421 passed, 0 failed, 12 modules |
+| Workbench suite | `python3 workbench/run_tests.py` | 490 passed, 0 failed, 15 modules |
 | Static analysis | `python3 -m bandit -r workbench -ll` | exit 0; 0 issues at MEDIUM or above; 5 line-level suppressions, each with its reason on the preceding line; 96 LOW findings at the full-severity run, expected in test tooling |
-| Repository validation | `python3 .github/scripts/validate.py` | 8/8 — adapters 387, integrity 3,864 vendored files byte-identical, catalogue 32, links 5,297 with 0 broken in authored docs, index 4,449 with 0 unindexed and 0 dangling, secrets, config, history |
+| Repository validation | `python3 .github/scripts/validate.py` | 8/8 — adapters 387, integrity 3,864 vendored files byte-identical, catalogue 32, links 5,381 with 0 broken in authored docs, index 4,467 with 0 unindexed and 0 dangling, secrets, config, history |
 | Gap audit | `python3 .github/scripts/gap_audit.py` | 20/20 |
 | Capability audit | `python3 .github/scripts/verify_capability_audit.py` | 85 claims; every cited path resolves; every published count current |
-| Authored config | `python3 .github/scripts/check_authored_config.py` | 16 files parse; every workflow well-formed |
-| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,449 entries |
+| Authored config | `python3 .github/scripts/check_authored_config.py` | 17 files parse; every workflow well-formed |
+| Policy gate | `python3 -m workbench.cli policy validate` | the policy parses; all ten documents it names exist |
+| Policy enforcement | `python3 workbench/run_tests.py test_policy` | 28 passed — including every route the directive named for getting past the gate |
+| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,467 entries |
 | End-to-end | `python3 workbench/run_tests.py test_end_to_end` | 1 passed |
 
 ---
@@ -469,13 +471,22 @@ fixture target.
 Every figure below was re-derived from the gate that measures it, never typed
 from memory.
 
-| Figure | Was | Now | Derived from |
-|---|---|---|---|
-| `FILE-INDEX.txt` entries | 4,435 | 4,449 | `gen_index.py --check` |
-| Local links checked | 5,279 | 5,297 | `validate.py` |
-| Workflows | 6 | 7 | `.github/workflows/*.yml` |
-| Authored files (activation prompt) | 55 | 60 | the walk `gap_audit.py` performs |
-| Capability rows | 62 (29/15/18) | 74 (40/16/18) | section row counts |
+| Figure | Before the phase | At the phase commit | Final | Derived from |
+|---|---|---|---|---|
+| `FILE-INDEX.txt` entries | 4,435 | 4,449 | 4,467 | `gen_index.py --check` |
+| Local links checked | 5,279 | 5,297 | 5,381 | `validate.py` |
+| Workflows | 6 | 7 | 7 | `.github/workflows/*.yml` |
+| Authored files (activation prompt) | 55 | 60 | 74 | the walk `gap_audit.py` performs |
+| Capability rows | 62 (29/15/18) | 74 (40/16/18) | 74 (40/16/18) | section row counts |
+| Commands | 14 | 17 | 21 | `cli.build_parser()` |
+| Test modules | 10 | 12 | 15 | the test registry |
+| Tests | 352 | 421 | 490 | `run_tests.py` |
+| Policy documents | 0 | 0 | 10 | `policy/BLACKHEART-POLICY.json` |
+| Agent documents | 3 | 3 | 5 | `docs/agent/*.md` |
+
+The finalization pass also removed two tests and rewrote two others rather than
+leaving them passing for the wrong reason — the counts above are of the suite as it
+stands, not of the suite plus the tests that were withdrawn.
 
 ---
 
@@ -503,9 +514,22 @@ An independent review has not been performed. §34 asks for one, and the honest
 state is that it is outstanding; the report would otherwise be claiming a second
 pair of eyes that was not there.
 
+The finalization pass ran a second, adversarial review written from the reviewer's
+side rather than the implementer's, and it is recorded in full — method, findings,
+withdrawn hypotheses, the bypass campaign and what it does not cover — in
+`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`. It found six defects, all fixed,
+each with the test that fails against the earlier behaviour; the findings are
+numbered F-1 to F-6 in that document and described in §30 below. It is still a
+self-review, and that document says so in its first section rather than in a
+footnote.
+
 ---
 
 ## 26. Freeze
+
+**This section records the state at the phase commit. The final declaration, made
+after the finalization pass and after every gate had been re-run on the frozen
+tree, is §34.**
 
 Per §37, after this phase: no Phase 6, no new backlog, no cosmetic features, no
 dependency upgrades for freshness, no speculative skills, and no duplicate
@@ -515,6 +539,187 @@ content still requires a human reading it.
 
 The workbench is frozen at the state described above. Any later change to it is a
 new engagement with its own authorization, not an extension of this one.
+
+---
+
+## 27. The policy layer
+
+A framework that documents its rules and does not enforce them is documenting an
+intention. This phase closed that gap: the rules are now a machine-readable policy,
+and the workbench refuses to open a socket until they have been accepted.
+
+| Component | What it is |
+|---|---|
+| `policy/BLACKHEART-POLICY.json` | Policy version 1.0.0. Ten named documents, the requirements, the acceptance block, the enforcement block, the prohibited and exempted operations, and the acquisition rules |
+| `workbench/policy.py` | The acceptance engine: load, validate, record, and `require_acceptance()`, which is the gate |
+| `workbench/http_client.py` | `require_acceptance()` is the first statement of `request()` — the socket boundary, not the CLI |
+| `workbench/cli.py` | Four commands: `policy validate`, `policy status`, `policy accept`, `policy show`; the parser now has 21 commands and the count is asserted against the parser, not typed |
+| `workbench/tests/__init__.py` | The suite performs a real acceptance into a temporary state directory. The gate is exercised, never stubbed |
+
+**Two requirements, deliberately separate.** An active operation needs a recorded
+acceptance *and* a valid scope. Acceptance establishes that the rules were read on
+that machine; the scope file is the operator's assertion of authorization. Neither
+substitutes for the other, and the difference is tested rather than described.
+
+**The acceptance record** is local: policy version, the policy document's SHA-256,
+and a timestamp. No identity, no hostname, no target, nothing transmitted. It is
+written atomically with mode 600, and a symlinked record is refused rather than
+followed — the record decides whether requests go out, so it is not something to
+resolve through a link.
+
+**A material change invalidates it.** The version and the content hash are both
+checked, so editing the policy after acceptance leaves the acceptance stale and
+active work refused. A record with no hash is refused for the same reason: it
+cannot be checked, and an unchecked record is not an acceptance.
+
+**What this does not do.** It is not authentication of the operator and not
+authorization for anything. Anyone who can write to the state directory can accept
+the policy. That residual is recorded in the policy itself under
+`enforcement.documented_residual` rather than left for a reader to discover.
+
+## 28. The agent documentation layer
+
+Two documents, both new, and the existing ones extended rather than duplicated:
+
+| Document | Why it exists |
+|---|---|
+| `docs/agent/PHASE5-SAFETY-RULES.md` | The rules an agent must meet before it meets a target: AUTHORIZATION FIRST, the never-do list, acceptance-is-not-authorization, the stop conditions, and the reporting obligations |
+| `docs/agent/PHASE5-WORKBENCH-OPERATIONS.md` | The capability map: each command group, what it refuses, what the agent records when it refuses, and the deterministic blocked/ambiguous tree |
+| `docs/agent/AGENT-OPERATING-PROTOCOL.md` (extended) | The eleven-step operating order and the decision tree, added where an agent already reads before it acts |
+| `docs/agent/AGENT-BOOTSTRAP.md` (extended) | A Layer 0 for the binding rules, the policy and workbench documents in the reading list, and the authored-file count re-derived to 74 |
+
+The candidates in the directive that would have restated an existing document —
+a separate protocol, a separate failure-handling guide, per-capability agent
+guides — were folded into these two rather than written as duplicates. The test is
+whether a document contains judgement that is not already published; where the
+answer was no, nothing was written.
+
+## 29. Independent review
+
+**Status: outstanding.** No genuinely separate reviewer exists in this
+environment, and the gate is not marked passed. The wording used in
+`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md` is that independent review remains
+outstanding, and §8 of that document sets out what a reviewer would need to do to
+close it.
+
+What was performed instead, and what the report claims for it:
+
+| | Performed | Claim |
+|---|---|---|
+| Adversarial self-review, CLI and module boundaries | yes | complete |
+| Bypass campaign against the policy gate (fifteen routes named in the directive) | yes | every route fails safely |
+| Cross-implementation attacks written from the public interface | yes | 23 tests, kept in the suite |
+| Review by a person with no part in building this | **no** | **not claimed** |
+
+## 30. Defects found in the finalization pass
+
+Six, all fixed, each with a regression test that fails against the previous
+behaviour. They are numbered F-1 to F-6 in the review document; summarised here:
+
+| # | Defect | Consequence before the fix |
+|---|---|---|
+| F-1 | A challenge interstitial served where a *page* was expected was written and recorded as a successful acquisition | The manifest called an interstitial the page; nothing in the entry said otherwise |
+| F-2 | `Evidence.as_dict()` serialised without validating | A hand-built record reached JSON with no limitation, no reproduction step, unchecked |
+| F-3 | `report.add_bundle` adopted every record before verifying it | A record edited after writing still supplied the report's counts, beside the hash mismatch warning |
+| F-4 | `History.add` wrote the operator's tag verbatim | A credential typed into a tag sat in the clear in a file otherwise redacted end to end |
+| F-5 | `policy.acceptance_status` skipped the hash check when the record had no hash | Deleting one JSON field defeated the change check on the policy |
+| F-6 | `cli.py` used the policy module without importing it | Every `policy` subcommand raised `NameError`; the acceptance commands did not run at all |
+
+Two further defects were found in the review's own test code: two tests deleted the
+suite-wide state-directory variable instead of restoring it, which presented as
+thirteen failures in an unrelated module. Both were rewritten around one
+save-and-restore context manager. Recorded because the failure mode — a test that
+breaks a later test — is worth recognising.
+
+## 31. Privacy and legal audits
+
+**Privacy.** The privacy policy describes only audited behaviour. The audit
+covered: the workbench's storage (history, bundles, manifests, downloads,
+extractions, reports, acceptance record), the socket layer (one connection path,
+checked against the scope first), the site (no analytics, no cookies, no forms, no
+third-party embeds, one `localStorage` entry for the theme), the workflows (what
+each one reads and writes, and which have write permissions), and the acceptance
+record (local, no identity, nothing transmitted). Two claims were withdrawn during
+the audit as unsupported: an apparent tracker on the site, which was the word
+"plausible" in a sentence of prose, and a secret leak in a response body, which
+was the history tag and became F-4.
+
+**Legal.** Ten documents, written to state what the project is and what it does not
+claim. No entity, attorney, certification, jurisdiction or approval is invented;
+the project is identified as BLACKHEART Security Framework, GitHub owner
+`devara1983ntr`, author Roshan. Every document that carries a legal effect says
+that it has not been reviewed by a lawyer and that its effect depends on
+jurisdiction. Liability is stated as an allocation of responsibility between the
+user and the author, not as a promise that liability cannot arise. Tests assert
+that no compliance badge, company form, legal professional or absolute claim
+appears in authored content, and that the README and the site link every document
+the policy names.
+
+## 32. Policy enforcement, tested
+
+The gate was attacked from every route the directive named. Each failed safely —
+refused, no socket, no file written:
+
+| Route | Result |
+|---|---|
+| Alternate command | Refused before any request |
+| Direct module invocation (`http_client.request`) | Refused at the socket boundary |
+| Environment variables (`*_POLICY_ACCEPTED`, `*_IGNORE_POLICY`, `*_SKIP_POLICY`) | Not read; no effect |
+| A directory that does not exist, and one that is empty | Blocks; writes nothing into it |
+| Malformed policy JSON, and a policy naming a missing document | Refused, with the reason |
+| Old acceptance, and acceptance before a policy change | Stale, checked by version and by content hash |
+| Acceptance record edited by hand, or with the hash deleted | Refused |
+| Symlinked acceptance record | Refused rather than followed |
+| Relative path, and a different working directory | Resolved absolutely; same answer |
+| Command ordering (accept, then delete the record) | Re-checked per request |
+| Direct replay through the history path | Same gate, same refusal |
+| A flag that looks like a bypass | None exists, asserted over every option string |
+
+The exemption for local, read-only work is tested too: the exempt commands run
+without an acceptance, and a test holds the policy's exemption list against the
+command parser so that a command requiring `--scope` cannot be described as exempt.
+
+## 33. What remains, and why
+
+| Step | State |
+|---|---|
+| Local gates on the frozen tree | **green** — suite 490, `validate.py` 8/8, `gap_audit.py` 20/20, capability audit current, `bandit -ll` exit 0 |
+| Push of `phase5/workbench` | **not performed here.** The remote is configured, but the credential is the operator's and is not held by this environment. §29 forbids asking for it in a transcript |
+| One pull request, base `main` | prepared — the body is reconciled to the measured values; opening it needs the same credential |
+| CI on the pull request | **not run** — it runs when the push happens |
+| Independent review | **outstanding**, per §29 |
+| Merge | **not performed.** Normal merge only, and only after the review gate and every required check |
+| Post-merge and live verification | **not performed** — it follows the merge |
+| Policy documents deployed and reachable | **verified locally**; the live check follows the merge |
+
+Nothing in this table is represented as done. The next command in the sequence is
+the push, and it needs the operator.
+
+## 34. Final freeze declaration
+
+The declaration is made on the frozen tree at the commit this report is committed
+in — the last commit on `phase5/workbench` before it is pushed. Every gate in §23
+was re-run on that tree after the last content change, and the values in §23 and
+§24 are the values those runs produced.
+
+**Frozen at that commit:**
+
+- the workbench: 17 production modules, 15 test modules, 490 tests, 21 commands;
+- the policy layer: `policy/BLACKHEART-POLICY.json` v1.0.0, `workbench/policy.py`,
+  the acceptance gate at the socket, and the ten documents it names;
+- the agent layer: two new documents, two extended, and the activation prompt's
+  reading list and counts re-derived;
+- the repository figures in §24, each measured rather than recalled.
+
+**After this point:** no Phase 6, no new backlog, no features, no cosmetic
+redesign, no dependency upgrades for freshness, no speculative skills, no duplicate
+commands, and no reopening of anything recorded here as complete. Any later change
+is a separate engagement with its own authorization.
+
+**The independent review is not declared complete, and this freeze does not depend
+on that claim** — it depends on the gates above, all of which passed. If a
+separate review is later performed, its findings are a new engagement, not an
+amendment to this one.
 
 ---
 
@@ -543,7 +748,7 @@ new engagement with its own authorization, not an extension of this one.
 cd /path/to/blackheart-security-framework
 git checkout phase5/workbench
 
-python3 workbench/run_tests.py                 # 421 passed, 12 modules
+python3 workbench/run_tests.py                 # 490 passed, 15 modules
 python3 workbench/run_tests.py test_end_to_end # the whole chain, with its assertions
 python3 -m bandit -r workbench -ll             # 0 at MEDIUM or above
 python3 .github/scripts/validate.py            # 8/8
@@ -551,5 +756,6 @@ python3 .github/scripts/gap_audit.py           # 20/20
 python3 .github/scripts/verify_capability_audit.py
 python3 .github/scripts/check_authored_config.py
 python3 .github/scripts/gen_index.py --check
-python3 -m workbench.cli --help                # the 17 commands
+python3 -m workbench.cli --help                # the 21 commands
+python3 -m workbench.cli policy validate       # the policy and its ten documents
 ```

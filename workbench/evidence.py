@@ -138,6 +138,13 @@ class Evidence:
         }
 
     def as_dict(self):
+        # Serialising a record is the moment its claims become quotable, so the
+        # same validation `Bundle.add` performs runs here as well. Without this, a
+        # record built by hand and written straight out — `record.as_dict()`, or
+        # any caller that skipped `add` — reached JSON without ever being checked
+        # for an empty limitation, a missing reproduction step, or validated
+        # language on an unvalidated record.
+        self.validate()
         data = self.payload()
         data["notes"] = self.notes
         data["hashes"] = dict(self.hashes)
@@ -157,15 +164,21 @@ class Evidence:
 
     # -- validation ------------------------------------------------------
     def validate(self):
-        """Raise on anything that would make this record dishonest or incomplete."""
+        """Every field that carries a claim, checked before the record is used.
+
+        This is called from `Bundle.add`, from `as_dict`, and from the CLI's write
+        path — all of them, deliberately. A record constructed by hand and then
+        serialised is the easiest way to get an unvalidated claim into a report,
+        so serialisation validates too rather than trusting that `add` ran.
+        """
         for field in REQUIRED:
             value = getattr(self, field, None)
             if value is None or (isinstance(value, str) and not value.strip()):
                 raise EvidenceError(f"{self.id}: {field} is required and must not be empty")
-        if not self.limitations.strip():
+        if not isinstance(self.limitations, str) or not self.limitations.strip():
             raise EvidenceError(
                 f"{self.id}: limitations is empty. A record without a stated "
-                f"limitation reads as complete coverage")
+                f"limitation reads as complete coverage.")
         if not self.reproduction:
             raise EvidenceError(f"{self.id}: reproduction steps are required")
         if not isinstance(self.reproduction, list):
@@ -270,6 +283,29 @@ class Bundle:
         return manifest
 
     @staticmethod
+    def verify_record_file(path, entry):
+        """Check one written record against its manifest entry.
+
+        Returns a problem string, or None. `Bundle.verify` and the report's
+        bundle reader both call this, so the two cannot disagree about which
+        records are intact — and a record that fails this check is not adopted
+        as evidence by either of them.
+        """
+        entry_id = entry.get("id")
+        recorded = entry.get("sha256")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+        except (OSError, json.JSONDecodeError) as exc:
+            return f"{entry_id}: record file cannot be read ({exc})"
+        recomputed = record_sha256(data)
+        if recomputed != recorded:
+            return (f"{entry_id}: hash mismatch ({recomputed[:12]} != "
+                    f"{str(recorded)[:12]}): the file is not the record that was "
+                    f"written, so it is not evidence of anything")
+        return None
+
+    @staticmethod
     def verify(directory):
         """Re-hash the records in a written bundle and report the first mismatch.
 
@@ -287,15 +323,21 @@ class Bundle:
             if not os.path.isfile(path):
                 problems.append(f"{entry['id']}: record file missing")
                 continue
-            with open(path, encoding="utf-8") as fh:
-                data = json.load(fh)
-            recomputed = sha256_text(canonical_json({
-                key: value for key, value in data.items()
-                if key not in ("hashes", "notes")}))
-            if recomputed != entry["sha256"]:
-                problems.append(f"{entry['id']}: hash mismatch "
-                                f"({recomputed[:12]} != {entry['sha256'][:12]})")
+            problem = Bundle.verify_record_file(path, entry)
+            if problem:
+                problems.append(problem)
         return problems
+
+
+def record_sha256(data):
+    """The digest a written record is checked against.
+
+    `hashes` and `notes` are excluded: the first is the record's own digest of
+    its request and response, the second is a field a reviewer may add to.
+    """
+    return sha256_text(canonical_json({
+        key: value for key, value in data.items()
+        if key not in ("hashes", "notes")}))
 
 
 def _count(entries, field):

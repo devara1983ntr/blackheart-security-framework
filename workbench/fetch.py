@@ -586,6 +586,13 @@ def acquire(guard, url, manifest, *, history=None, filename=None, max_bytes=None
     requested_document = expects_a_document(acquisition.final_url, expect)
     challenge = looks_like_a_challenge(response.get("body_text"),
                                        acquisition.content_type)
+    # A challenge blocks a document outright, and is *recorded* on a page. The
+    # asymmetry is deliberate — a page about captchas is a legitimate page, and
+    # blocking every HTML response that contains the word would be a false
+    # positive on the framework's own documentation — but silence was not: a page
+    # carrying a challenge marker used to be written as a plain success, with
+    # nothing in the entry to say the marker had been seen. It is now recorded in
+    # both cases, so a reader of the manifest can see it either way.
     if challenge and requested_document:
         return manifest.add(_block(
             acquisition, record, status,
@@ -636,6 +643,13 @@ def acquire(guard, url, manifest, *, history=None, filename=None, max_bytes=None
         acquisition.warnings.append(
             "an HTML document was served where a file was expected: it may be a landing "
             "page, a login page or an error page rather than the resource")
+    if challenge:
+        # Recorded whether it blocked or not, so a page saved with a challenge
+        # marker in it says so in the manifest instead of reading as a clean page.
+        acquisition.warnings.append(
+            f"this response carries an interstitial challenge marker ({challenge!r}); it "
+            f"was written because a page was asked for, and it is the marker's presence "
+            f"that makes it untrustworthy as page content")
     if not acquisition.confident_type:
         acquisition.warnings.append(
             "the file type was inferred from the declared type or the URL, not from a "

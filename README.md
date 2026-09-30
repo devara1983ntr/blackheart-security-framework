@@ -251,8 +251,8 @@ not a control, it is a vulnerability.
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,297 local links; **0 broken in authored docs** |
-| `index` | 4,449 entries; 0 unindexed, 0 dangling |
+| `links` | 5,381 local links; **0 broken in authored docs** |
+| `index` | 4,467 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |
 | `history` | no commit subject contains an unexpanded `$(name)` token |
@@ -344,10 +344,13 @@ operations and are not configured here; the site is crawlable but unclaimed.
 | [`AGENT.md`](AGENT.md) | how an agent is expected to behave |
 | [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md) | **activation prompt** — loads the framework and verifies the load |
 | [`SECURITY.md`](SECURITY.md) | threat model, disclosure, secret handling |
+| [`docs/workbench/COMMANDS.md`](docs/workbench/COMMANDS.md) | the 21-command surface, and the gate on active work |
+| [`docs/workbench/LIMITATIONS.md`](docs/workbench/LIMITATIONS.md) | what the workbench does not do, stated plainly |
+| [`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`](docs/workbench/INDEPENDENT-SECURITY-REVIEW.md) | the review, and its status: **outstanding** |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to contribute safely |
 | [`CHANGELOG.md`](CHANGELOG.md) | version history |
 | [`ROADMAP.md`](ROADMAP.md) | what comes next |
-| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,449 files, one per line |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,467 files, one per line |
 | [`skills/VENDOR.md`](skills/VENDOR.md) | provenance, exclusions, upstream defects |
 | [`skills/README.md`](skills/README.md) | the catalogue and its rules |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | the rules that win |
@@ -367,6 +370,32 @@ you do not own or have written permission to test.
 - Findings default to `UNVERIFIED`. Claims require evidence.
 
 Violating these constraints is both a security failure and a legal one.
+
+### The terms, and the gate that enforces them
+
+Reading and testing are governed by these documents, and the machine-readable
+policy that names them. **Active operations require both a recorded policy
+acceptance and a valid scope file**; local, read-only operations do not. The
+acceptance is a local acknowledgement, not authorization for any target.
+
+| | |
+|---|---|
+| [`LEGAL.md`](LEGAL.md) | who this project is, and what it does not claim |
+| [`TERMS-OF-USE.md`](TERMS-OF-USE.md) | the terms, including liability and the limits of enforceability |
+| [`ACCEPTABLE-USE.md`](ACCEPTABLE-USE.md) | permitted and prohibited use, in operational detail |
+| [`AUTHORIZATION-AGREEMENT.md`](AUTHORIZATION-AGREEMENT.md) | the template an authorization is recorded in |
+| [`RESPONSIBLE-USE.md`](RESPONSIBLE-USE.md) | how to work without causing harm |
+| [`SECURITY-RESEARCH-DISCLAIMER.md`](SECURITY-RESEARCH-DISCLAIMER.md) | what research under this framework does and does not establish |
+| [`PRIVACY-POLICY.md`](PRIVACY-POLICY.md) | the framework's own data behaviour, audited against the code |
+| [`THIRD-PARTY-CONTENT.md`](THIRD-PARTY-CONTENT.md) | licences, attribution and what is not claimed about vendored content |
+| [`DOWNLOAD-AND-ACQUISITION-POLICY.md`](DOWNLOAD-AND-ACQUISITION-POLICY.md) | what may be acquired, and what is refused |
+| [`AI-AGENT-TERMS.md`](AI-AGENT-TERMS.md) | additional terms when an agent operates the framework |
+| [`policy/BLACKHEART-POLICY.json`](policy/BLACKHEART-POLICY.json) | the policy in machine-readable form, v1.0.0 |
+
+```bash
+python3 -m workbench.cli policy status    # is it accepted on this machine, and current?
+python3 -m workbench.cli policy accept    # record acceptance of the version you read
+```
 
 ---
 

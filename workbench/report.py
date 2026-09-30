@@ -138,6 +138,15 @@ class Report:
                 problems.append(f"{entry['id']}: record file missing, so it is not "
                                 f"included in this report")
                 continue
+            # Verified before it is adopted, not after. The previous order read
+            # every record into the report and then reported the mismatches, so a
+            # record edited after the bundle was written still supplied the
+            # report's counts and severity table — the reader was told the file
+            # did not match while the numbers came from it.
+            problem = ev.Bundle.verify_record_file(path, entry)
+            if problem:
+                problems.append(problem)
+                continue
             with open(path, encoding="utf-8") as fh:
                 self.records.append(json.load(fh))
         problems = _dedupe_problems(problems + list(ev.Bundle.verify(directory)))
@@ -310,6 +319,10 @@ class Report:
                     lines.append(f"  - {problem}")
         else:
             lines.append("- No bundle or manifest was supplied, so nothing was re-hashed.")
+        if any(detail.get("problems") for detail in self.verification.values()):
+            lines.append("- A record that fails its own hash check, or that the manifest "
+                         "does not claim, is not included in the counts above. The counts "
+                         "are of the records that verified, and nothing else.")
         lines.append("")
 
         lines += ["## What this report does not establish", ""]

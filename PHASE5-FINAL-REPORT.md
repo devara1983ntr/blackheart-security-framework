@@ -454,7 +454,7 @@ fixture target.
 | Gate | Command | Result |
 |---|---|---|
 | Workbench suite | `python3 workbench/run_tests.py` | 490 passed, 0 failed, 15 modules |
-| Static analysis | `python3 -m bandit -r workbench -ll` | exit 0; 0 issues at MEDIUM or above; 5 line-level suppressions, each with its reason on the preceding line; 96 LOW findings at the full-severity run, expected in test tooling |
+| Static analysis | `python3 -m bandit -r workbench -ll` | exit 0; 0 issues at MEDIUM or above; 5 line-level suppressions, each with its reason on the preceding line; 97 LOW findings at the full-severity run, expected in test tooling |
 | Repository validation | `python3 .github/scripts/validate.py` | 8/8 — adapters 387, integrity 3,864 vendored files byte-identical, catalogue 32, links 5,381 with 0 broken in authored docs, index 4,467 with 0 unindexed and 0 dangling, secrets, config, history |
 | Gap audit | `python3 .github/scripts/gap_audit.py` | 20/20 |
 | Capability audit | `python3 .github/scripts/verify_capability_audit.py` | 85 claims; every cited path resolves; every published count current |

@@ -251,7 +251,7 @@ Six workflows, nine verification scripts.
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,291 local links; **0 broken in authored docs** |
+| `links` | 5,294 local links; **0 broken in authored docs** |
 | `index` | 4,448 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |

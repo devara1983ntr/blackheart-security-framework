@@ -143,11 +143,11 @@ library alone and are what CI enforces on every push.
 
 | # | Check | Status |
 |---|---|---|
-| 9.1 | 5,294 local links; 0 broken in Blackhearts-authored docs | ✅ |
+| 9.1 | 5,297 local links; 0 broken in Blackhearts-authored docs | ✅ |
 | 9.2 | 111 vendored defects registered individually with reasons | ✅ |
 | 9.3 | 48 authored defects fixed | ✅ |
 | 9.4 | Every internal link resolves; every anchor matches a real `id` | ✅ |
-| 9.5 | `FILE-INDEX.txt` in sync (4,448 entries) | ✅ |
+| 9.5 | `FILE-INDEX.txt` in sync (4,449 entries) | ✅ |
 | 9.6 | Every documented figure verified against the tree by audit group 16 | ✅ |
 | 9.7 | No unfinished-work markers or placeholders outside templates | ✅ |
 

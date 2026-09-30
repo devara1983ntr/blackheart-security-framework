@@ -8,13 +8,67 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 This repository is documentation-first, but it also carries executable content: a
-complete mirror of a third-party catalogue (3,864 files), a validation gate, and
-six automation workflows. Versions therefore track both documentation maturity
-and the state of the executable layer.
+complete mirror of a third-party catalogue (3,864 files), a validation gate,
+seven automation workflows, and the workbench — first-party tooling for
+authorized HTTP, API and resource work. Versions therefore track both
+documentation maturity and the state of the executable layer.
 
 ## [Unreleased]
 
 ### Added
+- **The workbench — `workbench/`, a first-party authorized-use toolkit.** Seventeen
+  production modules and a suite of 421 tests, with no dependency outside the
+  standard library and no subprocess anywhere. Every request goes through one
+  function, `workbench/scope.py`'s `require()`, which raises on an unlisted host,
+  an excluded path, a disallowed method, an exhausted budget or an expired
+  authorization window; `--scope` is required by every command that sends a
+  request, and a test walks the whole argument tree asserting that no option
+  string is named after a control it disables. Refusals are a stop, not an
+  obstacle: `401`, `402`, `403`, `407`, `451` and challenge pages are recorded as
+  `blocked` with no file written, together with the route that *is* authorised.
+  Nothing is executed, imported or installed from a download. Capabilities:
+  history with TLS metadata; a request editor and a mutation catalogue that never
+  generates write verbs; a repeater with replay and comparison; sixteen
+  observable checks producing evidence records whose status is one of five
+  defined states and which are never promoted to a finding; bounded fuzzing with
+  budget, rate limit, cancellation and destructive-method protection; discovery
+  limited to what a target publishes; acquisition with full provenance and a
+  manifest that never records a file it did not obtain; PDF and archive reading
+  under size, count, ratio, traversal and bomb limits; read-only emergency
+  collection where `GET` and `HEAD` are a module constant proven by an AST test;
+  and a report generator whose every number is derived from the records it holds.
+  Documented in [`docs/workbench/`](docs/workbench/README.md), including a real
+  end-to-end transcript with its failures.
+- **`phase5-validation.yml` — the workbench's own gate.** The suite is run with
+  `socket.socket.connect` wrapped so that only loopback addresses can be reached,
+  which makes "the tests never contact anything else" a property of the run
+  rather than a reading of the source; then twice, with the two machine-readable
+  results compared (failures first, so two identical failures cannot pass as
+  deterministic); then bandit at MEDIUM and above, the same bar as the authored
+  code. It is deliberately not a required status check — adding one changes
+  branch protection and needs approval first.
+- **`docs/workbench/`** — what the workbench is and the rules it is built
+  around, every command with its exit codes, the threat model, the limitations,
+  and a transcript of one run against the loopback fixture server.
+
+### Changed
+- [`ROADMAP.md`](ROADMAP.md) stated that the framework was "documentation only:
+  no code, no scanners, no automation, and deliberately none". That stopped being
+  true when `workbench/` shipped, so the paragraph is corrected rather than left
+  standing: the instruction set is still documentation; one piece of first-party
+  code sits alongside it; and the four rules that keep it compatible with the
+  framework's authorization model are stated. The out-of-scope entry for
+  automated scanning stays, with a sentence saying why the workbench is not that.
+- [`docs/CAPABILITY-AUDIT.md`](docs/CAPABILITY-AUDIT.md) is re-run rather than
+  re-asserted: twelve rows added (eleven security capabilities and one
+  engineering row for the workbench's gate), the header counts moved with the
+  table to 40/16/18, and a new §6 recording how all 39 Phase 5 requests were
+  classified — what the documents already governed and the code merely carries
+  out, the one genuinely new capability, what was declined as out of scope, and
+  what was refused outright.
+- The workflow count (6 to 7) and the local-link figure in the files that
+  publish them, and the activation prompt's authored-file count.
+
 - **`upstream-watch.yml` and `watch_upstream.py` — the second pinned source was
   unwatched.** `upstream-sync.yml` covers the skill mirror. The catalogue
   (`VoltAgent/awesome-openclaw-skills`) had its commit recorded in

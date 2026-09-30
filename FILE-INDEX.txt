@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4448
+# Total entries: 4449
 
 .gitattributes
 .github/CODEOWNERS
@@ -52,6 +52,7 @@ CODEOWNERS
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 LICENSE
+PHASE5-FINAL-REPORT.md
 README.md
 RELEASE-CHECKLIST.md
 ROADMAP.md

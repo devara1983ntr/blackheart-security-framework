@@ -492,11 +492,24 @@ def cmd_resource_extract(args):
     lines, results = [], []
     for entry in wanted:
         path = os.path.join(directory, entry["file"])
-        report_obj = extractmod.inspect_file(path, limits_used, extract_into=args.out)
+        digest = ev.file_sha256(path)
+        if not entry.get("sha256") or digest != entry["sha256"]:
+            # The hash is checked before the file is parsed. Reading first and
+            # refusing afterwards meant the page and member counts in the report
+            # came from a file the manifest did not describe — the report said
+            # "was not read" while showing what had been read out of it.
+            report_obj = extractmod.Extraction(
+                path, entry.get("file_type") or "unknown", os.path.getsize(path),
+                limits_used)
+            report_obj.sha256 = digest
+            report_obj.refuse(
+                f"the file on disk does not match the manifest hash: the manifest "
+                f"records {str(entry.get('sha256'))[:12]}... and the file is "
+                f"{digest[:12]}...")
+            report_obj.notes.append("not parsed: the manifest does not describe this file")
+        else:
+            report_obj = extractmod.inspect_file(path, limits_used, extract_into=args.out)
         entry["extraction_status"] = extractmod.extraction_status(report_obj)
-        if not report_obj.sha256 or report_obj.sha256 != entry.get("sha256"):
-            entry["extraction_status"] = "refused_hash_mismatch"
-            report_obj.refuse("the file on disk does not match the manifest hash")
         results.append({"id": entry["id"], "file": entry["file"],
                         "extraction": report_obj.summary()})
         lines.append(report_obj.report_lines())

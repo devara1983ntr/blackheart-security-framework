@@ -178,6 +178,10 @@ class Extraction:
             "links": len(self.links),
             "flagged_features": len(self.flagged_features),
             "refusals": len(self.refusals),
+            # The reasons travel with the count. A machine-readable summary that
+            # says a file was refused but not why sends the reader to the prose
+            # output to find out, and the prose is the part a pipeline drops.
+            "refusal_reasons": list(self.refusals),
             "text_chars": len(self.text),
             "executed": False,
         }

@@ -432,3 +432,40 @@ def test_a_report_over_a_bundle_that_was_edited_reports_the_problem():
         with open(os.path.join(work, "report.md"), encoding="utf-8") as fh:
             text = fh.read()
         contains(text, "record file missing")
+
+
+def test_a_file_that_changed_after_it_was_recorded_is_refused_before_it_is_read():
+    """The hash gate belongs before the parser, not after it.
+
+    Reading first and refusing afterwards produced a report that said the file
+    "was not read" while printing the page and member counts that reading it had
+    produced. The refusal has to come first, so nothing describes the file.
+    """
+    with fixtures.FixtureServer() as srv:
+        work = fixtures.tempfile_dir()
+        path = _scope_file(work, srv.url(""))
+        directory = os.path.join(work, "downloads")
+        code, _out, _err = _run("resource", "download", "--scope", path,
+                                "--url", srv.url("/data.zip"), "--out", directory, "--yes")
+        equal(code, cli.EXIT_OK)
+        archive = os.path.join(directory, "data.zip")
+        before = os.path.getsize(archive)
+        with open(archive, "ab") as fh:
+            fh.write(b"tamper")
+
+        into = os.path.join(work, "extracted")
+        code, out, _err = _run("resource", "extract", "--out", into, "--json",
+                               "--manifest", os.path.join(directory, "manifest.json"))
+        equal(code, cli.EXIT_OK, "a refusal is a result, not a failure of the command")
+        payload = json.loads(out)
+        extraction = payload["result"]["extractions"][0]["extraction"]
+        equal(extraction["status"], "refused")
+        equal(len(extraction["refusal_reasons"]), 1)
+        contains(extraction["refusal_reasons"][0], "does not match the manifest hash")
+        equal(extraction["members"], 0, "the archive was not listed")
+        equal(extraction["pages"], 0)
+        check(os.path.getsize(archive) > before, "the fixture did change the file")
+        check(not os.path.exists(into), "nothing was extracted from the changed file")
+        with open(os.path.join(directory, "manifest.json"), encoding="utf-8") as fh:
+            entry = json.load(fh)["entries"][0]
+        equal(entry["extraction_status"], "refused")

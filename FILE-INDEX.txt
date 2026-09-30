@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4476
+# Total entries: 4488
 
 .gitattributes
 .github/CODEOWNERS
@@ -72,6 +72,18 @@ docs/CAPABILITY-AUDIT.md
 docs/GLOSSARY.md
 docs/README.md
 docs/SKILLS.md
+docs/admin/ADMIN-GOVERNANCE.md
+docs/admin/ADMIN-REVIEW-CHECKLIST.md
+docs/admin/ADMIN-THREAT-MODEL.md
+docs/admin/AI-ADMIN-PROTOCOL.md
+docs/admin/AUDIT-AND-EVIDENCE.md
+docs/admin/CONTENT-AND-DATA-RULES.md
+docs/admin/EMERGENCY-AUTHORIZATION-TEMPLATE.md
+docs/admin/EMERGENCY-GOVERNANCE.md
+docs/admin/HIGH-RISK-RESEARCH.md
+docs/admin/PHASE6-FINAL-REPORT.md
+docs/admin/README.md
+docs/admin/SECURITY-CONTROLS.md
 docs/agent/AGENT-BOOTSTRAP.md
 docs/agent/AGENT-OPERATING-PROTOCOL.md
 docs/agent/AGENT-SKILL-CATALOGUE.md

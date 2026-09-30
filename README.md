@@ -195,7 +195,7 @@ checklist with the command for every gate.
 
 Hand the agent the prompt in
 [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md). It enumerates
-the 55-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
+the 95-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
 a stated precedence order, and returns a **countable** readiness confirmation
 instead of an unfalsifiable one.
 
@@ -251,8 +251,8 @@ not a control, it is a vulnerability.
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,432 local links; **0 broken in authored docs** |
-| `index` | 4,476 entries; 0 unindexed, 0 dangling |
+| `links` | 5,485 local links; **0 broken in authored docs** |
+| `index` | 4,488 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |
 | `history` | no commit subject contains an unexpanded `$(name)` token |
@@ -347,10 +347,11 @@ operations and are not configured here; the site is crawlable but unclaimed.
 | [`docs/workbench/COMMANDS.md`](docs/workbench/COMMANDS.md) | the 21-command surface, and the gate on active work |
 | [`docs/workbench/LIMITATIONS.md`](docs/workbench/LIMITATIONS.md) | what the workbench does not do, stated plainly |
 | [`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`](docs/workbench/INDEPENDENT-SECURITY-REVIEW.md) | the review, and its status: **outstanding** |
+| [`docs/admin/README.md`](docs/admin/README.md) | **administrator governance** — the four roles, high-risk review, emergency access, and the backdoor prohibition |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to contribute safely |
 | [`CHANGELOG.md`](CHANGELOG.md) | version history |
 | [`ROADMAP.md`](ROADMAP.md) | what comes next |
-| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,476 files, one per line |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,488 files, one per line |
 | [`skills/VENDOR.md`](skills/VENDOR.md) | provenance, exclusions, upstream defects |
 | [`skills/README.md`](skills/README.md) | the catalogue and its rules |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | the rules that win |

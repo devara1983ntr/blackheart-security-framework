@@ -22,6 +22,19 @@ authorized adversarial security research framework.
 |---|---|
 | [`CAPABILITY-AUDIT.md`](CAPABILITY-AUDIT.md) | What this framework can and cannot do, checked against the tree, with the decisions taken on every gap |
 
+## The workbench
+
+`workbench/` is the framework's own code: an authorized-use HTTP, API and resource
+toolkit with a command surface, an evidence format and a report generator.
+
+| Document | Purpose |
+|---|---|
+| [`workbench/README.md`](workbench/README.md) | What it is, the rules it is built around, and how to run it |
+| [`workbench/COMMANDS.md`](workbench/COMMANDS.md) | Every command, its flags, and what each exit code means |
+| [`workbench/THREAT-MODEL.md`](workbench/THREAT-MODEL.md) | What the code must never do, and the threats it is built against |
+| [`workbench/LIMITATIONS.md`](workbench/LIMITATIONS.md) | What it cannot establish, stated plainly |
+| [`workbench/END-TO-END.md`](workbench/END-TO-END.md) | A real transcript of one run, failures included |
+
 ## Domain guides
 
 | Guide | Purpose |

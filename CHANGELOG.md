@@ -8,13 +8,143 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 This repository is documentation-first, but it also carries executable content: a
-complete mirror of a third-party catalogue (3,864 files), a validation gate, and
-six automation workflows. Versions therefore track both documentation maturity
-and the state of the executable layer.
+complete mirror of a third-party catalogue (3,864 files), a validation gate,
+seven automation workflows, and the workbench — first-party tooling for
+authorized HTTP, API and resource work. Versions therefore track both
+documentation maturity and the state of the executable layer.
 
 ## [Unreleased]
 
+### Documentation
+- **The AI-agent documentation set, finalised.** [`docs/agent/README.md`](docs/agent/README.md)
+  is the entry point: the reading order, the policy index, a six-level hierarchy and
+  the conflict rule (stricter wins, then check the implementation, then report it).
+  Six documents carry the operational detail an agent needs and none of it was
+  published before: [`PHASE5-AGENT-OVERVIEW.md`](docs/agent/PHASE5-AGENT-OVERVIEW.md)
+  (read-only vs active, the five statuses and their permitted transitions, limitations),
+  [`PHASE5-AUTHORIZATION-PROTOCOL.md`](docs/agent/PHASE5-AUTHORIZATION-PROTOCOL.md)
+  (the four conditions, the record's fields, the pre-request checklist, the route when
+  authorization is unclear), [`PHASE5-SCOPE-PROTOCOL.md`](docs/agent/PHASE5-SCOPE-PROTOCOL.md)
+  (every field, every refusal and its wording), [`PHASE5-EVIDENCE-PROTOCOL.md`](docs/agent/PHASE5-EVIDENCE-PROTOCOL.md)
+  (the record, the hash checks, what an agent must never do),
+  [`PHASE5-FAILURE-HANDLING.md`](docs/agent/PHASE5-FAILURE-HANDLING.md) (the
+  deterministic matrix over twenty-one conditions) and
+  [`PHASE5-CAPABILITY-NOTES.md`](docs/agent/PHASE5-CAPABILITY-NOTES.md) (how to use
+  HTTP, API, discovery, fuzzing, acquisition, extraction and emergency mode properly).
+  Sixteen candidate documents in the directive became seven: the rest would have
+  restated the command reference, so the agent-specific judgement was consolidated into
+  one file rather than spread across six. Every command, field, status, limit and
+  refusal named in these documents was read out of the implementation.
+- **The usage policies, linked from where a reader will look.** The README, the
+  activation prompt and the published site all point at Terms of Use, Acceptable Use,
+  Privacy Policy, Security Research Disclaimer, Authorization Agreement, Responsible
+  Use, Third-Party Content, the Download and Acquisition Policy, the AI Agent Terms and
+  the machine-readable policy. The site's links use absolute repository URLs, because
+  Pages serves only `site/` and a relative root link there would be dead.
+- **Documentation reconciled with the tree.** `FILE-INDEX.txt`, the link count, the
+  authored-file count the activation prompt publishes, the agent-document count in the
+  capability audit and the workbench command reference were each re-derived from the
+  gate that measures them. No figure in this entry was typed from memory.
+
 ### Added
+- **The policy layer — rules that are enforced, not described.** `policy/BLACKHEART-POLICY.json`
+  (v1.0.0) names ten documents and carries the requirements, the acceptance block
+  and the exemption list; `workbench/policy.py` records acceptance locally —
+  version, policy SHA-256, timestamp, mode 600, no identity, nothing transmitted —
+  and `require_acceptance()` is the **first statement of `http_client.request()`**,
+  which is the socket boundary rather than the command line. Active operations need
+  a recorded acceptance *and* a valid scope; twelve local, read-only commands are
+  exempt from both so that analysing evidence someone else collected needs no
+  authorization. A material change to the policy invalidates a prior acceptance by
+  content hash, and a record with no hash is refused rather than trusted. Anyone who
+  can write to the state directory can accept the policy — recorded as a residual in
+  the policy itself. Four new commands (`policy validate|status|accept|show`) bring
+  the surface to 21, asserted against the parser.
+- **The legal and usage layer — ten documents, and tests that keep them honest.**
+  [`LEGAL.md`](LEGAL.md), [`TERMS-OF-USE.md`](TERMS-OF-USE.md),
+  [`ACCEPTABLE-USE.md`](ACCEPTABLE-USE.md),
+  [`AUTHORIZATION-AGREEMENT.md`](AUTHORIZATION-AGREEMENT.md),
+  [`RESPONSIBLE-USE.md`](RESPONSIBLE-USE.md),
+  [`SECURITY-RESEARCH-DISCLAIMER.md`](SECURITY-RESEARCH-DISCLAIMER.md),
+  [`PRIVACY-POLICY.md`](PRIVACY-POLICY.md),
+  [`THIRD-PARTY-CONTENT.md`](THIRD-PARTY-CONTENT.md),
+  [`DOWNLOAD-AND-ACQUISITION-POLICY.md`](DOWNLOAD-AND-ACQUISITION-POLICY.md) and
+  [`AI-AGENT-TERMS.md`](AI-AGENT-TERMS.md). Each states what it has not been
+  reviewed for and where effect depends on jurisdiction; the privacy policy
+  describes only audited behaviour; the acquisition policy matches the code's own
+  statuses. Tests assert that no compliance badge, invented company, legal
+  professional or absolute liability claim appears in authored content, that the
+  README and the site link every document, and that the documents and the
+  implementation agree.
+- **The agent documentation layer.** [`docs/agent/PHASE5-SAFETY-RULES.md`](docs/agent/PHASE5-SAFETY-RULES.md)
+  (AUTHORIZATION FIRST, the never-do list, acceptance is not authorization, stop
+  conditions) and [`docs/agent/PHASE5-WORKBENCH-OPERATIONS.md`](docs/agent/PHASE5-WORKBENCH-OPERATIONS.md)
+  (what each command refuses, and the deterministic tree for a blocked or ambiguous
+  path). The existing protocol and activation prompt were extended rather than
+  duplicated: the eleven-step operating order, the decision tree, a Layer 0 for the
+  binding rules, and a reading list and authored-count re-derived to 74 files.
+- **An adversarial review, and the six defects it found.** [`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`](docs/workbench/INDEPENDENT-SECURITY-REVIEW.md)
+  records the method, the findings and a fifteen-route bypass campaign against the
+  policy gate. Fixed: a challenge page written as a successful page acquisition; a
+  record serialised without validation; a report counting records that failed their
+  own hash check; an operator tag written to disk unredacted; a policy acceptance
+  whose hash check could be skipped by deleting a field; and the `policy` commands
+  failing with `NameError`. **Independent review remains outstanding** — no separate
+  reviewer was available, and the document says so in its first section.
+
+- **The workbench — `workbench/`, a first-party authorized-use toolkit.** Eighteen
+  production modules and a suite of 490 tests, with no dependency outside the
+  standard library and no subprocess anywhere. Every request goes through one
+  function, `workbench/scope.py`'s `require()`, which raises on an unlisted host,
+  an excluded path, a disallowed method, an exhausted budget or an expired
+  authorization window; `--scope` is required by every command that sends a
+  request, and a test walks the whole argument tree asserting that no option
+  string is named after a control it disables. Refusals are a stop, not an
+  obstacle: `401`, `402`, `403`, `407`, `451` and challenge pages are recorded as
+  `blocked` with no file written, together with the route that *is* authorised.
+  Nothing is executed, imported or installed from a download. Capabilities:
+  history with TLS metadata; a request editor and a mutation catalogue that never
+  generates write verbs; a repeater with replay and comparison; sixteen
+  observable checks producing evidence records whose status is one of five
+  defined states and which are never promoted to a finding; bounded fuzzing with
+  budget, rate limit, cancellation and destructive-method protection; discovery
+  limited to what a target publishes; acquisition with full provenance and a
+  manifest that never records a file it did not obtain; PDF and archive reading
+  under size, count, ratio, traversal and bomb limits; read-only emergency
+  collection where `GET` and `HEAD` are a module constant proven by an AST test;
+  and a report generator whose every number is derived from the records it holds.
+  Documented in [`docs/workbench/`](docs/workbench/README.md), including a real
+  end-to-end transcript with its failures.
+- **`phase5-validation.yml` — the workbench's own gate.** The suite is run with
+  `socket.socket.connect` wrapped so that only loopback addresses can be reached,
+  which makes "the tests never contact anything else" a property of the run
+  rather than a reading of the source; then twice, with the two machine-readable
+  results compared (failures first, so two identical failures cannot pass as
+  deterministic); then bandit at MEDIUM and above, the same bar as the authored
+  code. It is deliberately not a required status check — adding one changes
+  branch protection and needs approval first.
+- **`docs/workbench/`** — what the workbench is and the rules it is built
+  around, every command with its exit codes, the threat model, the limitations,
+  and a transcript of one run against the loopback fixture server.
+
+### Changed
+- [`ROADMAP.md`](ROADMAP.md) stated that the framework was "documentation only:
+  no code, no scanners, no automation, and deliberately none". That stopped being
+  true when `workbench/` shipped, so the paragraph is corrected rather than left
+  standing: the instruction set is still documentation; one piece of first-party
+  code sits alongside it; and the four rules that keep it compatible with the
+  framework's authorization model are stated. The out-of-scope entry for
+  automated scanning stays, with a sentence saying why the workbench is not that.
+- [`docs/CAPABILITY-AUDIT.md`](docs/CAPABILITY-AUDIT.md) is re-run rather than
+  re-asserted: twelve rows added (eleven security capabilities and one
+  engineering row for the workbench's gate), the header counts moved with the
+  table to 40/16/18, and a new §6 recording how all 39 Phase 5 requests were
+  classified — what the documents already governed and the code merely carries
+  out, the one genuinely new capability, what was declined as out of scope, and
+  what was refused outright.
+- The workflow count (6 to 7) and the local-link figure in the files that
+  publish them, and the activation prompt's authored-file count.
+
 - **`upstream-watch.yml` and `watch_upstream.py` — the second pinned source was
   unwatched.** `upstream-sync.yml` covers the skill mirror. The catalogue
   (`VoltAgent/awesome-openclaw-skills`) had its commit recorded in

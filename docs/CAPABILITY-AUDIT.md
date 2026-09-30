@@ -14,9 +14,12 @@ document, script or collection that implements the capability, so a reader can
 check the row instead of trusting it. Where a capability is **not** held, that is
 stated as plainly as where it is — an unstated gap reads as coverage.
 
-Three families are classified: the security work this framework does (29
-capabilities), the engineering work it does on itself (15), and the framework
-machinery that carries both (18). Sixty-two in total, none of them aspirational.
+Three families are classified: the security work this framework does (40
+capabilities), the engineering work it does on itself (16), and the framework
+machinery that carries both (18). Seventy-four in total, none of them
+aspirational. The eleven security rows and one engineering row added by the
+Phase 5 audit cite `workbench/` code as well as the document that governs it,
+because a capable-sounding document is not a capability.
 
 This is not a feature list and not a roadmap. Nothing here is aspirational.
 
@@ -64,7 +67,7 @@ DUPLICATE         two implementations of the same thing  -> none found
 | Configuration security | ALREADY COVERED | `AGENT.md` §4 · `guides/TOOL-AND-ENVIRONMENT.md` · and this repository's own configuration, now parse-checked (see §4) |
 | Threat modeling | ALREADY COVERED | `templates/AGENT-THREAT-MODEL.md` · `guides/AGENTIC-AI-SECURITY.md` §4 · `guides/METHODOLOGY-STANDARDS.md` |
 | Secure development | PARTIAL | `guides/REMEDIATION-AND-RETEST.md` gives fix patterns and regression tests; this is an assessment framework, not an SDLC. Vendored `security-guidance`, `tdd-guide`, `code-reviewer` carry the authoring side |
-| DevSecOps | PARTIAL | Assessment-side: `guides/SUPPLY-CHAIN.md` §4 build and publish integrity. Repository-side: the six workflows in §4 |
+| DevSecOps | PARTIAL | Assessment-side: `guides/SUPPLY-CHAIN.md` §4 build and publish integrity. Repository-side: the 7 workflows in §4 |
 | CI/CD security | ALREADY COVERED | `guides/SUPPLY-CHAIN.md` §4 · and enforced on this repository by `validate.yml`, `authored-scan.yml` |
 | Evidence collection | ALREADY COVERED | `guides/EVIDENCE.md` · `AGENT.md` §20 · `templates/TEST-LOG.md`, `templates/COVERAGE-MATRIX.md` |
 | Reporting | ALREADY COVERED | `guides/REPORTING.md` · `AGENT.md` §24 · `templates/FINDING.md`, `templates/FINAL-REPORT.md` |
@@ -73,6 +76,17 @@ DUPLICATE         two implementations of the same thing  -> none found
 | Malware analysis | OUT OF SCOPE | Zero authored coverage, and correctly so: analysing live malware needs isolation this framework does not provide and would not claim. The vendored `threat-detection` and `incident-response` skills cover the detection side |
 | Reverse engineering | PARTIAL | Named in `modes/SECURITY-AUDIT.md` and `modes/SECURITY-RESEARCH-MODE.md`; the worked case is static APK analysis in `AGENT.md` §15–§17. No general RE procedure, deliberately |
 | Incident response | PARTIAL | Named in `docs/agent/AGENT-OPERATING-PROTOCOL.md` and the adversary-emulation mode as a detection question. Response playbooks are the vendored `incident-response` and `incident-commander` skills; this framework assesses, it does not run response |
+| HTTP request and response capture | ALREADY COVERED | `guides/EVIDENCE.md` · `workbench/http_client.py` (one send path, TLS facts, redirect chains) · `workbench/history.py` (append-only JSON Lines) |
+| Response comparison | ALREADY COVERED | `workbench/diff.py` — exact, normalised and JSON-structural; the output is labelled an observable response difference, never a vulnerability claim |
+| Parameter discovery | ALREADY COVERED | `workbench/params.py` — inventory, classification and value handling; masked values stay masked |
+| Bounded fuzzing | ALREADY COVERED | `workbench/fuzz.py` and `workbench/mutate.py` — budget, rate limit, cancellation, scope enforcement and destructive-method protection; no evasion of any kind |
+| Published-surface discovery | ALREADY COVERED | `workbench/discover.py` — robots, sitemaps, forms, API descriptions, script references, assets; no wordlist, no extension sweep, no name guessing |
+| Resource acquisition with provenance | ALREADY COVERED | `workbench/fetch.py`, `docs/workbench/COMMANDS.md` — source URL, final URL, status, type, size, SHA-256, timestamp, redirect chain, licence note, authorization scope |
+| Document and archive reading | ALREADY COVERED | `workbench/extract.py` — PDF and archive inventory under size, count and ratio caps; traversal, links and bomb limits; nothing is executed |
+| Read-only emergency collection | ALREADY COVERED | `workbench/emergency.py` — `GET` and `HEAD` only, enforced by an AST test over the module's own call sites |
+| Evidence records and bundles | ALREADY COVERED | `workbench/evidence.py` — required fields, the status ladder, hashes, and `Bundle.verify()` re-hashing on read · `guides/EVIDENCE.md` |
+| Report assembly | ALREADY COVERED | `workbench/report.py` — every count derived from the records, unvalidated records never promoted · `guides/REPORTING.md` |
+| Scope enforcement at the call site | ALREADY COVERED | `workbench/scope.py` — `require()` raises rather than returning a flag, there is no bypass parameter, and a scope file with no request budget authorises nothing · `workbench/cli.py` requires `--scope` for every command that sends a request |
 
 ## 2. Engineering capabilities
 
@@ -84,12 +98,13 @@ DUPLICATE         two implementations of the same thing  -> none found
 | Code review | ALREADY COVERED | Vendored `code-reviewer`, `adversarial-reviewer` · `.github/PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` |
 | Architecture | ALREADY COVERED | `ARCHITECTURE.md` · vendored `senior-architect` |
 | Refactoring | OPTIONAL | Not authored here; vendored `fix` and `migrate` skills cover it. Adding an authored refactoring guide would duplicate them without new judgement |
-| Documentation | ALREADY COVERED | `docs/` (3 agent docs, 5 modes, 22 guides) · `templates/` · generated `FILE-INDEX.txt` · the link check in `validate.yml` |
+| Documentation | ALREADY COVERED | `docs/` (12 agent docs, 5 modes, 22 guides) · `templates/` · generated `FILE-INDEX.txt` · the link check in `validate.yml` |
 | Git/GitHub | ALREADY COVERED | `CONTRIBUTING.md` · `.github/ISSUE_TEMPLATE/` · `PULL_REQUEST_TEMPLATE.md` · `CODEOWNERS` · `.github/dependabot.yml` · `.github/scripts/repo_settings.py` · vendored `git-and-github` |
-| CI/CD | ALREADY COVERED | Six workflows — see §4. Two dimensions were REAL GAPS and are closed there |
+| CI/CD | ALREADY COVERED | 7 workflows — see §4. Three dimensions were REAL GAPS and are closed there |
 | Release management | ALREADY COVERED | `RELEASE-CHECKLIST.md`, twelve sections, with the command for every gate |
 | Dependency management | ALREADY COVERED | `.github/dependabot.yml` (Actions weekly, pip monthly) · no authored runtime manifest by policy, enforced by audit group 20 |
 | Automation | ALREADY COVERED | 14 authored scripts in `.github/scripts/` · 6 site scripts · the scheduled jobs in §4 |
+| Workbench release gate | ALREADY COVERED | `.github/workflows/phase5-validation.yml` — the suite run with the socket layer restricted to loopback, run twice and compared, then bandit at MEDIUM and above |
 | Performance analysis | OUT OF SCOPE | The one performance control is the payload budget in `site/audit_seo.py`: a 150 KB visitor budget, enforced on every run. Runtime performance analysis is not what this framework is for |
 | Reliability | PARTIAL | Stated as generated artifacts, no build step, and gates that fail loudly. There is no uptime or SLO work, because there is no service to keep up |
 | Observability | PARTIAL | The framework is static: CI logs, job summaries and the `upstream-watch` report are its telemetry. In the *assessed* systems, observability appears as a detection question in `guides/ADVERSARY-EMULATION.md` |
@@ -116,7 +131,7 @@ all eighteen held — the four that were not are in §4.
 | Manifests | ALREADY COVERED | `.github/UPSTREAM-MANIFEST.json` is the single source for pins, counts and exclusions; `skills/openclaw.example.json5` is generated from the mirror by `.github/scripts/gen_config.py` |
 | Integrity | ALREADY COVERED | `validate.py` adapter-drift and digest checks · `.github/scripts/gen_manifest.py` |
 | Provenance | ALREADY COVERED | `skills/VENDOR.md` §8 · `skills/licenses/claude-skills-LICENSE` · the per-source pins in the manifest · the licence/provenance bucket in `.github/scripts/watch_upstream.py` |
-| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,410 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
+| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,488 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
 | Registry | ALREADY COVERED | The link defect registry, 111 registered, reconciled by `.github/scripts/gen_link_registry.py --check` in CI |
 | Audit gates | ALREADY COVERED | `validate.py` · `gap_audit.py` · `check_site.py` · `audit_seo.py` · `check_contrast.py` · `test_interactions.py` · `check_authored_config.py` · `verify_capability_audit.py` — all in CI (§4) |
 | Doc generation | ALREADY COVERED | `gen_index.py` · `gen_link_registry.py` · `gen_manifest.py` · `gen_adapters.py` · `gen_collection_adapters.py` · `gen_config.py` |
@@ -190,7 +205,61 @@ Nothing was removed by this audit: no file, skill, command, script, template,
 collection, adapter or document. The change is additive, apart from corrections
 to published figures that were true of no commit in the repository's history.
 
-## 6. Re-verifying this document
+## 6. The Phase 5 audit: what was requested, and how each was classified
+
+The Phase 5 work added first-party tooling. Every requested capability was
+classified before anything was written, and only the rows that came out as a
+genuine addition were implemented. The vocabulary is the one the directive sets:
+
+```text
+ALREADY COVERED   a document already governs it; the code implements, it does not reinterpret
+EXTENSION         a document covers the method; code was needed to carry it out
+NEW CAPABILITY    nothing covered it at all
+DUPLICATE         it already existed; implementing it again would fork a source of truth
+OUT OF SCOPE      it does not belong in this framework, with a reason
+UNSAFE-REJECTED   it was asked for and refused on the framework's own rules
+```
+
+| Requested | Classification | Decision |
+|---|---|---|
+| HTTP history with TLS metadata | EXTENSION | `workbench/http_client.py`, `workbench/history.py`. The method is `guides/EVIDENCE.md`; the code carries it out and records the handshake facts it observed |
+| Request editor: method, URL, query, headers, cookies, JSON, form, multipart | EXTENSION | `workbench/mutate.py`, `workbench/params.py` |
+| Response inspector: security headers, CORS, cache, redirects | EXTENSION | `workbench/checks.py` — checks that read one response and record what they saw |
+| Repeater with clone, edit, replay and compare | EXTENSION | `workbench/history.py` `replay`/`replay_from_record`, `workbench/diff.py` |
+| Repeater against destructive methods | UNSAFE-REJECTED as asked | A write method needs the scope to allow it *and* an explicit confirmation at the call site. Silently re-sending a `DELETE` is not offered, and there is no option that makes it automatic |
+| Deterministic comparison, labelled "observable response difference" | ALREADY COVERED | `docs/workbench/LIMITATIONS.md` states the limit; `workbench/diff.py` prints the phrase rather than a verdict |
+| Parameter discovery, classification and value handling | EXTENSION | `workbench/params.py`. Sensitive values are masked and stay masked through mutation and reporting |
+| Safe fuzzing with budget, concurrency, timeout, cancellation, allowlist, scope, destructive-method protection, audit logging | EXTENSION | `workbench/fuzz.py`. Every bound is a parameter with a conservative default |
+| WAF, IDS, rate-limit or authentication evading fuzzing | UNSAFE-REJECTED | Not implemented, not configurable, and named in `docs/workbench/THREAT-MODEL.md` as something the code must never do |
+| Test modules for HTTP, API and web with "POTENTIAL FINDING" and evidence | EXTENSION | `workbench/checks.py` produces records whose status is one of the five defined states; nothing in it can produce `REPRODUCED` |
+| Automatic exploitation of anything found | UNSAFE-REJECTED | `AGENT.md` §21 requires validation by a person. The tool has no exploit surface at all |
+| Mutation records: source request, mutation, resulting request, response, timestamp, scope, auth context | EXTENSION | `workbench/mutate.py`, `workbench/evidence.py` |
+| Discovery from published sources only | EXTENSION | `workbench/discover.py`. No wordlist, no extension sweep, no name guessing |
+| Crawling domains a page links to | UNSAFE-REJECTED | Refused per hop against the scope file; recorded as out of scope with the address, not followed |
+| Acquisition with full provenance, never fabricating | EXTENSION | `workbench/fetch.py`. Nothing is recorded as obtained unless the bytes arrived, hashed, and re-hash on disk |
+| The acquisition manifest with its four statuses | ALREADY COVERED as a schema, EXTENSION as code | The schema is honoured exactly: `success`, `failed`, `blocked`, `skipped`, written by `workbench/fetch.py` |
+| Premium, paid or licensed resources | ALREADY COVERED | `guides/PAYMENT-PREMIUM-TESTING.md` and `AGENT.md` §12 already governed it. The code stops the path and names the authorised route; the only new thing is that the stop is recorded mechanically |
+| Paywall, DRM or subscription circumvention | UNSAFE-REJECTED | Rejected at every layer. `docs/workbench/LIMITATIONS.md` and the standing statement in every report say it in the same words |
+| PDF, archive and document extraction | EXTENSION | `workbench/extract.py`, with bomb, traversal, symlink, device and count limits |
+| Executing, importing or installing a download | UNSAFE-REJECTED | Nothing is executed. An extraction writes files; it never runs one |
+| Untrusted-file handling, extension-versus-content mismatch, quarantine | EXTENSION | `workbench/fetch.py` type sniffing, `workbench/extract.py` mismatch reporting and quarantine directory |
+| Normalised evidence fields and the five statuses | ALREADY COVERED | `guides/EVIDENCE.md` and `conformance/SKILL.md` define them; `workbench/evidence.py` implements the same fields and the same ladder |
+| Promoting a potential finding to confirmed | UNSAFE-REJECTED | `ALLOWED_TRANSITIONS` in `workbench/evidence.py` defines the only legal moves, and `REPRODUCED` requires a second observation |
+| Emergency mode, read-only by default | NEW CAPABILITY as code | `workbench/emergency.py`. Read-only is not the default — it is the only mode the module can execute |
+| Mandatory scope file checked before every request, no bypass | ALREADY COVERED as policy, EXTENSION as enforcement | `guides/SCOPE.md` set the policy; `workbench/scope.py` makes it unskippable, including refusing a scope file that contains a control-disabling key |
+| `--ignore-scope` or any equivalent | UNSAFE-REJECTED | It does not exist. A test walks the whole argument tree and fails if any option string contains `ignore`, `bypass`, `skip`, `unsafe`, `insecure` or `disable` |
+| No raw credential persistence, redaction of the named headers | ALREADY COVERED | `AGENT.md` §18 and `guides/EVIDENCE.md` §3; `workbench/http_client.py` implements it, keeping `Set-Cookie` attributes while dropping the value |
+| The command surface, one command per capability | NEW CAPABILITY | `workbench/cli.py`. A test compares the documented list against the parser, so a command cannot exist undocumented or be documented without existing |
+| Console UI for the workbench | OUT OF SCOPE for this phase | The directive listed it as optional. It would be a second surface to keep honest, and the CLI already provides real states with no manufactured ones. Not built |
+| Vendor a third-party HTTP or parsing library | UNSAFE-REJECTED | Nothing new was vendored. The workbench is standard-library only, which is also why it has no dependency to update |
+
+Two rows are worth reading twice. **Emergency mode is the only NEW CAPABILITY in
+the table**: everything else was a method the documents already governed, and the
+code carries the method out rather than redefining it. And **the console UI was
+declined**: an optional feature that would add a surface with states to keep
+truthful, against a CLI that already reports them.
+
+## 7. Re-verifying this document
 
 ```bash
 python3 .github/scripts/verify_capability_audit.py   # read-only, prints a table

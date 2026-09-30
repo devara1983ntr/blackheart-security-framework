@@ -323,7 +323,7 @@
           <tr><th scope="row">Security gate</th><td>Declarative flags: <code>requireAuthorizedTarget</code>, <code>requireAdapter</code>, <code>denyTargetsWithoutScope</code></td></tr>
           <tr><th scope="row">9 first-party scripts</th><td>Generators, validator, gap auditor, index and link-registry builders, drift detector</td></tr>
           <tr><th scope="row">53 authored documents</th><td>Master instruction, 22 guides, 5 operating modes, 7 templates, activation protocol</td></tr>
-          <tr><th scope="row">6 workflows</th><td>validate (push/PR), pages (deploy), upstream-sync (daily, opens a PR for review), upstream-watch (weekly, read-only), site-verify (browser), authored-scan (static analysis)</td></tr>
+          <tr><th scope="row">7 workflows</th><td>validate (push/PR), pages (deploy), upstream-sync (daily, opens a PR for review), upstream-watch (weekly, read-only), site-verify (browser), authored-scan (static analysis), phase5-validation (workbench suite and static analysis)</td></tr>
         </tbody>
       </table>
     </div>
@@ -474,7 +474,7 @@
           <li><b>adapters</b> — every skill and collection has a reviewed adapter</li>
           <li><b>integrity</b> — 3,864 files byte-identical to the pinned commit</li>
           <li><b>catalog</b> — the discovery index is unmodified</li>
-          <li><b>links</b> — 5,279 links; <b>0</b> broken in authored docs</li>
+          <li><b>links</b> — 5,485 links; <b>0</b> broken in authored docs</li>
           <li><b>index</b> — every file listed, every entry exists</li>
           <li><b>secrets</b> — no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed)</li>
           <li><b>config</b> — the gate config parses and references only real skills</li>
@@ -586,6 +586,25 @@ python3 .github/scripts/sync_upstream.py</code></pre>
       <li><b>No credential is ever requested or handled.</b> Not for the target, not for payment, not for the agent.</li>
       <li><b>No production data is modified.</b> Write capability is answered by static analysis and reasoning, never by writing.</li>
       <li><b>Findings default to <code>UNVERIFIED</code>.</b> Claims require evidence and trace to a log ID.</li>
+      <li><b>Active work needs a recorded acceptance and a scope.</b> The workbench refuses to open a socket without both. Local, read-only analysis is exempt; that distinction is documented and tested.</li>
+    </ul>
+
+    <p class="lede" style="margin-top:2.5rem">
+      The terms are not decoration: they are the same rules the tool enforces, and
+      a policy change invalidates an earlier acceptance by content hash.
+    </p>
+    <ul class="promises" role="list">
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/TERMS-OF-USE.md" rel="noopener">Terms of use</a></b> — including what the project does and does not promise.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/ACCEPTABLE-USE.md" rel="noopener">Acceptable use</a></b> — what may be done with it, and what never may.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AUTHORIZATION-AGREEMENT.md" rel="noopener">Authorization agreement</a></b> — the template an authorization is recorded in.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/RESPONSIBLE-USE.md" rel="noopener">Responsible use</a></b> — practical guidance for an engagement.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY-RESEARCH-DISCLAIMER.md" rel="noopener">Security research disclaimer</a></b> — what research here establishes.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/PRIVACY-POLICY.md" rel="noopener">Privacy policy</a></b> — the framework's own data behaviour.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/DOWNLOAD-AND-ACQUISITION-POLICY.md" rel="noopener">Download and acquisition policy</a></b> — what may be acquired.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/THIRD-PARTY-CONTENT.md" rel="noopener">Third-party content</a></b> — licences and attribution.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AI-AGENT-TERMS.md" rel="noopener">AI agent terms</a></b> — additional terms for agents.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/LEGAL.md" rel="noopener">Legal</a></b> — identity, and what is not claimed.</li>
+      <li><b><a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/policy/BLACKHEART-POLICY.json" rel="noopener">The policy</a></b> — machine-readable, v1.0.0.</li>
     </ul>
   </div>
 </section>
@@ -619,6 +638,15 @@ python3 .github/scripts/sync_upstream.py</code></pre>
         <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/ARCHITECTURE.md" rel="noopener">Architecture</a>
         <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/SECURITY.md" rel="noopener">Security</a>
         <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/skills/VENDOR.md" rel="noopener">Provenance</a>
+      </div>
+      <div>
+        <h3>Policy</h3>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/TERMS-OF-USE.md" rel="noopener">Terms of use</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/ACCEPTABLE-USE.md" rel="noopener">Acceptable use</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AUTHORIZATION-AGREEMENT.md" rel="noopener">Authorization</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/PRIVACY-POLICY.md" rel="noopener">Privacy</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/AI-AGENT-TERMS.md" rel="noopener">AI agent terms</a>
+        <a href="https://github.com/devara1983ntr/blackheart-security-framework/blob/main/policy/BLACKHEART-POLICY.json" rel="noopener">Policy (JSON)</a>
       </div>
       <div>
         <h3>Upstream</h3>

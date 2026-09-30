@@ -195,7 +195,7 @@ checklist with the command for every gate.
 
 Hand the agent the prompt in
 [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md). It enumerates
-the 55-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
+the 95-file authored instruction set from `FILE-INDEX.txt`, reconciles it under
 a stated precedence order, and returns a **countable** readiness confirmation
 instead of an unfalsifiable one.
 
@@ -242,7 +242,7 @@ not a control, it is a vulnerability.
 
 ## Verification
 
-Six workflows, nine verification scripts.
+7 workflows, nine verification scripts.
 
 `validate.py` — 8 checks, on every push and pull request:
 
@@ -251,8 +251,8 @@ Six workflows, nine verification scripts.
 | `adapters` | every skill and collection has a reviewed adapter |
 | `integrity` | 3,864 files byte-identical to the pinned SHA, plus 399 adapters |
 | `catalog` | 32 catalogue files unmodified |
-| `links` | 5,279 local links; **0 broken in authored docs** |
-| `index` | 4,410 entries; 0 unindexed, 0 dangling |
+| `links` | 5,485 local links; **0 broken in authored docs** |
+| `index` | 4,488 entries; 0 unindexed, 0 dangling |
 | `secrets` | no credential material outside a 7-entry allowlist (15 allowlisted placeholders suppressed) |
 | `config` | JSON5 parses; 374/374 configured entries declared |
 | `history` | no commit subject contains an unexpanded `$(name)` token |
@@ -279,7 +279,7 @@ is configured never to merge its own pull request.
 Four further gates cover the published site. `check_site.py` and `audit_seo.py`
 run in `pages.yml` on every change; `check_contrast.py` and
 `test_interactions.py` measure the site in a real browser and run in
-`site-verify.yml`. **All six workflows are in CI. Nothing is local-only.**
+`site-verify.yml`. **All 7 workflows are in CI. Nothing is local-only.**
 
 | Gate | What it proves | Result |
 |---|---|---|
@@ -344,10 +344,14 @@ operations and are not configured here; the site is crawlable but unclaimed.
 | [`AGENT.md`](AGENT.md) | how an agent is expected to behave |
 | [`docs/agent/AGENT-BOOTSTRAP.md`](docs/agent/AGENT-BOOTSTRAP.md) | **activation prompt** — loads the framework and verifies the load |
 | [`SECURITY.md`](SECURITY.md) | threat model, disclosure, secret handling |
+| [`docs/workbench/COMMANDS.md`](docs/workbench/COMMANDS.md) | the 21-command surface, and the gate on active work |
+| [`docs/workbench/LIMITATIONS.md`](docs/workbench/LIMITATIONS.md) | what the workbench does not do, stated plainly |
+| [`docs/workbench/INDEPENDENT-SECURITY-REVIEW.md`](docs/workbench/INDEPENDENT-SECURITY-REVIEW.md) | the review, and its status: **outstanding** |
+| [`docs/admin/README.md`](docs/admin/README.md) | **administrator governance** — the four roles, high-risk review, emergency access, and the backdoor prohibition |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to contribute safely |
 | [`CHANGELOG.md`](CHANGELOG.md) | version history |
 | [`ROADMAP.md`](ROADMAP.md) | what comes next |
-| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,410 files, one per line |
+| [`FILE-INDEX.txt`](FILE-INDEX.txt) | all 4,488 files, one per line |
 | [`skills/VENDOR.md`](skills/VENDOR.md) | provenance, exclusions, upstream defects |
 | [`skills/README.md`](skills/README.md) | the catalogue and its rules |
 | [`skills/conformance/SKILL.md`](skills/conformance/SKILL.md) | the rules that win |
@@ -367,6 +371,32 @@ you do not own or have written permission to test.
 - Findings default to `UNVERIFIED`. Claims require evidence.
 
 Violating these constraints is both a security failure and a legal one.
+
+### The terms, and the gate that enforces them
+
+Reading and testing are governed by these documents, and the machine-readable
+policy that names them. **Active operations require both a recorded policy
+acceptance and a valid scope file**; local, read-only operations do not. The
+acceptance is a local acknowledgement, not authorization for any target.
+
+| | |
+|---|---|
+| [`LEGAL.md`](LEGAL.md) | who this project is, and what it does not claim |
+| [`TERMS-OF-USE.md`](TERMS-OF-USE.md) | the terms, including liability and the limits of enforceability |
+| [`ACCEPTABLE-USE.md`](ACCEPTABLE-USE.md) | permitted and prohibited use, in operational detail |
+| [`AUTHORIZATION-AGREEMENT.md`](AUTHORIZATION-AGREEMENT.md) | the template an authorization is recorded in |
+| [`RESPONSIBLE-USE.md`](RESPONSIBLE-USE.md) | how to work without causing harm |
+| [`SECURITY-RESEARCH-DISCLAIMER.md`](SECURITY-RESEARCH-DISCLAIMER.md) | what research under this framework does and does not establish |
+| [`PRIVACY-POLICY.md`](PRIVACY-POLICY.md) | the framework's own data behaviour, audited against the code |
+| [`THIRD-PARTY-CONTENT.md`](THIRD-PARTY-CONTENT.md) | licences, attribution and what is not claimed about vendored content |
+| [`DOWNLOAD-AND-ACQUISITION-POLICY.md`](DOWNLOAD-AND-ACQUISITION-POLICY.md) | what may be acquired, and what is refused |
+| [`AI-AGENT-TERMS.md`](AI-AGENT-TERMS.md) | additional terms when an agent operates the framework |
+| [`policy/BLACKHEART-POLICY.json`](policy/BLACKHEART-POLICY.json) | the policy in machine-readable form, v1.0.0 |
+
+```bash
+python3 -m workbench.cli policy status    # is it accepted on this machine, and current?
+python3 -m workbench.cli policy accept    # record acceptance of the version you read
+```
 
 ---
 

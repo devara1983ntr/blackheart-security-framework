@@ -1,0 +1,117 @@
+{
+  "policy_version": "1.0.0",
+  "terms_version": "1.0.0",
+  "acceptable_use_version": "1.0.0",
+  "privacy_version": "1.0.0",
+  "authorization_schema_version": "1.0.0",
+  "updated": "2026-09-30",
+  "project": {
+    "name": "BLACKHEART Security Framework",
+    "repository": "devara1983ntr/blackheart-security-framework",
+    "author": "Roshan",
+    "licence": "MIT",
+    "legal_review": "none",
+    "note": "No company, legal entity, attorney, certification or registration is claimed. These documents have not been reviewed by a lawyer. Where enforceability depends on jurisdiction or legal advice, the document says so rather than asserting it."
+  },
+  "documents": {
+    "legal": "LEGAL.md",
+    "terms_of_use": "TERMS-OF-USE.md",
+    "acceptable_use": "ACCEPTABLE-USE.md",
+    "security_research_disclaimer": "SECURITY-RESEARCH-DISCLAIMER.md",
+    "privacy_policy": "PRIVACY-POLICY.md",
+    "authorization_agreement": "AUTHORIZATION-AGREEMENT.md",
+    "responsible_use": "RESPONSIBLE-USE.md",
+    "third_party_content": "THIRD-PARTY-CONTENT.md",
+    "download_and_acquisition": "DOWNLOAD-AND-ACQUISITION-POLICY.md",
+    "ai_agent_terms": "AI-AGENT-TERMS.md"
+  },
+  "requirements": {
+    "acceptance_required_for_active_operations": true,
+    "authorization_required_for_active_operations": true,
+    "acceptance_is_not_authorization": true,
+    "local_operations_exempt_from_both": true,
+    "active_operation_definition": "Any operation that sends a request over a network: every command that takes --scope, and any direct call into workbench.http_client.request()."
+  },
+  "acceptance": {
+    "required": true,
+    "recorded_locally": true,
+    "state_file": "policy-acceptance.json",
+    "state_directory_default": "~/.blackheart",
+    "state_directory_override": "BLACKHEART_STATE_DIR",
+    "records": ["policy_version", "policy_sha256", "accepted_at"],
+    "collects_identity": false,
+    "transmitted_remotely": false,
+    "note": "The state directory may be moved by environment variable; the acceptance itself cannot be satisfied by one. An empty or missing directory blocks active operations exactly as an unaccepted policy does."
+  },
+  "enforcement": {
+    "single_gate": "workbench/http_client.py request()",
+    "reason": "Every socket in the framework is opened there, so the check sits under the network boundary rather than beside it.",
+    "cli_gate": "workbench/cli.py _guard()",
+    "scope_gate": "workbench/scope.py require()",
+    "documented_residual": "The acceptance acknowledgement can be forged by a person with local write access to the state directory, because it records an acknowledgement rather than a secret. The scope check that follows cannot be forged this way: it reads the authorization file the operator supplied."
+  },
+  "acquisition_rules": {
+    "public_resources": "acquire normally",
+    "resources_requiring_authorized_access": "require the operator's own authorized credentials",
+    "paywalled_or_subscription_resources": "do not circumvent; record blocked and name the authorized route",
+    "drm_protected_resources": "do not circumvent; record blocked",
+    "captcha_or_challenge_pages": "do not solve; record blocked",
+    "signed_urls": "do not extend, guess or reuse; record expired",
+    "licensed_content": "record the licence note; do not strip notices; do not redistribute",
+    "blocked_representation": "A blocked resource is recorded as blocked with its HTTP status and the route that is authorized. It is never represented as a failed challenge to be overcome.",
+    "execution": "Never execute, import, install or run anything acquired. No macros. No binaries."
+  },
+  "prohibited_actions": [
+    "Unauthorized access to any system, or testing any target without the authorization required for it",
+    "Bypassing authentication, authorization, MFA, CAPTCHA or any other access control",
+    "Bypassing, evading or defeating a WAF, IDS, rate limit or security control",
+    "Circumventing a paywall, subscription check, DRM, licensing control or signed-URL expiry",
+    "Accessing private storage, private repositories or another person's data without authorization",
+    "Obtaining, using or transferring credentials, tokens, session cookies or keys that are not the operator's own authorized access material",
+    "Collecting personal data beyond what the authorized engagement requires",
+    "Destructive, disruptive or denial-of-service testing without explicit authorization",
+    "Deploying malware, ransomware, persistence or any unauthorized payload",
+    "Exploiting a target without authorization, or automatically exploiting anything the workbench observes",
+    "Fabricating evidence, findings, downloads, scans, statistics or successful exploitation",
+    "Promoting a potential or unverified observation into a confirmed finding",
+    "Representing the framework's output, or possession of the framework, as authorization",
+    "Using the framework to surveil, defraud, harass or abuse any person or infrastructure",
+    "Executing, importing or installing anything acquired by the framework"
+  ],
+  "allowed_actions": [
+    "Testing infrastructure you own or operate",
+    "Testing a target for which you hold written authorization from someone entitled to grant it",
+    "Testing local test environments and the loopback fixtures shipped with this repository",
+    "Authorized security research within an agreed scope, budget and window",
+    "Authorized acquisition of public resources, and of resources you are authorized to access",
+    "Authorized incident evidence collection, read-only, within scope",
+    "Reading, hashing and reporting on evidence you already hold"
+  ],
+  "agent_requirements": {
+    "validate_scope_before_active_requests": true,
+    "refuse_missing_or_malformed_scope": true,
+    "refuse_out_of_scope_targets": true,
+    "respect_host_path_method_restrictions": true,
+    "respect_request_budgets_and_rate_limits": true,
+    "obey_cancellation": true,
+    "record_evidence_and_preserve_provenance": true,
+    "redact_secrets": true,
+    "stop_when_authorization_is_unclear": true,
+    "never_invent_authorization": true,
+    "never_infer_authorization_from_ownership_claims_alone": true
+  },
+  "exempt_operations": [
+    "blackheart policy show",
+    "blackheart policy status",
+    "blackheart policy validate",
+    "blackheart policy accept",
+    "blackheart scope validate",
+    "blackheart http diff",
+    "blackheart http mutate",
+    "blackheart resource inspect",
+    "blackheart resource extract",
+    "blackheart evidence hash",
+    "blackheart evidence manifest",
+    "blackheart report generate"
+  ]
+}

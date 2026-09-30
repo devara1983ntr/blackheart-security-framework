@@ -23,9 +23,36 @@ and mobile assessment, business logic, the payment and entitlement chain,
 artifact validation, evidence handling, severity rating, reference mappings,
 remediation and retest, and reporting.
 
-It is documentation only: no code, no scanners, no automation, and deliberately
-none. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for why that is the correct
-shape for a methodology framework.
+The instruction set — the modes, guides, templates, agent layer and the
+conformance rules — remains documentation, and deliberately so. It has no
+scanner behind it and does not act on a target by itself. See
+[`ARCHITECTURE.md`](ARCHITECTURE.md) for why that is the correct shape for a
+methodology framework.
+
+Alongside it, the framework now ships one piece of first-party code:
+[`workbench/`](workbench/), with its commands documented in
+[`docs/workbench/`](docs/workbench/README.md). It exists because an assessment
+that records what it actually observed — with hashes, provenance and the limits
+of each observation — produced better evidence than a narrative written
+afterwards, and because "I did not download it" is a claim an operator should be
+able to check rather than assert. It is built to the framework's own rules or it
+would not belong here:
+
+- **Authorization first.** Every request is checked against a scope file the
+  operator supplies. There is no default scope and no flag that skips the check;
+  a scope file that does not name a request budget, a host or a method is
+  refused when it is loaded, because an unbounded scope is not a scope.
+- **A refusal is a stop.** A `401`, `402`, `403`, `407`, `451`, a challenge page
+  or a paywall ends that path, is recorded with its status and reason, and is
+  answered with the route that *is* authorised.
+- **No bypass exists to find.** An observable response difference is not a
+  finding, a `POTENTIAL` record is never promoted, and the emergency mode can
+  send `GET` and `HEAD` and nothing else.
+- **Nothing is executed.** Downloads are read as bytes, never imported,
+  installed or run.
+
+That is a narrower thing than "automated scanning", which is why the out-of-scope
+entry below still stands.
 
 ## Recently closed
 
@@ -123,7 +150,7 @@ Recorded so these are not repeatedly proposed.
 
 | Not planned | Why |
 |---|---|
-| Automated scanning or exploitation tooling | The framework's integrity model depends on explicit, human-established authorization. A tool that acts on targets cannot guarantee that. |
+| Automated scanning or exploitation tooling | The framework's integrity model depends on explicit, human-established authorization. A tool that acts on targets cannot guarantee that. [`workbench/`](workbench/) is deliberately not that: it acts only within a scope file a human wrote, and it has no unattended mode. |
 | Exploit or payload collections | Contradicts the framework's purpose. A methodology is not an arsenal. |
 | A hosted assessment service | Would introduce authorization ambiguity the framework exists to remove. |
 | Real-world case studies | Requires authorization that cannot be granted for retrospective disclosure. Synthetic examples only. |

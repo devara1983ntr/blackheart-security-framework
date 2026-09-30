@@ -68,6 +68,60 @@ If any box is unticked, do not send the request. Record why.
 This pre-flight is deliberately tedious. It exists because the agent's failure
 is not usually deciding to skip the check — it is never noticing there was one.
 
+### 3.1 The operating order for the workbench
+
+The pre-flight above is the discipline. This is the same discipline expressed as
+the eleven steps an agent takes when it is driving `workbench/cli.py`, in order,
+with the framework's own enforcement points named. It is repeated here rather than
+left in one document because this is the file an agent reads before it acts, and a
+rule that lives somewhere else is a rule that gets missed.
+
+```text
+ 1. rules        docs/agent/PHASE5-SAFETY-RULES.md, ACCEPTABLE-USE.md
+ 2. policy       policy/BLACKHEART-POLICY.json and the ten documents it names
+ 3. version      blackheart policy status          (exit 1 when not accepted)
+ 4. acceptance   blackheart policy accept          (local record; not authorization)
+ 5. local/active a socket is the dividing line, and the exempt list is exhaustive
+ 6. scope        the authorization, written into a scope file
+ 7. validation   blackheart scope validate --scope scope.json
+ 8. execution    inside budget, interval, window, methods and exclusions
+ 9. evidence     history, manifest, bundle — recorded as the run proceeds
+10. ambiguity    stop; a refusal is a result, not an obstacle
+11. reporting    observations, limitations, refusals, and what was not tested
+```
+
+**Acceptance and authorization are separate requirements.** `policy status`
+returning `accepted` establishes that the rules were read on this machine and
+nothing more. An agent that reports "policy accepted, proceeding" as if it had
+established permission has confused an acknowledgement with authority. Both the
+scope file and a current acceptance are needed, and neither substitutes for the
+other. See [`PHASE5-SAFETY-RULES.md`](PHASE5-SAFETY-RULES.md).
+
+### 3.2 Blocked or ambiguous: the decision tree
+
+When it is not obvious whether to proceed, the answer is decided by this tree and
+not by judgement:
+
+```text
+Local and read-only (parse, hash, report from existing evidence)?
+├─ yes ──────────────────────────────► proceed; no scope or acceptance required
+└─ no  (it would open a socket)
+   ├─ policy not accepted, or stale ─► STOP; report the reason from `policy status`
+   ├─ no scope file ─────────────────► STOP; authorization is not established
+   ├─ `scope validate` refuses ──────► STOP; record the decision verbatim
+   ├─ target refuses or challenges ──► record status + reason; name the authorized
+   │                                    route; STOP that path
+   ├─ budget, window or rate reached ► STOP the run; report the counts
+   └─ otherwise ─────────────────────► execute, record, continue
+```
+
+Two branches deserve emphasis because they are where agents improvise:
+
+- **A refusal is terminal for that path.** The next step is never a different
+  header, a different method, a different encoding, or a retry after a pause.
+- **An ambiguous authorization is a stop, not a smaller run.** A reduced scan
+  against a target whose authorization is unclear is still a scan of that target.
+
 ## 4. Tool use protocol
 
 ```text

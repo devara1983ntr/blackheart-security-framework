@@ -60,7 +60,7 @@ Do not guess at the document set. Derive it:
 FILE-INDEX.txt is the authoritative manifest. It contains one
 repository-relative path per line, for every file in the repository.
 
-The BLACKHEART-authored instruction set you must read completely is 82
+The BLACKHEART-authored instruction set you must read completely is 83
 files. Confirm this number yourself; do not assume it.
 
     Reading order — dependencies first:
@@ -342,12 +342,12 @@ BLACKHEART ACTIVATION CONFIRMATION
 
   Repository:        devara1983ntr/blackheart-security-framework @ <commit sha>
   Manifest:          FILE-INDEX.txt, <N> entries enumerated
-  Instruction set:   82 BLACKHEART-authored files read in full
+  Instruction set:   83 BLACKHEART-authored files read in full
   Vendored mirror:   3,864 files, untrusted, adapters reviewed
   Conformance layer: loaded, precedence understood
   Mode:              none selected — awaiting target and instruction
 
-  READ            [ ] 82/82 authored files read completely, end to end
+  READ            [ ] 83/83 authored files read completely, end to end
   VERIFIED        [ ] count derived from FILE-INDEX.txt, not assumed
   RECONCILED      [ ] read as one instruction set; precedence order applied
   UNDERSTOOD      [ ] A scope and authorization

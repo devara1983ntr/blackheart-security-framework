@@ -97,6 +97,57 @@ directive asked for is present. File count was not a goal.
 | Download / Acquisition Policy | `DOWNLOAD-AND-ACQUISITION-POLICY.md` |
 | AI Agent Terms | `AI-AGENT-TERMS.md` |
 
+## 5a. The 18-question agent audit (§34)
+
+Each question below was answered **from the repository**, and the answer's source
+is named. Where the answer is a refusal, the refusal is in the code as well as in
+the prose.
+
+| # | Question | Answer | Where it is supported |
+|---|---|---|---|
+| 1 | What is BLACKHEART? | A governed security-supply-chain framework for AI agents: an instruction set, an audited mirror of third-party skills, and a first-party workbench | `docs/agent/PHASE5-AGENT-OVERVIEW.md` §1, `README.md` |
+| 2 | What does Phase 5 actually provide? | The workbench: 21 commands across HTTP, API, discovery, fuzzing, acquisition, extraction, emergency, evidence and policy | `docs/agent/PHASE5-AGENT-OVERVIEW.md` §2, `docs/workbench/COMMANDS.md` |
+| 3 | When is authorization required? | Before any active (network) operation. Four conditions: a grant, a named target, a permitted action, a recorded scope file | `docs/agent/PHASE5-AUTHORIZATION-PROTOCOL.md` §2 |
+| 4 | Public access vs authorization? | Public accessibility is not permission for security testing; a URL, a domain and reachability are all not authorization | `SECURITY-RESEARCH-DISCLAIMER.md`, `PHASE5-AUTHORIZATION-PROTOCOL.md` §1 |
+| 5 | What happens when scope is missing? | The command exits `2` naming the missing argument; the scope loader refuses an empty file and a file with no request budget | `workbench/scope.py`, `PHASE5-SCOPE-PROTOCOL.md` §3 |
+| 6 | What happens on 401/403? | Recorded as `blocked`, **no file written**, authorized route named | `workbench/fetch.py` (`BLOCKING_STATUSES`), `PHASE5-FAILURE-HANDLING.md` |
+| 7 | Can the agent bypass a paywall? | No. `402` and entitlement markers are blocking conditions | `DOWNLOAD-AND-ACQUISITION-POLICY.md` |
+| 8 | Can the agent bypass DRM? | No. The marker is recorded; the file is not obtained | `DOWNLOAD-AND-ACQUISITION-POLICY.md`, `PHASE5-SAFETY-RULES.md` |
+| 9 | Can the agent bypass CAPTCHA? | No. A challenge interstitial is recognised and recorded; never solved, replayed or evaded | `workbench/fetch.py` (`looks_like_a_challenge`), `PHASE5-FAILURE-HANDLING.md` |
+| 10 | Private/premium without authorization? | No. Private storage and repositories are out of scope by definition and refused by the scope file | `DOWNLOAD-AND-ACQUISITION-POLICY.md`, `ACCEPTABLE-USE.md` |
+| 11 | Can downloaded files be executed? | No. No `subprocess`, `os.system`, `exec` or import of acquired content anywhere in production modules | `workbench/extract.py`; asserted by AST test |
+| 12 | How is evidence represented? | Records with required fields, a five-state status, hashes, and a bundle manifest that re-verifies on read | `PHASE5-EVIDENCE-PROTOCOL.md` §1–§2, `workbench/evidence.py` |
+| 13 | How are secrets handled? | Redacted by header name before anything is written; any value named with `--secret` replaced wherever it appears; a redacted URL refuses replay | `PHASE5-EVIDENCE-PROTOCOL.md` §…, `workbench/http_client.py` |
+| 14 | What is emergency mode? | Bounded read-only collection: the target URL, `robots.txt`, `security.txt`; `GET`/`HEAD` as a module constant; budget `min(scope.max_requests, 20)` | `workbench/emergency.py`, `PHASE5-CAPABILITY-NOTES.md` §7 |
+| 15 | What must the agent do when authorization is unclear? | Stop the affected action, preserve what exists, record the reason, report — never run a reduced version | `PHASE5-AUTHORIZATION-PROTOCOL.md` §6, `PHASE5-FAILURE-HANDLING.md` §1 |
+| 16 | Who is responsible for use? | Users remain responsible for their use of the framework, their authorization, their targets, and compliance with applicable law | `TERMS-OF-USE.md` §11, `AI-AGENT-TERMS.md` §7, `SECURITY-RESEARCH-DISCLAIMER.md` |
+| 17 | What does the Privacy Policy cover? | Software behaviour, operator-controlled local data, GitHub platform processing and third-party services, distinguished; no telemetry; no analytics or cookies on the site | `PRIVACY-POLICY.md` §1–§8 |
+| 18 | What do the Terms require? | Only authorized use; compliance with applicable law; respect for limits; no prohibited use; acceptance of the disclaimer of warranty and the allocation of responsibility | `TERMS-OF-USE.md` §2–§14 |
+
+**One gap was found by asking question 11's twin** — "what did the tool tell the
+target about itself". The User-Agent string the client sends names
+`workbench/AUTHORIZED-USE.md`, and that file **did not exist**. The package
+docstring pointed at the same missing path. Both are pre-existing; neither was
+introduced here.
+
+| Finding | Resolution |
+|---|---|
+| `workbench/__init__.py` and the User-Agent both reference `workbench/AUTHORIZED-USE.md`, which was never written | Written in this task. A markdown document, so it is inside the documentation-only scope; **no code was touched**, and the User-Agent string is unchanged |
+
+That is a real defect in a shipped string: a target operator who reads the
+User-Agent is invited to consult a document that was not there.
+
+## 5b. No-fake-content audit (§35), the searches
+
+| Search | Command | Result |
+|---|---|---|
+| Unfinished-work markers | `gap_audit.py` group 19 | clean outside `templates/` |
+| Credential-shaped strings | `validate.py` secrets | none unrecognised; 15 allowlisted placeholders |
+| Compliance badges and absolutes | `test_legal.py` + repo search | none in authored content |
+| Fabricated statistics, testimonials, downloads | repo search + review of every count's derivation | none |
+| Placeholder URLs presented as real | repo search | none |
+| Filler text | `gap_audit.py` group 19 | none |
+
 ## 6. Acceptance documentation, and what is claimed (§28)
 
 The repository **does** contain a technical acceptance mechanism, implemented
@@ -169,8 +220,8 @@ Run with the repository's existing tooling. No new gate was created.
 | Gate | Command | Result |
 |---|---|---|
 | Workbench suite | `python3 workbench/run_tests.py` | **490 passed, 0 failed, 15 modules** — includes the legal-document and policy tests |
-| Repository validation | `python3 .github/scripts/validate.py` | **8/8** — links 5,424 with 0 broken, index 4,475 with 0 unindexed and 0 dangling, secrets, config 374/374, history |
-| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,475 entries |
+| Repository validation | `python3 .github/scripts/validate.py` | **8/8** — links 5,432 with 0 broken, index 4,476 with 0 unindexed and 0 dangling, secrets, config 374/374, history |
+| Index | `python3 .github/scripts/gen_index.py --check` | in sync, 4,476 entries |
 | Gap audit | `python3 .github/scripts/gap_audit.py` | **20/20** |
 | Capability audit | `python3 .github/scripts/verify_capability_audit.py` | 85 claims; every cited path resolves, every published count current |
 | Site | `python3 site/check_site.py` | 118 passed, 0 failed |
@@ -196,8 +247,8 @@ carries the values.
 
 | Measure | Value | Derived from |
 |---|---|---|
-| `FILE-INDEX.txt` entries | **4,475** (was 4,467) | `gen_index.py --check` |
-| Local links checked | **5,424** (was 5,381) | `validate.py` |
+| `FILE-INDEX.txt` entries | **4,476** (was 4,467) | `gen_index.py --check` |
+| Local links checked | **5,432** (was 5,381) | `validate.py` |
 | Authored files the activation prompt publishes | **82** (was 74) | the walk `gap_audit.py` performs |
 | Agent documents | **12** (was 5) | `docs/agent/*.md` |
 | Workbench tests | **490**, 15 modules, 0 failures | `run_tests.py` |

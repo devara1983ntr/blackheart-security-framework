@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import io
 import socket
+import tarfile
 import threading
 import time
 import zipfile
@@ -170,6 +171,69 @@ def build_malformed_zip():
     # the file is still detected as an archive by magic bytes.
     good[30:34] = b"\xff\xff\xff\xff"
     return bytes(good[:200])
+
+
+def build_symlink_tar():
+    """A tar with a symlink and a traversal member, for the extraction rules."""
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tf:
+        payload = b"Blackhearts test fixture\n"
+        safe = tarfile.TarInfo("fixture.txt")
+        safe.size = len(payload)
+        tf.addfile(safe, io.BytesIO(payload))
+
+        link = tarfile.TarInfo("escape-link")
+        link.type = tarfile.SYMTYPE
+        link.linkname = "/etc/passwd"
+        tf.addfile(link)
+
+        climbing = tarfile.TarInfo("../escaped-from-tar.txt")
+        climbing.size = len(payload)
+        tf.addfile(climbing, io.BytesIO(payload))
+    return buf.getvalue()
+
+
+def build_encrypted_zip():
+    """A zip whose entries declare encryption.
+
+    Built by writing a normal archive and setting the encryption flag in both
+    the local and the central header, which is what a reader consults. No
+    password is set, which is the point: the fixture exists so the reader can be
+    shown to refuse the member rather than to try one.
+    """
+    raw = bytearray(build_zip())
+    index = 0
+    while True:
+        index = raw.find(b"PK\x03\x04", index)
+        if index < 0:
+            break
+        raw[index + 6] |= 0x01
+        index += 4
+    index = 0
+    while True:
+        index = raw.find(b"PK\x01\x02", index)
+        if index < 0:
+            break
+        raw[index + 8] |= 0x01
+        index += 4
+    return bytes(raw)
+
+
+def build_docx(with_macro=False):
+    """A minimal OOXML package: one document part, optionally a macro part."""
+    buf = io.BytesIO()
+    document = (b'<?xml version="1.0" encoding="UTF-8"?>'
+                b'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                b'<w:body><w:p><w:r><w:t>Fixture document body</w:t></w:r></w:p></w:body>'
+                b'</w:document>')
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("[Content_Types].xml",
+                    '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/'
+                    'package/2006/content-types"/>')
+        zf.writestr("word/document.xml", document)
+        if with_macro:
+            zf.writestr("word/vbaProject.bin", b"fixture-not-a-real-macro-payload")
+    return buf.getvalue()
 
 
 def build_tar_gz():
@@ -621,6 +685,7 @@ __all__ = [
     "FIXTURE_MARKER", "FIXTURE_NOTE", "FixtureServer", "scope_data",
     "write_scope", "build_pdf", "build_zip", "build_nested_zip",
     "build_traversal_zip", "build_bomb_zip", "build_many_entries_zip",
-    "build_malformed_zip", "build_tar_gz", "guess_free_port", "tempfile_dir",
+    "build_malformed_zip", "build_tar_gz", "build_symlink_tar", "build_encrypted_zip",
+    "build_docx", "guess_free_port", "tempfile_dir",
     "PDF_TITLE", "PDF_AUTHOR", "PDF_TEXT_PAGE1", "PDF_TEXT_PAGE2", "PDF_LINK_URL",
 ]

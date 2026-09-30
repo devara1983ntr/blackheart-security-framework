@@ -116,7 +116,7 @@ all eighteen held — the four that were not are in §4.
 | Manifests | ALREADY COVERED | `.github/UPSTREAM-MANIFEST.json` is the single source for pins, counts and exclusions; `skills/openclaw.example.json5` is generated from the mirror by `.github/scripts/gen_config.py` |
 | Integrity | ALREADY COVERED | `validate.py` adapter-drift and digest checks · `.github/scripts/gen_manifest.py` |
 | Provenance | ALREADY COVERED | `skills/VENDOR.md` §8 · `skills/licenses/claude-skills-LICENSE` · the per-source pins in the manifest · the licence/provenance bucket in `.github/scripts/watch_upstream.py` |
-| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,441 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
+| Indexing | ALREADY COVERED | `FILE-INDEX.txt`, 4,448 entries, reconciled by `.github/scripts/gen_index.py --check` in CI |
 | Registry | ALREADY COVERED | The link defect registry, 111 registered, reconciled by `.github/scripts/gen_link_registry.py --check` in CI |
 | Audit gates | ALREADY COVERED | `validate.py` · `gap_audit.py` · `check_site.py` · `audit_seo.py` · `check_contrast.py` · `test_interactions.py` · `check_authored_config.py` · `verify_capability_audit.py` — all in CI (§4) |
 | Doc generation | ALREADY COVERED | `gen_index.py` · `gen_link_registry.py` · `gen_manifest.py` · `gen_adapters.py` · `gen_collection_adapters.py` · `gen_config.py` |

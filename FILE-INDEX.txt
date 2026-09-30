@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4441
+# Total entries: 4448
 
 .gitattributes
 .github/CODEOWNERS
@@ -38,6 +38,7 @@
 .github/upstream-link-defects.json
 .github/workflows/authored-scan.yml
 .github/workflows/pages.yml
+.github/workflows/phase5-validation.yml
 .github/workflows/site-verify.yml
 .github/workflows/upstream-sync.yml
 .github/workflows/upstream-watch.yml
@@ -89,6 +90,11 @@ docs/modes/RED-HEART-ADVERSARY-EMULATION.md
 docs/modes/SECURITY-AUDIT.md
 docs/modes/SECURITY-RESEARCH-MODE.md
 docs/modes/ZERO-CREDENTIAL-ESCALATION-MODE.md
+docs/workbench/COMMANDS.md
+docs/workbench/END-TO-END.md
+docs/workbench/LIMITATIONS.md
+docs/workbench/README.md
+docs/workbench/THREAT-MODEL.md
 examples/NEW-PROJECT-BOOTSTRAP.md
 site/404.html
 site/app.js
@@ -4444,6 +4450,7 @@ workbench/tests/harness.py
 workbench/tests/test_cli.py
 workbench/tests/test_discovery.py
 workbench/tests/test_emergency.py
+workbench/tests/test_end_to_end.py
 workbench/tests/test_evidence.py
 workbench/tests/test_extract.py
 workbench/tests/test_fetch.py

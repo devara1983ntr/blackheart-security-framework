@@ -478,7 +478,7 @@ def run():
             'name="robots" content="noindex' not in read(os.path.join(REPO, "site", "404.html")):
         problems.append("site/404.html is indexable and would compete in search")
     check("18. publication readiness", not problems,
-          "18 required artefacts, 6 workflows, canonical URL consistent"
+          "18 required artefacts, 7 workflows, canonical URL consistent"
           if not problems else "; ".join(problems[:3]))
 
 

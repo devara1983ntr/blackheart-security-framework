@@ -1,0 +1,145 @@
+name: phase5-validation
+
+# The gate for the Phase 5 workbench: `workbench/`, which is first-party code
+# that makes network requests, so it gets its own test run and its own static
+# analysis rather than riding on the repository-wide checks.
+#
+# Why these four steps and not more
+# ---------------------------------
+# 1. The suite runs with the socket layer restricted to loopback. The fixtures
+#    already bind 127.0.0.1; this makes "the tests never contact anything else" a
+#    property of the run rather than a reading of the source. A future test that
+#    reaches a real host fails here instead of passing quietly on a runner that
+#    happens to have internet access.
+# 2. The suite runs a second time and the two machine-readable results are
+#    compared. A suite whose result depends on ordering, timing or a leftover
+#    file is a suite whose green build means less than it looks like it does.
+# 3. bandit scans the workbench at MEDIUM and above, the same bar the authored
+#    code is held to in `authored-scan.yml`. LOW findings are expected here
+#    (temporary directories in tests, a URL literal in a fixture); anything new
+#    at MEDIUM or above fails the job.
+# 4. Nothing else. `validate.yml` already runs the repository gates, and the
+#    capability audit is re-verified in `authored-scan.yml`.
+#
+# This workflow is deliberately not a required status check: it is a new gate,
+# and making a new gate required is a change to branch protection that would
+# need approval first. It reports, and a failure is visible on the pull request.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase5-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  workbench:
+    name: Workbench suite and static analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Install the scanning tool
+        run: |
+          python -m pip install --quiet --disable-pip-version-check 'bandit==1.9.4'
+
+      - name: Run the workbench suite with the network restricted to loopback
+        # `socket.socket.connect` is wrapped before the suite is imported. The
+        # fixtures bind 127.0.0.1 and the tests authorise that host, so nothing
+        # legitimate is blocked; anything else is an error naming the address.
+        # The suite prints JSON in this mode, so this run is also the input to
+        # the determinism comparison below. `pipefail` makes the step fail on the
+        # suite's exit code rather than on tee's.
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' | tee /tmp/workbench-run-1.json
+          import ipaddress, socket, sys
+
+          ALLOWED = {"127.0.0.1", "::1", "localhost"}
+          original = socket.socket.connect
+
+          def guarded(self, address):
+              host = address[0] if isinstance(address, tuple) else address
+              text = str(host)
+              try:
+                  loopback = ipaddress.ip_address(text).is_loopback
+              except ValueError:
+                  loopback = text in ALLOWED
+              if not loopback:
+                  raise AssertionError(
+                      f"the suite tried to connect to {text!r}; the tests must "
+                      f"stay on loopback")
+              return original(self, address)
+
+          socket.socket.connect = guarded
+          sys.path.insert(0, ".")
+          from workbench.run_tests import main
+          raise SystemExit(main(["--json"]))
+          PY
+
+      - name: Summarise the suite result
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, pathlib, sys
+          path = pathlib.Path("/tmp/workbench-run-1.json")
+          if not path.exists():
+              print("the suite did not produce a result file")
+              sys.exit(0)
+          result = json.loads(path.read_text())
+          print(f"modules : {len(result['modules'])}")
+          print(f"tests   : {result['tests']}")
+          print(f"passed  : {result['passed']}")
+          print(f"failed  : {result['failed']}")
+          for failure in result["failures"]:
+              print(f"  FAIL {failure['test']}: {failure['error']}")
+          PY
+
+      - name: The suite is deterministic
+        # Two runs, compared. Elapsed time is the only field that may differ, so
+        # it is removed before the comparison. Failures are checked first: two
+        # runs that fail in exactly the same way are consistent and still red.
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, pathlib, subprocess, sys
+
+          def run(path):
+              with open(path, "w", encoding="utf-8") as handle:
+                  subprocess.run(
+                      [sys.executable, "-c",
+                       "import sys; sys.path.insert(0, '.');"
+                       "from workbench.run_tests import main;"
+                       "raise SystemExit(main(['--json']))"],
+                      stdout=handle, check=False)
+              result = json.loads(pathlib.Path(path).read_text())
+              result.pop("seconds", None)
+              return result
+
+          first = run("/tmp/workbench-run-1.json")
+          second = run("/tmp/workbench-run-2.json")
+          if first["failed"] or second["failed"]:
+              print(f"a run had failures: {first['failed']} and {second['failed']}")
+              sys.exit(1)
+          if first != second:
+              print("the two runs disagree:")
+              print(json.dumps({"first": first, "second": second},
+                               indent=2, sort_keys=True))
+              sys.exit(1)
+          print(f"two runs agree: {first['passed']} passed, {first['failed']} failed")
+          PY
+
+      - name: Static analysis of the workbench, failing on MEDIUM and above
+        run: bandit -r workbench -ll

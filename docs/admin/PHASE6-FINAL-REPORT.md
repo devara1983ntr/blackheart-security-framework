@@ -224,11 +224,65 @@ difference is normal machine variance, not a change of state.
 | Follow-up commit | **`2c05e1a`** — this report's own measured figures |
 | Second follow-up | the documentation commit that records the repeated gate sweep below |
 | Branch state | `phase5/workbench`, one commit ahead of `3703312` |
-| Push / PR / CI / merge | **Not yet performed at the time of writing.** The branch is local; the push boundary is handled by the project's credential mechanism, never by a pasted token and never by storing one |
+| Push / PR / CI / merge | **Not performed — blocked at the credential boundary.** See §10a |
+| Independent review | **Outstanding — not performed.** No genuinely separate reviewer is available, and none is claimed |
 
 **Note on the branch.** This work sits on top of the Phase 5 branch, which is
 already complete through §39 and awaiting its own push. The Phase 6 commit adds
 only documentation.
+
+## 10a. Delivery status — blocked at the credential boundary
+
+The delivery directive required push → one PR → independent review → CI → merge →
+verify → freeze. **Delivery could not be performed in this environment, and this
+section records that fact rather than an assumption about it.**
+
+| Delivery element | Actual state |
+|---|---|
+| Local branch | **Ready.** `phase5/workbench` at `4bebc6e`, working tree clean, 24 commits ahead of `main` (`776c89fe`), 89 files, +23,157 / −32 |
+| Remote configuration | **Missing.** No `origin` is configured in this environment |
+| Credential mechanism | **Unavailable.** No GitHub CLI, no credential helper, no stored credential file, no token in the environment, no SSH key or agent |
+| Push | **Not performed.** Nothing was sent to any remote |
+| Pull request | **Not created.** There is no PR number, and none is invented here |
+| CI | **Not run.** No check has executed against this branch, and no result is claimed |
+| Merge | **Not performed.** `main` is unchanged |
+| Post-merge verification | **Not applicable** — there is nothing merged to verify |
+| Deployment verification | **Not applicable** — the published site still corresponds to `main` as it stands, which does not include this branch |
+| Independent review | **Outstanding.** Not performed; not claimed |
+
+**Nothing was fabricated to fill a gap.** No commit, push, PR number, CI run,
+review approval, merge commit, verification result or deployment result appears in
+this report, or in any document in this repository, that did not actually happen.
+
+### What remains, and the exact form it takes
+
+A person holding the repository's credential can complete delivery without any
+change to the tree:
+
+```text
+git remote add origin https://github.com/devara1983ntr/blackheart-security-framework.git
+git push -u origin phase5/workbench          # normal push; no force, no rewrite
+```
+
+then open one pull request, base `main`, head `phase5/workbench`, using the
+reconciled body; wait for the existing required checks; obtain the separate review
+if the project can supply one; merge normally; and verify the published site
+against the merged `main`.
+
+**Two conditions the merge step depends on, stated because they are not met by
+this branch as it stands:**
+
+1. The **independent security review remains outstanding**. If repository policy
+   requires it before merge, the gate is open and the merge should wait for it.
+2. The **administrative credential from the refused request must be rotated** if
+   the same value is in use anywhere real. It is absent from this repository and
+   from all of its history.
+
+### Gate state at this head
+
+The local gates were re-run at `4bebc6e`, each exactly as its workflow runs it,
+after the last content change. All are green, and §9 records the values. **This is
+a local result, not a CI result**, and the difference matters: CI has not run.
 
 ## 11. Known limitations of this documentation task
 
@@ -248,7 +302,18 @@ only documentation.
 
 ## 12. Freeze
 
-On completion, this documentation layer is **frozen**. No backlog, no follow-on
-phase, no bypass tooling, no backdoors, no universal credentials and no hidden
-overrides are added or planned. A future change to any of it is a separate
-engagement with its own authorization.
+**The freeze is not declared, because its precondition was not met.** A freeze is
+declared only after the delivery gates pass, and delivery is blocked at the
+credential boundary (§10a). The branch is complete and unmerged; nothing has been
+published, reviewed independently, or verified against a merged `main`.
+
+**What is already true and does not depend on delivery:**
+
+- No backlog, no follow-on phase, no bypass tooling, no backdoors, no universal
+  credentials and no hidden overrides exist, are added, or are planned.
+- A future change to any of this is a separate engagement with its own
+  authorization.
+
+**What remains outstanding:** the push, the pull request, CI, the independent
+review, the merge, post-merge verification, and deployment verification — in the
+form set out in §10a.

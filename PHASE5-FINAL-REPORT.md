@@ -684,7 +684,7 @@ command parser so that a command requiring `--scope` cannot be described as exem
 | Step | State |
 |---|---|
 | Local gates on the frozen tree | **green** — suite 490, `validate.py` 8/8, `gap_audit.py` 20/20, capability audit current, `bandit -ll` exit 0 |
-| Push of `phase5/workbench` | **not performed here.** The branch is 18 commits ahead of `main` (`3f166f6`); the remote is configured and no credential exists in this environment. §29 forbids asking for one in a transcript, so the push is the operator's to make: `git push -u origin phase5/workbench` |
+| Push of `phase5/workbench` | **not performed here.** The branch stands at the commit this report is committed in, ahead of `main` by exactly the commits in Appendix A — the count is deliberately not written down, because a figure that includes its own commit is wrong the moment it is made. The remote is configured; no credential exists in this environment, and §29 forbids asking for one in a transcript. The push is the operator's to make: `git push -u origin phase5/workbench` |
 | One pull request, base `main` | prepared — the body is reconciled to the measured values; opening it needs the same credential |
 | CI on the pull request | **not run** — it runs when the push happens |
 | Independent review | **outstanding**, per §29 |

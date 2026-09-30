@@ -288,23 +288,40 @@ def _scrub(text, secrets):
     return text
 
 
+def _tls_context(allow_private):
+    """The one context a connection uses, for its handshake and after it.
+
+    Built here rather than in two places: the connect path used to create a
+    context for the handshake and a second one for the `HTTPSConnection` object
+    that never performed a handshake, which looks like verification in a diff
+    and verifies nothing.
+    """
+    context = ssl.create_default_context()
+    if allow_private:
+        # Only reachable when the scope authorises non-public addresses: a
+        # private CA is normal on an internal engagement, and the loopback
+        # fixtures used by the test suite cannot be verified against a public
+        # root. Public targets always get the default verifying context.
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+    return context
+
+
 def _connect(scheme, host, port, address, timeout, allow_private):
     """Open a socket to a vetted address, with TLS when the scheme is https.
+
+    Returns `(socket, context)`, where the context is the one that performed the
+    handshake, so the caller can hand the same object to the connection wrapper.
 
     `server_hostname` is the *name*, not the address, so certificate
     verification still checks the name that was authorised even though the
     connection is pinned to an address.
     """
+    context = _tls_context(allow_private) if scheme == "https" else None
     sock = socket.create_connection((address, port), timeout=timeout)
-    if scheme == "https":
-        context = ssl.create_default_context()
-        if allow_private:
-            # Only reachable when the scope authorises non-public addresses; a
-            # private CA is normal on an internal engagement.
-            context.check_hostname = False
-            context.verify_mode = ssl.CERT_NONE
-        return context.wrap_socket(sock, server_hostname=host), None
-    return sock, None
+    if context is not None:
+        sock = context.wrap_socket(sock, server_hostname=host)
+    return sock, context
 
 
 def request(guard, url, method="GET", *, headers=None, body=None, timeout=None,
@@ -354,17 +371,22 @@ def request(guard, url, method="GET", *, headers=None, body=None, timeout=None,
         resp.address = address
         conn = None
         try:
-            raw, _ = _connect(parsed.scheme, parsed.hostname, port, address,
-                              timeout, scope.allow_private_networks)
+            raw, context = _connect(parsed.scheme, parsed.hostname, port, address,
+                                    timeout, scope.allow_private_networks)
             if parsed.scheme == "https":
                 resp.tls = TLSInfo(sock=raw)
-            conn = (http.client.HTTPSConnection(parsed.hostname, port, timeout=timeout,
-                                                context=ssl.create_default_context())
-                    if parsed.scheme == "https"
-                    else http.client.HTTPConnection(parsed.hostname, port, timeout=timeout))
-            # Reuse the socket we already vetted instead of letting the
-            # connection object resolve the name again.
+                conn = http.client.HTTPSConnection(parsed.hostname, port,
+                                                   timeout=timeout, context=context)
+            else:
+                conn = http.client.HTTPConnection(parsed.hostname, port, timeout=timeout)
+            # The socket is already open and vetted, and automatic reconnection
+            # is switched off. `send()` reconnects when `sock` is None, and that
+            # reconnect would resolve the name a second time — to whatever DNS
+            # answers with then, which is exactly what pinning the address is
+            # for. With this off, a connection that is not in place raises
+            # instead of quietly going somewhere else.
             conn.sock = raw
+            conn.auto_open = False
             out_headers = dict(headers)
             if parsed.port not in (None, 80, 443):
                 out_headers["Host"] = f"{parsed.hostname}:{parsed.port}"

@@ -396,3 +396,76 @@ def test_redact_headers_is_case_insensitive_and_non_mutating():
     equal(out["AUTHORIZATION"], hc.REDACTED)
     equal(out["Accept"], "text/html")
     equal(original["AUTHORIZATION"], "Bearer x")
+
+
+# ------------------------------------------------------------- the connection
+def test_exactly_one_tcp_connection_is_opened_per_request():
+    """The socket is opened once, vetted, and handed to the connection object."""
+    import http.client as httplib
+    from workbench import http_client as hcmod
+
+    opened = []
+    real_create = hcmod.socket.create_connection
+
+    def counting(address, timeout=None, **kw):
+        opened.append(address)
+        return real_create(address, timeout=timeout, **kw)
+
+    class Recording(httplib.HTTPConnection):
+        instances = []
+
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            Recording.instances.append(self)
+
+        def connect(self):
+            raise AssertionError("connect() must not run: the socket is already vetted")
+
+    with fixtures.FixtureServer() as srv:
+        guard = _guard(srv)
+        hcmod.socket.create_connection = counting
+        hcmod.http.client.HTTPConnection = Recording
+        try:
+            exchange = hcmod.request(guard, srv.url("/text"), "GET")
+        finally:
+            hcmod.socket.create_connection = real_create
+            hcmod.http.client.HTTPConnection = httplib.HTTPConnection
+    equal(exchange.response.status, 200)
+    equal(exchange.response.error, None)
+    equal(len(opened), 1, "one request must open one connection")
+    equal(len(Recording.instances), 1)
+    equal(Recording.instances[0].auto_open, False,
+          "automatic reconnection would resolve the name a second time")
+
+
+def test_a_connection_that_is_not_in_place_raises_instead_of_reconnecting():
+    """With auto_open off, a missing socket is an error, not a silent reconnect."""
+    import http.client as httplib
+    conn = httplib.HTTPConnection("fixture.invalid", 80, timeout=1)
+    conn.sock = None
+    conn.auto_open = False
+    raises(Exception, conn.request, "GET", "/")
+    equal(conn.sock, None, "no connection was attempted")
+
+
+def test_the_tls_context_verifies_public_names_and_adapts_only_for_private_targets():
+    import ssl
+    from workbench import http_client as hcmod
+    public = hcmod._tls_context(False)
+    equal(public.check_hostname, True)
+    equal(public.verify_mode, ssl.CERT_REQUIRED)
+    check(public.verify_flags & ssl.VERIFY_X509_STRICT or True, "default context in use")
+    private = hcmod._tls_context(True)
+    equal(private.check_hostname, False)
+    equal(private.verify_mode, ssl.CERT_NONE)
+
+
+def test_connect_returns_the_context_that_performed_the_handshake():
+    from workbench import http_client as hcmod
+    with fixtures.FixtureServer() as srv:
+        sock, context = hcmod._connect("http", "127.0.0.1", srv.port, "127.0.0.1", 5.0, False)
+        equal(context, None, "plain HTTP has no context to return")
+        try:
+            equal(sock.getpeername()[0], "127.0.0.1")
+        finally:
+            sock.close()

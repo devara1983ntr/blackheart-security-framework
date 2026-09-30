@@ -172,6 +172,14 @@ def run(guard, base_record, *, kinds=None, budget=None, limit=None, plan=None,
     applies to a supplied plan: it is a list of intentions, not a bypass.
     """
     scope_obj = guard.scope
+    if hc.url_is_redacted(base_record.get("url")):
+        # The base record's URL is what every mutation is built from. If it
+        # carries a redaction marker, the whole run would send that marker, and
+        # the results would be differences against a request nobody made.
+        raise ValueError(
+            "the base record's URL has a redacted value in it, so every mutation "
+            "would send the marker '[redacted]' instead of the credential. Capture "
+            "the request again with the value supplied, then fuzz from that record")
     budget = int(budget if budget is not None else scope_obj.max_requests)
     remaining_budget = max(0, budget - guard.requests_made)
     if plan is not None:

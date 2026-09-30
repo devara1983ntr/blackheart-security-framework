@@ -161,6 +161,11 @@ def replay_from_record(guard, history, entry_id, *, headers=None, body=None,
     entry = history.get(entry_id)
     if entry is None:
         raise KeyError(f"no history entry {entry_id}")
+    if hc.url_is_redacted(entry.get("url")):
+        raise ValueError(
+            f"{entry_id} was recorded with a value redacted from its URL, so replaying "
+            f"it would send the marker '[redacted]' where a credential was. Re-issue "
+            f"the request with the value supplied again instead of replaying this one")
     stored_headers = dict(entry.get("request_headers") or {})
     if stored_headers:
         # Persisted headers are redacted, so a replay of a stored request cannot

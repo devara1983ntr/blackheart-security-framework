@@ -11,6 +11,8 @@ from __future__ import annotations
 import json
 import time
 
+from workbench import fuzz as fuzzmod
+from workbench import history as hist
 from workbench import http_client as hc
 from workbench import scope as sc
 from workbench.tests import fixtures
@@ -469,3 +471,65 @@ def test_connect_returns_the_context_that_performed_the_handshake():
             equal(sock.getpeername()[0], "127.0.0.1")
         finally:
             sock.close()
+
+
+# ------------------------------------------------------- redacting a URL value
+def test_a_value_redacted_from_a_body_is_also_redacted_from_the_url():
+    """A credential does not only travel in a body or a header.
+
+    `?api_key=...`, a token in a path segment and a `Location` header on a
+    redirect all put the same value in the record. Scrubbing only bodies and
+    headers left four fields holding a value the operator had asked to be
+    redacted: `url`, `final_url`, `query` and the URL inside `scope_decision`.
+    """
+    with fixtures.FixtureServer() as srv:
+        guard = _guard(srv)
+        secret = "fixture-secret-value"
+        exchange = hc.request(guard, srv.url(f"/reflect?q={secret}"))
+        record = exchange.record(secrets=[secret])
+        equal(secret in json.dumps(record, sort_keys=True), False,
+              "the redacted value is still somewhere in the record")
+        contains(record["url"], "[redacted]")
+        contains(record["final_url"], "[redacted]")
+        contains(record["query"], "[redacted]")
+        contains(record["scope_decision"]["url"], "[redacted]")
+        equal(record["host"], "127.0.0.1", "the host is not a secret and stays readable")
+        equal(record["path"], "/reflect")
+
+
+def test_a_redirect_location_is_scrubbed_too():
+    with fixtures.FixtureServer() as srv:
+        guard = _guard(srv)
+        secret = "fixture-secret-value"
+        exchange = hc.request(guard, srv.url(f"/open-redirect?next=/{secret}"))
+        record = exchange.record(secrets=[secret])
+        check(secret not in json.dumps(record), "the record kept the value")
+
+
+def test_a_stored_url_that_was_redacted_may_not_be_replayed():
+    with fixtures.FixtureServer() as srv:
+        guard = _guard(srv)
+        secret = "fixture-secret-value"
+        history_obj = hist.History(secrets=[secret])
+        exchange = hc.request(guard, srv.url(f"/reflect?q={secret}"))
+        history_obj.add(exchange, tag="capture")
+        contains(history_obj.get("H0001")["url"], "[redacted]",
+                 "the history was written with the value redacted")
+        before = len(srv.hits)
+        error = raises(ValueError, hist.replay_from_record, guard, history_obj, "H0001")
+        contains(str(error), "redacted")
+        equal(len(srv.hits), before, "the replay sent nothing")
+
+
+def test_fuzzing_from_a_record_with_a_redacted_url_refuses_before_sending_anything():
+    with fixtures.FixtureServer() as srv:
+        guard = _guard(srv)
+        secret = "fixture-secret-value"
+        history_obj = hist.History(secrets=[secret])
+        exchange = hc.request(guard, srv.url(f"/reflect?q={secret}"))
+        history_obj.add(exchange, tag="capture")
+        record = history_obj.get("H0001")
+        before = len(srv.hits)
+        error = raises(ValueError, fuzzmod.run, guard, record, limit=3)
+        contains(str(error), "redacted")
+        equal(len(srv.hits), before, "the fuzz run sent nothing")

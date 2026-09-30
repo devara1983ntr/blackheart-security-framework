@@ -274,6 +274,7 @@ class Exchange:
         }
         data["request_body"] = _scrub(
             self.request_body.decode("utf-8", errors="replace")[:body_limit], secrets)
+        _scrub_urls(data, secrets)
         if self.response is not None:
             resp = self.response.as_dict(include_body=include_body, body_limit=body_limit)
             resp["headers"] = redact_headers(resp["headers"])
@@ -291,6 +292,46 @@ def _scrub(text, secrets):
         if value and len(str(value)) >= 4:
             text = text.replace(str(value), REDACTED)
     return text
+
+
+def _scrub_urls(data, secrets):
+    """Redact the URL-bearing fields of a record, in place.
+
+    A credential does not only travel in a header. `?api_key=...` in a query
+    string, a token in a path segment and a `Location` header on a redirect all
+    put the same value in the record, and scrubbing only the body left all four
+    of them in the file. The fields are named individually rather than walked
+    generically: this is the list of places a URL appears, and a field added
+    later has to be added here on purpose.
+    """
+    if not secrets:
+        return data
+    for field in ("url", "final_url", "path", "query", "note"):
+        if isinstance(data.get(field), str):
+            data[field] = _scrub(data[field], secrets)
+    for hop in data.get("redirect_chain") or []:
+        # `from` is the URL the hop started at, `location` is where it pointed.
+        # Both carry the value a redirect was built from.
+        for key in ("location", "url", "from"):
+            if isinstance(hop.get(key), str):
+                hop[key] = _scrub(hop[key], secrets)
+    decision = data.get("scope_decision")
+    if isinstance(decision, dict):
+        for key, value in list(decision.items()):
+            if isinstance(value, str):
+                decision[key] = _scrub(value, secrets)
+    return data
+
+
+def url_is_redacted(url):
+    """Whether a stored URL carries a redaction marker.
+
+    Callers that reuse a stored URL — replay and fuzzing — check this first.
+    Sending `[redacted]` where a credential was would produce a request that
+    looks deliberate, answers wrongly, and reads in the history as though the
+    value had been transmitted.
+    """
+    return isinstance(url, str) and REDACTED in url
 
 
 def _tls_context(allow_private):

@@ -407,3 +407,83 @@ def test_history_records_the_acquisition_request():
         equal(len(h.entries), 1)
         equal(h.entries[0]["method"], "GET")
         equal(h.entries[0]["tag"], "acquire")
+
+
+# ------------------------------------------------------------- round-tripping
+def test_a_manifest_can_be_read_back_and_extended_without_losing_entries():
+    """Two acquisitions in one directory must produce one growing record.
+
+    A run that started from an empty `Manifest` every time would overwrite the
+    manifest with its own single entry, and the first acquisition would vanish
+    from the record while its file stayed on disk — a manifest that describes
+    neither run.
+    """
+    with fixtures.FixtureServer() as srv:
+        directory = fixtures.tempfile_dir()
+        guard = _guard(srv)
+        first = fetch.Manifest(directory, scope_file="<fixture>", scope=guard.summary())
+        fetch.acquire(guard, srv.url("/file.pdf"), first, expect="document")
+        first_path = first.write()
+
+        second = fetch.Manifest.load(first_path, scope_file="<fixture>",
+                                     scope=guard.summary())
+        equal([entry.id for entry in second.entries], ["D0001"])
+        fetch.acquire(guard, srv.url("/data.zip"), second, expect="document")
+        second.write()
+
+        reloaded = fetch.Manifest.load(first_path)
+        equal([entry.id for entry in reloaded.entries], ["D0001", "D0002"])
+        equal(reloaded.counts()["success"], 2)
+        equal(reloaded.next_id(), "D0003")
+        equal(fetch.verify_manifest(first_path), [])
+
+
+def test_reading_a_manifest_back_preserves_what_each_entry_claimed():
+    with fixtures.FixtureServer() as srv:
+        directory = fixtures.tempfile_dir()
+        guard = _guard(srv)
+        manifest = fetch.Manifest(directory, scope_file="<fixture>", scope=guard.summary())
+        fetch.acquire(guard, srv.url("/file.pdf"), manifest, expect="document",
+                      license_note="public domain fixture", note="round trip")
+        fetch.acquire(guard, srv.url("/forbidden"), manifest)
+        path = manifest.write()
+        reloaded = fetch.Manifest.load(path)
+        obtained, blocked = reloaded.entries
+        equal(obtained.status, "success")
+        equal(obtained.file, "file.pdf")
+        equal(obtained.sha256, ev.file_sha256(os.path.join(directory, "file.pdf")))
+        equal(obtained.license_note, "public domain fixture")
+        equal(obtained.note, "round trip")
+        equal(blocked.status, "blocked")
+        equal(blocked.file, None)
+        equal(blocked.downloaded, False)
+        equal(blocked.access["routes"][0]["route"], "ask the asset owner")
+        equal(reloaded.entries[1].as_dict()["blocked_reason"],
+              manifest.entries[1].as_dict()["blocked_reason"])
+
+
+def test_loading_a_manifest_that_is_not_there_gives_an_empty_one():
+    directory = fixtures.tempfile_dir()
+    manifest = fetch.Manifest.load(os.path.join(directory, "manifest.json"))
+    equal(manifest.entries, [])
+    equal(manifest.next_id(), "D0001")
+    equal(manifest.directory, directory)
+
+
+def test_an_unknown_status_in_a_stored_manifest_is_propagated_not_ignored():
+    """A manifest edited by hand must fail verification, not read as healthy."""
+    with fixtures.FixtureServer() as srv:
+        directory = fixtures.tempfile_dir()
+        guard = _guard(srv)
+        manifest = fetch.Manifest(directory, scope_file="<fixture>", scope=guard.summary())
+        fetch.acquire(guard, srv.url("/file.pdf"), manifest, expect="document")
+        path = manifest.write()
+        with open(path, encoding="utf-8") as fh:
+            body = json.load(fh)
+        body["entries"][0]["status"] = "downloaded"
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(body, fh)
+        problems = fetch.verify_manifest(path)
+        check(any("unknown status" in problem for problem in problems), problems)
+        reloaded = fetch.Manifest.load(path)
+        equal(reloaded.entries[0].status, "downloaded")

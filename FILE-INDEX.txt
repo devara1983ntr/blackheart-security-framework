@@ -9,7 +9,7 @@
 # not exist, fails `python3 .github/scripts/validate.py` (check: index)
 # and fails this script in CI.
 #
-# Total entries: 4435
+# Total entries: 4441
 
 .gitattributes
 .github/CODEOWNERS
@@ -4423,8 +4423,10 @@ templates/FINDING.md
 templates/TEST-LOG.md
 workbench/__init__.py
 workbench/checks.py
+workbench/cli.py
 workbench/diff.py
 workbench/discover.py
+workbench/emergency.py
 workbench/evidence.py
 workbench/extract.py
 workbench/fetch.py
@@ -4433,16 +4435,20 @@ workbench/history.py
 workbench/http_client.py
 workbench/mutate.py
 workbench/params.py
+workbench/report.py
 workbench/run_tests.py
 workbench/scope.py
 workbench/tests/__init__.py
 workbench/tests/fixtures.py
 workbench/tests/harness.py
+workbench/tests/test_cli.py
 workbench/tests/test_discovery.py
+workbench/tests/test_emergency.py
 workbench/tests/test_evidence.py
 workbench/tests/test_extract.py
 workbench/tests/test_fetch.py
 workbench/tests/test_http_client.py
 workbench/tests/test_mutation.py
+workbench/tests/test_report.py
 workbench/tests/test_scope.py
 workbench/tests/test_workbench.py

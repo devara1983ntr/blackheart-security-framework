@@ -335,6 +335,40 @@ class Acquisition:
             "downloaded": self.downloaded,
         }
 
+    @classmethod
+    def from_dict(cls, data):
+        """Rebuild an entry from a written manifest.
+
+        Two invocations of the same command over the same directory must not
+        produce a manifest that forgets the first one, so the CLI reads the file
+        back with this. Every field is copied explicitly rather than with
+        `update`, so a manifest written by a different version cannot smuggle an
+        attribute in and have it silently ignored on the next write.
+        """
+        acquisition = cls(data.get("id", ""), data.get("source_url", ""),
+                          data.get("authorization_scope") or {},
+                          license_note=data.get("license_note") or "",
+                          note=data.get("note") or "")
+        acquisition.final_url = data.get("final_url", acquisition.source_url)
+        acquisition.status = data.get("status", "skipped")
+        acquisition.http_status = data.get("http_status")
+        acquisition.content_type = data.get("content_type")
+        acquisition.bytes = data.get("bytes", 0)
+        acquisition.sha256 = data.get("sha256")
+        acquisition.timestamp = data.get("timestamp", acquisition.timestamp)
+        acquisition.redirect_chain = list(data.get("redirect_chain") or [])
+        acquisition.file = data.get("file")
+        acquisition.file_type = data.get("file_type")
+        acquisition.confident_type = bool(data.get("type_confident"))
+        acquisition.extension_matches_content = data.get("extension_matches_content")
+        acquisition.extraction_status = data.get("extraction_status", "not_started")
+        acquisition.blocked_reason = data.get("blocked_reason")
+        acquisition.access = data.get("access")
+        acquisition.public_metadata = dict(data.get("public_metadata") or {})
+        acquisition.error = data.get("error")
+        acquisition.warnings = list(data.get("warnings") or [])
+        return acquisition
+
     def summary_line(self):
         detail = self.final_url if self.final_url == self.source_url else \
             f"{self.source_url} -> {self.final_url}"
@@ -360,6 +394,7 @@ class Manifest:
         self.name = name
         self.entries = []
         self.started_at = now()
+        self.next_number = 1
 
     def add(self, acquisition):
         if acquisition.status not in STATUSES:
@@ -367,8 +402,42 @@ class Manifest:
         self.entries.append(acquisition)
         return acquisition
 
+    @classmethod
+    def load(cls, path, *, directory=None, scope_file=None, scope=None):
+        """Read a written manifest so a later run appends to it.
+
+        The entries are reconstructed rather than kept as dictionaries: the
+        manifest is the record of what was obtained, and a run that starts by
+        forgetting the previous run's entries would rewrite that record with a
+        shorter one. Numbering continues from the highest `Dnnnn` present, so ids
+        stay unique even if an entry was removed by hand.
+        """
+        if not os.path.isfile(path):
+            return cls(directory or os.path.dirname(os.path.abspath(path)),
+                       scope_file=scope_file, scope=scope)
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+        manifest = cls(directory or os.path.dirname(os.path.abspath(path)),
+                       scope_file=scope_file if scope_file is not None
+                       else data.get("scope_file"),
+                       scope=scope if scope is not None
+                       else (data.get("authorization_scope") or {}),
+                       name=data.get("name", "downloads"))
+        manifest.started_at = data.get("started_at", manifest.started_at)
+        for entry in data.get("entries") or []:
+            manifest.entries.append(Acquisition.from_dict(entry))
+        highest = 0
+        for entry in manifest.entries:
+            entry_id = entry.id or ""
+            if entry_id.startswith("D") and entry_id[1:].isdigit():
+                highest = max(highest, int(entry_id[1:]))
+        manifest.next_number = highest + 1
+        return manifest
+
     def next_id(self):
-        return f"D{len(self.entries) + 1:04d}"
+        number = getattr(self, "next_number", len(self.entries) + 1)
+        self.next_number = number + 1
+        return f"D{number:04d}"
 
     def counts(self):
         counts = {status: 0 for status in STATUSES}
